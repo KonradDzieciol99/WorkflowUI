@@ -68,7 +68,7 @@ export class ListComponent implements OnInit {
 
   ngOnInit() {
 
-    this.teamService.existingTeams$.subscribe({
+    this.teamService.GetAll().subscribe({
       next:(x:Team[])=>{
         this.ELEMENT_DATA_FROM_BACK=x;
         this.ELEMENT_DATA.splice(0);

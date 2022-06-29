@@ -7,6 +7,7 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router } from '@angular/router';
 
 @Component({
+  
   selector: 'app-inside',
   templateUrl: './inside.component.html',
   styleUrls: ['./inside.component.css']

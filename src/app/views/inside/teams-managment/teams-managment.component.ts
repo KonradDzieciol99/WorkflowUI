@@ -6,7 +6,7 @@ import {MatSort} from '@angular/material/sort';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { TeamService } from 'src/app/services/team.service';
 import { Team } from 'src/app/models/Team.model';
-import { mergeMap, Observable } from 'rxjs';
+import { concatWith, mergeMap, Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateTeamComponent } from 'src/app/components/dialogs/create-team/create-team.component';
 import { Router } from '@angular/router';
@@ -26,15 +26,9 @@ export interface EditUser {
 })
 export class TeamsManagmentComponent implements OnInit {
 
-  newTeamName!: string;
-//dialog
-
   ELEMENT_DATA_FROM_BACK: Team[] = [];
-
   ELEMENT_DATA: EditUser[] = [];
-
   displayedColumns: string[] = ['name','action'];
-
   dataSource!: MatTableDataSource<EditUser>;
   selected = 'option1';
 
@@ -44,18 +38,6 @@ export class TeamsManagmentComponent implements OnInit {
   sort!: MatSort;
   editForm!: FormGroup;
 
-  listofTeams!:Team[];
-
-  //@ViewChild(MatTable) table: MatTable<string[]>;
-
-  
-  // constructor(private teamService: TeamService,public dialog: MatDialog) {
-  //   const editForm = (e: Team) => new FormGroup({
-  //     id: new FormControl(e.id,Validators.required),
-  //     name: new FormControl(e.name,Validators.required),
-  //   });
-  //   this.GetTeams(editForm);
-  // }
   editForm2!:any;
   constructor(private teamService: TeamService,public dialog: MatDialog, private route:Router) {
     const editForm = (e: Team) => new FormGroup({
@@ -65,26 +47,28 @@ export class TeamsManagmentComponent implements OnInit {
     this.editForm2=editForm;
   }
 
-
-
   ngOnInit() {
 
-    this.teamService.existingTeams$.subscribe({
+    this.teamService.GetAll().subscribe({
       next:(x:Team[])=>{
         this.ELEMENT_DATA_FROM_BACK=x;
         this.ELEMENT_DATA.splice(0);
         this.ELEMENT_DATA_FROM_BACK.forEach(element => {
-          this.ELEMENT_DATA.push({currentData: element, 
-                                  originalData: element, 
-                                  editable: false, 
-                                  validator: this.editForm2(element)});
-                                  this.dataSource = new MatTableDataSource(this.ELEMENT_DATA.slice());
-                                  this.dataSource.paginator = this.paginator;
-                                  this.dataSource.sort = this.sort;
-                                  //this.table.renderRows();
-                                  this.dataSource.filterPredicate = (data:EditUser, filterValue: string) => data.originalData.name.indexOf(filterValue) != -1;//filter neeed
-                                  //(data:EditUser, filterValue: string) => data.originalData.name.indexOf(filterValue);
+        this.ELEMENT_DATA.push({currentData: element, 
+                                originalData: element, 
+                                editable: false, 
+                                validator: this.editForm2(element)
+                              });
+
+                                  
         });
+        //this.table.renderRows();
+        // to było w push
+        this.dataSource = new MatTableDataSource(this.ELEMENT_DATA.slice());
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        //
+        this.dataSource.filterPredicate = (data:EditUser, filterValue: string) => data.originalData.name.indexOf(filterValue) != -1;//filter neeed
 
       },
       error: (v)=>console.log(v)
@@ -121,19 +105,22 @@ export class TeamsManagmentComponent implements OnInit {
   deleteRow(index: number,row:any) {
 
     const team:Team = row.currentData;
-    
-    
     this.teamService.DeleteTeam(team).subscribe(()=>{
 
-      // const data = this.dataSource.data;
-      // data.splice((this.paginator.pageIndex * this.paginator.pageSize) + index, 1);
-      // this.dataSource.data = data;
-      // let Teams:Team;
+      const data = this.dataSource.data;
+      data.splice((this.paginator.pageIndex * this.paginator.pageSize) + index, 1);
+      this.dataSource.data = data;
+
+      this.ELEMENT_DATA.splice((this.paginator.pageIndex * this.paginator.pageSize) + index, 1);
+      this.dataSource.filterPredicate = (data:EditUser, filterValue: string) => data.originalData.name.indexOf(filterValue) != -1;
       
+      //this.dataSource = new MatTableDataSource(this.ELEMENT_DATA.slice());
+      //this.dataSource.paginator = this.paginator;
+      //this.dataSource.sort = this.sort;
+      // let Teams:Team;
       // data.forEach(element => {
       //   console.log(element.originalData);
       // });
-
       //this.teamService.SetExistingTeams(data);
     })
 
@@ -165,32 +152,6 @@ export class TeamsManagmentComponent implements OnInit {
         this.deleteRow(i,row);
       }
     }
-    
-    // GetTeams(editForm:any){
-    //   this.teamService.GetAll().subscribe({
-    //     next:(x:Team[])=>{
-    //       this.ELEMENT_DATA_FROM_BACK=x;
-    //       this.ELEMENT_DATA_FROM_BACK.forEach(element => {
-    //         this.ELEMENT_DATA.push({currentData: element, 
-    //                                 originalData: element, 
-    //                                 editable: false, 
-    //                                 validator: editForm(element)});
-    //                                 this.dataSource = new MatTableDataSource(this.ELEMENT_DATA.slice());
-    //                                 this.dataSource.paginator = this.paginator;
-    //                                 this.dataSource.sort = this.sort;
-    //       });
-        
-    //     },
-    //     error: (v)=>console.log(v)
-    //   });
-    //   // return this.teamService.GetAll().subscribe({next:(x:Team[])=>
-    //   //   this.ELEMENT_DATA_FROM_BACK=x});
-    // }
-
-    SelectTeam(row:any){
-      // this.teamService.sourceCurrentTeam.next(row.currentData);
-      // this.route.navigate(['/inside/dashboard']);
-    }
     addData()
     {
       this.openDialog();
@@ -203,67 +164,18 @@ export class TeamsManagmentComponent implements OnInit {
 
       dialogRef.afterClosed().subscribe((teamName:string)=>{
         let team :Team ={ name:teamName};
-        this.teamService.CreateTeam(team).subscribe()
+        this.teamService.CreateTeam(team).subscribe((response:Team)=>{
+          this.ELEMENT_DATA.push({
+            currentData: response, 
+            originalData: response, 
+            editable: false, 
+            validator: this.editForm2(response)
+          });
+          this.dataSource = new MatTableDataSource(this.ELEMENT_DATA.slice());
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+          this.dataSource.filterPredicate = (data:EditUser, filterValue: string) => data.originalData.name.indexOf(filterValue) != -1;
+        })
       })
     }
-
-      // dialogRef.afterClosed().pipe(
-      //   mergeMap((teamName:string)=>{return this.teamService.CreateTeam({name:teamName})}),
-      //   mergeMap((ok) => {return this.teamService.GetAll()}
-      //   )).subscribe((Teams)=> {
-      //     this.teamService.SetExistingTeams(Teams)
-      //   }
-
-      //   )
-        // mergeMap((Teams)=> {this.teamService.SetExistingTeams(succed)})
-      
-
-
-
-
-      // .pipe(
-      //   mergeMap((e: string) => {
-      //     return saveLocation({
-      //       x: e.clientX,
-      //       y: e.clientY,
-      //       timestamp: Date.now()
-      //     });
-      //   })
-      // )
-
-        // 
-        
-        
-        // result => {
-        // console.log('The dialog was closed');
-        // this.newTeamName = result;
-        // let Team:Team = {name:this.newTeamName};
-        // this.teamService.CreateTeam(Team).subscribe(x=>
-        //   {console.log(x)
-        //   this.teamService.GetAll().subscribe(succed=>{
-        //     this.teamService.SetExistingTeams(succed);
-        //     console.log("asdfas");
-        //     })}
-
-      //   );
-
-      // });
-  
-      // dialogRef.afterClosed().subscribe(result => {
-      //   console.log('The dialog was closed');
-      //   this.newTeamName = result;
-      //   let Team:Team = {name:this.newTeamName};
-      //   this.teamService.CreateTeam(Team).subscribe(x=>
-      //     {console.log(x)
-      //     this.teamService.GetAll().subscribe(succed=>{
-      //       this.teamService.SetExistingTeams(succed);
-      //       console.log("asdfas");
-      //       })}
-
-      //   );
-
-      // });
-   
-
-
 }
