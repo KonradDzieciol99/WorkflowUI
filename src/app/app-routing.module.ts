@@ -22,8 +22,9 @@ const routes: Routes = [
       },
       { path: "team-home", component: TeamHomeComponent,
       children:[
-        { path: "dashboard", component: DashboardComponent },
-        { path: "list", component: ListComponent },
+        { path: "dashboard", component: DashboardComponent},
+        { path: "list", component: ListComponent},
+        { path: "", redirectTo: "dashboard", pathMatch: "full" },
       ]},
       { path: "", redirectTo: "teams-managment", pathMatch: "full" },
     ],

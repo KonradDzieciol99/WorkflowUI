@@ -1,0 +1,36 @@
+/* .sidenav-container {
+    height: 100% !important;
+} 
+.sidenav {
+    width: 200px;
+    height: 200%;
+}
+
+.sidenav .mat-toolbar {
+    background: inherit;
+}
+
+.mat-toolbar.mat-primary {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+} 
+.mat-sidenav-content{
+    height: 100%;
+} */
+.sidenav {
+    width: 200px;
+    /* height: 200%; */
+}
+.test{
+    min-height: 100vh;
+    background-color: aqua;
+}
+.mat-sidenav-content{
+    background-color: rgb(179, 161, 183);
+}
+
+.mat-sidenav-container{
+    background-color: rgb(241, 22, 215);
+    min-height: 100vh;
+}
