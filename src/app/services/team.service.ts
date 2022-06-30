@@ -33,5 +33,5 @@ export class TeamService{
   SetCurrentTeam(data: Team) {
     this.sourceCurrentTeam.next(data);
   }
-
+  //zacząć używać !take(1)!
 }
