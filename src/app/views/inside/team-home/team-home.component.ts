@@ -21,10 +21,7 @@ export class TeamHomeComponent implements OnInit {
   private id:number;
 // private activatedRouteSnapshot: ActivatedRouteSnapshot
   constructor(private sizeService:SizeService,private router: Router,private activatedRoute: ActivatedRoute,private teamService: TeamService,private breakpointObserver: BreakpointObserver){
-    this.activatedRoute.params.subscribe(params => {
-      this.id = +params['id']; // (+) converts string 'id' to a number
-      this.teamService.GetTeam(this.id).subscribe()
-   });
+
     
     // this.activatedRoute.queryParams.subscribe(params => {
     //     console.log(params);

@@ -75,21 +75,6 @@ export class TeamsManagmentComponent implements OnInit {
     });
 
   }
-  navigate(row:any){
-    const team:Team = row.currentData;
-    this.teamService.SetCurrentTeam(team);
-    
-    // this.route.navigate(['../team-home/'+team.name], { state: { name:team.name,id:team.id } });
-    //this.route.navigate(['../team-home/'+team.name], { state: { team:team } });
-    
-  }
-  GetTeams(editForm:any){
-
-    // return this.teamService.GetAll().subscribe({next:(x:Team[])=>
-    //   this.ELEMENT_DATA_FROM_BACK=x});
-  }
-
-
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     if(filterValue==null)
@@ -123,8 +108,6 @@ export class TeamsManagmentComponent implements OnInit {
       // });
       //this.teamService.SetExistingTeams(data);
     })
-
-
   }
 
     confirmEditCreate(row: any) {

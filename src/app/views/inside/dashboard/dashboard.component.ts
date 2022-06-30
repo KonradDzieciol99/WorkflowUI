@@ -12,17 +12,16 @@ import { TeamService } from 'src/app/services/team.service';
 })
 export class DashboardComponent implements OnInit {
   
-  currentTeam!:Team;
-  currentUser!:TokenDbo;
+  currentTeam:Team;
+  //currentUser!:TokenDbo;
 
   constructor(public teamService: TeamService, private authenticationService: AuthenticationService) { }
-
   ngOnInit(): void {
     //this.currentTeam=this.teamService.currentTeam$
 
-    //this.teamService.currentTeam$.subscribe(T=>this.currentTeam= T);
+    this.teamService.currentTeam$.subscribe(T=>this.currentTeam=T);
 
-    this.authenticationService.currentUser$.subscribe(T=>this.currentUser=T);
+    //this.authenticationService.currentUser$.subscribe(T=>this.currentUser=T);
   }
 
 }
