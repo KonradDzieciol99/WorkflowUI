@@ -5,14 +5,17 @@ import {
   ActivatedRouteSnapshot
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
+import { Team } from '../models/Team.model';
+import { TeamService } from '../services/team.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TeamHomeResolver implements Resolve<boolean> {
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+  constructor(private teamService: TeamService) {}
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Team> {
     
-    return this.memberService.getMember(route.paramMap.get('id'));
+    return this.teamService.GetTeam(+route.paramMap.get('id'));// (+) converts string 'id' to a number
 
     //return this.memberService.getMember(route.paramMap.get('username'));
 
@@ -24,6 +27,5 @@ export class TeamHomeResolver implements Resolve<boolean> {
     //   error=>{this.router.navigateByUrl('/not-found');console.log(error,"redirect to not found ")}
     //   );
   //  });
-
   }
 }
