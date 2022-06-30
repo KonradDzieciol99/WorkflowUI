@@ -33,7 +33,7 @@ export class AuthorizationGuard implements CanActivate {
         return true;
         }
         else {
-        console.log("asdfsadfasdfas");
+        console.log("Guard info: lack of token");
         return false;
         }
         //this.toastr.error('You shall not pass!')

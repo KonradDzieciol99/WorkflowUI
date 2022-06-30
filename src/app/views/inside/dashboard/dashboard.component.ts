@@ -20,7 +20,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     //this.currentTeam=this.teamService.currentTeam$
 
-    this.teamService.currentTeam$.subscribe(T=>this.currentTeam= T);
+    //this.teamService.currentTeam$.subscribe(T=>this.currentTeam= T);
 
     this.authenticationService.currentUser$.subscribe(T=>this.currentUser=T);
   }

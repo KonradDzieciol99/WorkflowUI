@@ -8,12 +8,13 @@ import { Team } from '../models/Team.model';
 })
 export class TeamService{
 
+
   private teamExample:Team={
     name: 'exampleName'
   }
   // CurrentTeam : BehaviorSubject<Team> = new BehaviorSubject<Team>(this.teamExample);
   private sourceCurrentTeam : BehaviorSubject<Team>=new BehaviorSubject<Team>(this.teamExample);
-  currentTeam$ = this.sourceCurrentTeam.asObservable()
+  //currentTeam$ = this.sourceCurrentTeam.asObservable()
   constructor(private http: HttpClient) { }
 
 
@@ -22,6 +23,9 @@ export class TeamService{
   }
   GetAll() {
     return this.http.get<Team[]>('api/Teams/GetAll');
+  }
+  GetTeam(id: number) {
+    return this.http.get<Team>('api/Teams/GetOne');///todo ZROBIĆ W API!
   }
   DeleteTeam(team: Team) {
     return this.http.delete<Team[]>('api/Teams/DeleteTeam/'+team.id);

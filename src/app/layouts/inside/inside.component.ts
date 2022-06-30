@@ -45,7 +45,6 @@ export class InsideComponent implements OnInit {
 
     const sizeObserver = new ResizeObserver(entries => {
       const height = entries[0].contentRect.height;
-      console.log(height);
       this.sizeService.SetToolbarSize(height);
     });
     sizeObserver.observe(this.topHeightIdentifier.nativeElement);

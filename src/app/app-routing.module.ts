@@ -20,7 +20,7 @@ const routes: Routes = [
       { path: "teams-managment", component: TeamsManagmentComponent,
       children:[]
       },
-      { path: "team-home", component: TeamHomeComponent,
+      { path: "team-home/:id", component: TeamHomeComponent,
       children:[
         { path: "dashboard", component: DashboardComponent},
         { path: "list", component: ListComponent},

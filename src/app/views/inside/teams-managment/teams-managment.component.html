@@ -35,10 +35,12 @@
                   </ng-container> -->
 
 
+
         <!-- First Name Column -->
         <ng-container matColumnDef="name">
           <th mat-header-cell *matHeaderCellDef mat-sort-header> Name</th>
-          <td mat-cell (click)="navigate(row)" *matCellDef="let row;" routerLink="../team-home" [queryParams]='{id: row.currentData.id, name:row.currentData.name}'>
+          <td mat-cell (click)="navigate(row)" *matCellDef="let row;" [routerLink]="['../team-home', row.currentData.id]">
+          <!-- <td mat-cell (click)="navigate(row)" *matCellDef="let row;" routerLink="../team-home" [queryParams]='{id: row.currentData.id, name:row.currentData.name}'> -->
             <!-- <a routerLink='../team-home/{{row.currentData.name}}' [state]="{ orderId: 1234 }" class="link-primary"><input [formControl]="row.validator.get('name')" type="text" matInput [readonly]="true"></a> -->
             <a class="link-primary"><input [formControl]="row.validator.get('name')" type="text" matInput [readonly]="true"></a>
           </td>

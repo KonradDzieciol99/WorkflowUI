@@ -17,12 +17,18 @@ import { debounceTime,distinctUntilChanged } from 'rxjs/operators';
 })
 export class TeamHomeComponent implements OnInit {
   @ViewChild('drawer')  drawer: MatSidenav;
-  Team:Team;
+  private Team:Team;
+  private id:number;
 // private activatedRouteSnapshot: ActivatedRouteSnapshot
   constructor(private sizeService:SizeService,private router: Router,private activatedRoute: ActivatedRoute,private teamService: TeamService,private breakpointObserver: BreakpointObserver){
-    this.activatedRoute.queryParams.subscribe(params => {
-        console.log(params);
-    })
+    this.activatedRoute.params.subscribe(params => {
+      this.id = +params['id']; // (+) converts string 'id' to a number
+      this.teamService.GetTeam(this.id).subscribe()
+   });
+    
+    // this.activatedRoute.queryParams.subscribe(params => {
+    //     console.log(params);
+    // })
       // console.log(this.router.getCurrentNavigation().extras.state['name']); // should log out 'bar'
       // const navigation = this.router.getCurrentNavigation();
       // const state = navigation.extras.state as {team: Team};
@@ -33,14 +39,15 @@ export class TeamHomeComponent implements OnInit {
      map(result => result.matches),
      shareReplay()
    );
-   topSize$:Observable<number> = this.sizeService.currentToolbarSize$
+   //topSize$:Observable<number> = this.sizeService.currentToolbarSize$
    buttonState$:Observable<boolean> =this.sizeService.currentButtonStateSource$
   ngOnInit(): void {
     {
       //this.sizeService.currentToolbarSize$.pipe().subscribe((size:number)=>{if(this.drawer)this.drawer.fixedTopGap=(size+32),console.log("this.drawer.fixedTopGap",this.drawer.fixedTopGap),console.log((size+32))})
       //const heightOutput = document.querySelector('#height');
       //const widthOutput = document.querySelector('#width');
-      
+
+
 
       
      
