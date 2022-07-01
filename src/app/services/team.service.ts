@@ -20,7 +20,7 @@ export class TeamService{
     return this.http.get<Team[]>('api/Teams/GetAll');
   }
   GetTeam(id: number) {
-    return this.http.get<Team>('api/Teams/GetOne'+id);
+    return this.http.get<Team>('api/Teams/GetOne/'+id);
   }
   DeleteTeam(team: Team) {
     return this.http.delete<Team[]>('api/Teams/DeleteTeam/'+team.id);

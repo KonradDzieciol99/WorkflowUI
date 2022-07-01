@@ -9,8 +9,8 @@ export class PTaskService {
 
   constructor(private http: HttpClient) { }
 
-  GetAll() {
-    return this.http.get<PTask[]>('api/PTasks/GetAll');
+  GetAllByTeamId(id:number) {
+    return this.http.get<PTask[]>('api/PTasks/GetAllByTeamId'+id);
   }
   
 }

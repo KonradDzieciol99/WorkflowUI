@@ -17,7 +17,7 @@ import { debounceTime,distinctUntilChanged } from 'rxjs/operators';
 })
 export class TeamHomeComponent implements OnInit {
   @ViewChild('drawer')  drawer: MatSidenav;
-  private Team:Team;
+  currentTeam:Team;
   private id:number;
 // private activatedRouteSnapshot: ActivatedRouteSnapshot
   constructor(private sizeService:SizeService,private router: Router,private activatedRoute: ActivatedRoute,private teamService: TeamService,private breakpointObserver: BreakpointObserver){
@@ -40,6 +40,14 @@ export class TeamHomeComponent implements OnInit {
    buttonState$:Observable<boolean> =this.sizeService.currentButtonStateSource$
   ngOnInit(): void {
     {
+
+      this.activatedRoute.data.subscribe(value => {
+        console.log('Some extra data:', value);
+        //this.currentTeam=value
+    });
+    console.log("ssdfsdfsd")
+    //this.currentTeam=value
+      //this.currentTeam = this.activatedRoute.snapshot.data['team'];
       //this.sizeService.currentToolbarSize$.pipe().subscribe((size:number)=>{if(this.drawer)this.drawer.fixedTopGap=(size+32),console.log("this.drawer.fixedTopGap",this.drawer.fixedTopGap),console.log((size+32))})
       //const heightOutput = document.querySelector('#height');
       //const widthOutput = document.querySelector('#width');

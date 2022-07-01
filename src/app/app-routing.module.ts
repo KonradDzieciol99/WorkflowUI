@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthorizationGuard } from './guards/authorization.guard';
 import { AuthComponent } from './layouts/auth/auth.component';
 import { InsideComponent } from './layouts/inside/inside.component';
+import { TeamHomeResolver } from './resolvers/team-home.resolver';
 import { LoginComponent } from './views/auth/login/login.component';
 import { RegisterComponent } from './views/auth/register/register.component';
 import { DashboardComponent } from './views/inside/dashboard/dashboard.component';
@@ -20,7 +21,7 @@ const routes: Routes = [
       { path: "teams-managment", component: TeamsManagmentComponent,
       children:[]
       },
-      { path: "team-home/:id", component: TeamHomeComponent,
+      { path: "team-home/:id",  resolve: {team: TeamHomeResolver}, component: TeamHomeComponent,
       children:[
         { path: "dashboard", component: DashboardComponent},
         { path: "list", component: ListComponent},
