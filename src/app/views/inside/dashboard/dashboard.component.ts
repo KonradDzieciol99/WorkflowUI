@@ -15,34 +15,15 @@ import { TeamService } from 'src/app/services/team.service';
 export class DashboardComponent implements OnInit {
   
   currentTeam:Team;
-  //currentUser!:TokenDbo;
 
   constructor(private activatedRoute: ActivatedRoute,
     public ptaskService:PTaskService ,public teamService: TeamService, private authenticationService: AuthenticationService) { 
 
   }
-  temp:Team
   ngOnInit(): void {
     
-    this.activatedRoute.parent.data.subscribe(value => {
-      console.log('Some extra data:', value['team']);
-      this.teamService.SetCurrentTeam(value['team'])
-    });
+      this.teamService.currentTeam$.subscribe(res=>{this.currentTeam=res;});
 
-      this.teamService.currentTeam$.subscribe(res=>{console.log(res);this.temp =res;});
-      console.log(this.temp)
-
-      console.log("test")
-
-    // this.activatedRoute.data.subscribe(data => {
-    //   this.currentTeam = data['team'];
-    // })
-
-    //this.activatedRoute.data
-    //this.currentTeam=this.teamService.currentTeam$
-    //this.teamService.currentTeam$.subscribe(T=>this.currentTeam=T);
-    //this.ptaskService.GetAllByTeamId()
-    //this.authenticationService.currentUser$.subscribe(T=>this.currentUser=T);
   }
 
 }

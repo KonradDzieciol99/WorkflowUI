@@ -10,7 +10,7 @@ export class PTaskService {
   constructor(private http: HttpClient) { }
 
   GetAllByTeamId(id:number) {
-    return this.http.get<PTask[]>('api/PTasks/GetAllByTeamId'+id);
+    return this.http.get<PTask[]>('api/PTasks/GetAllByTeamId/'+id);
   }
   
 }

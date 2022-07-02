@@ -40,33 +40,13 @@ export class TeamHomeComponent implements OnInit {
    buttonState$:Observable<boolean> =this.sizeService.currentButtonStateSource$
   ngOnInit(): void {
     {
-
       this.activatedRoute.data.subscribe(value => {
-        console.log('Some extra data:', value);
-        //this.currentTeam=value
-    });
-    console.log("ssdfsdfsd")
-    //this.currentTeam=value
-      //this.currentTeam = this.activatedRoute.snapshot.data['team'];
-      //this.sizeService.currentToolbarSize$.pipe().subscribe((size:number)=>{if(this.drawer)this.drawer.fixedTopGap=(size+32),console.log("this.drawer.fixedTopGap",this.drawer.fixedTopGap),console.log((size+32))})
-      //const heightOutput = document.querySelector('#height');
-      //const widthOutput = document.querySelector('#width');
-
-
-
-      
-     
+        this.teamService.SetCurrentTeam(value['team'])
+      });
     }
-    // function reportWindowSize() {
-    //   //heightOutput.textContent = window.innerHeight;
-    //   //widthOutput.textContent = window.innerWidth;
-    //   console.log(window.innerHeight,"tutaj")
-    // }
-    // window.onresize = reportWindowSize;
-    //this.teamService.currentTeam$.subscribe(res=>this.Team=res);
   }
   ngAfterViewInit() {
-    this.sizeService.currentButtonStateSource$.pipe().subscribe((data:boolean)=>{this.drawer.toggle(data),console.log("teraz")})
+    this.sizeService.currentButtonStateSource$.pipe().subscribe((data:boolean)=>{this.drawer.toggle(data)})
   }
 
 }

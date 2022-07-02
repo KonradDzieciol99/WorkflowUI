@@ -7,13 +7,15 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { mergeMap } from 'rxjs';
 import { CreateTeamComponent } from 'src/app/components/dialogs/create-team/create-team.component';
+import { PTask } from 'src/app/models/PTask.model';
 import { Team } from 'src/app/models/Team.model';
+import { PTaskService } from 'src/app/services/ptask.service';
 import { TeamService } from 'src/app/services/team.service';
 
 
 export interface EditUser {
-  currentData?: Team;
-  originalData: Team;
+  currentData?: PTask;
+  originalData: PTask;
   editable: boolean;
   validator: FormGroup;
 }
@@ -25,15 +27,9 @@ export interface EditUser {
 })
 export class ListComponent implements OnInit {
 
-  newTeamName!: string;
-//dialog
-
-  ELEMENT_DATA_FROM_BACK: Team[] = [];
-
+  ELEMENT_DATA_FROM_BACK: PTask[] = [];
   ELEMENT_DATA: EditUser[] = [];
-
-  displayedColumns: string[] = ['id', 'name','action'];
-
+  displayedColumns: string[] = ['id','startDate','endDate','title','description','priorityId','stateId','teamId','action'];
   dataSource!: MatTableDataSource<EditUser>;
   selected = 'option1';
 
@@ -43,61 +39,57 @@ export class ListComponent implements OnInit {
   sort!: MatSort;
   editForm!: FormGroup;
 
-  listofTeams!:Team[];
-
-  //@ViewChild(MatTable) table: MatTable<string[]>;
-
-  
-  // constructor(private teamService: TeamService,public dialog: MatDialog) {
-  //   const editForm = (e: Team) => new FormGroup({
-  //     id: new FormControl(e.id,Validators.required),
-  //     name: new FormControl(e.name,Validators.required),
-  //   });
-  //   this.GetTeams(editForm);
-  // }
   editForm2!:any;
-  constructor(private teamService: TeamService,public dialog: MatDialog, private route:Router) {
-    const editForm = (e: Team) => new FormGroup({
+  currentTeam: Team;
+  constructor(private pTaskService: PTaskService,private teamService: TeamService,public dialog: MatDialog, private route:Router) {
+    const editForm = (e: PTask) => new FormGroup({
       id: new FormControl(e.id,Validators.required),
-      name: new FormControl(e.name,Validators.required),
+      startDate: new FormControl(e.startDate,Validators.required),
+      endDate: new FormControl(e.endDate,Validators.required),
+      title: new FormControl(e.title,Validators.required),
+      description: new FormControl(e.description,Validators.required),
+      priorityId: new FormControl(e.priorityId,Validators.required),
+      stateId: new FormControl(e.stateId,Validators.required),
+      teamId: new FormControl(e.teamId,Validators.required),
     });
     this.editForm2=editForm;
   }
 
-
-
   ngOnInit() {
+    //this.editForm2.get('id').valueChanges.debounceTime(400).subscribe(value => {console.log()})
 
-    this.teamService.GetAll().subscribe({
-      next:(x:Team[])=>{
+    
+
+    this.teamService.currentTeam$.subscribe(res=>{this.currentTeam=res;});
+    //this.pTaskService.GetAllByTeamId(this.currentTeam.id).subscribe(res=>{console.log(res)})
+
+    this.pTaskService.GetAllByTeamId(this.currentTeam.id).subscribe({
+      next:(x:PTask[])=>{
         this.ELEMENT_DATA_FROM_BACK=x;
         this.ELEMENT_DATA.splice(0);
         this.ELEMENT_DATA_FROM_BACK.forEach(element => {
-          this.ELEMENT_DATA.push({currentData: element, 
-                                  originalData: element, 
-                                  editable: false, 
-                                  validator: this.editForm2(element)});
-                                  this.dataSource = new MatTableDataSource(this.ELEMENT_DATA.slice());
-                                  this.dataSource.paginator = this.paginator;
-                                  this.dataSource.sort = this.sort;
-                                  //this.table.renderRows();
-                                  this.dataSource.filterPredicate = (data:EditUser, filterValue: string) => data.originalData.name.indexOf(filterValue) != -1;//filter neeed
+          console.log(element)
+        this.ELEMENT_DATA.push({currentData: element, 
+                                originalData: element, 
+                                editable: false, 
+                                validator: this.editForm2(element)
+                              });
 
+                                  
         });
+        //this.table.renderRows();
+        // to było w push
+        this.dataSource = new MatTableDataSource(this.ELEMENT_DATA.slice());
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        //
+        this.dataSource.filterPredicate = (data:EditUser, filterValue: string) => data.originalData.title.indexOf(filterValue) != -1;//filter neeed
 
       },
       error: (v)=>console.log(v)
     });
 
   }
-
-  GetTeams(editForm:any){
-
-    // return this.teamService.GetAll().subscribe({next:(x:Team[])=>
-    //   this.ELEMENT_DATA_FROM_BACK=x});
-  }
-
-
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     if(filterValue==null)
@@ -110,11 +102,18 @@ export class ListComponent implements OnInit {
     }
   }
 
-  deleteRow(index: number) {
-    const data = this.dataSource.data;
-    data.splice((this.paginator.pageIndex * this.paginator.pageSize) + index, 1);
+  deleteRow(index: number,row:any) {
 
-    this.dataSource.data = data;
+    // const team:PTask = row.currentData;
+    // this.teamService.DeleteTeam(team).subscribe(()=>{
+
+    //   const data = this.dataSource.data;
+    //   data.splice((this.paginator.pageIndex * this.paginator.pageSize) + index, 1);
+    //   this.dataSource.data = data;
+
+    //   this.ELEMENT_DATA.splice((this.paginator.pageIndex * this.paginator.pageSize) + index, 1);
+    //   this.dataSource.filterPredicate = (data:EditUser, filterValue: string) => data.originalData.name.indexOf(filterValue) != -1;
+    // })
   }
 
     confirmEditCreate(row: any) {
@@ -139,50 +138,35 @@ export class ListComponent implements OnInit {
       }
       else {
         // delete
-        this.deleteRow(i);
+        this.deleteRow(i,row);
       }
     }
-    
-    // GetTeams(editForm:any){
-    //   this.teamService.GetAll().subscribe({
-    //     next:(x:Team[])=>{
-    //       this.ELEMENT_DATA_FROM_BACK=x;
-    //       this.ELEMENT_DATA_FROM_BACK.forEach(element => {
-    //         this.ELEMENT_DATA.push({currentData: element, 
-    //                                 originalData: element, 
-    //                                 editable: false, 
-    //                                 validator: editForm(element)});
-    //                                 this.dataSource = new MatTableDataSource(this.ELEMENT_DATA.slice());
-    //                                 this.dataSource.paginator = this.paginator;
-    //                                 this.dataSource.sort = this.sort;
-    //       });
-        
-    //     },
-    //     error: (v)=>console.log(v)
-    //   });
-    //   // return this.teamService.GetAll().subscribe({next:(x:Team[])=>
-    //   //   this.ELEMENT_DATA_FROM_BACK=x});
-    // }
-
-    // SelectTeam(row:any){
-    //   this.teamService.sourceCurrentTeam.next(row.currentData);
-    //   this.route.navigate(['/inside/dashboard']);
-    // }
     addData()
     {
-      this.openDialog();
+      //this.openDialog();
     }
     openDialog(): void {
-      const dialogRef = this.dialog.open(CreateTeamComponent, {
-        width: '250px',
-        data: {name: ""},
-      });
+      // const dialogRef = this.dialog.open(CreateTeamComponent, {
+      //   width: '250px',
+      //   data: {name: ""},
+      // });
 
-      dialogRef.afterClosed().subscribe((teamName:string)=>{
-        let team :Team ={ name:teamName};
-        this.teamService.CreateTeam(team).subscribe()
-      })
+      // dialogRef.afterClosed().subscribe(
+      //   (teamName:string)=>{
+      //   let team :PTask ={ name:teamName};
+      //   this.teamService.CreateTeam(team).subscribe((response:PTask)=>{
+      //     this.ELEMENT_DATA.push({
+      //       currentData: response, 
+      //       originalData: response, 
+      //       editable: false, 
+      //       validator: this.editForm2(response)
+      //     });
+      //     this.dataSource = new MatTableDataSource(this.ELEMENT_DATA.slice());
+      //     this.dataSource.paginator = this.paginator;
+      //     this.dataSource.sort = this.sort;
+      //     this.dataSource.filterPredicate = (data:EditUser, filterValue: string) => data.originalData.name.indexOf(filterValue) != -1;
+      //   })
+      // })
     }
-
 
 }
