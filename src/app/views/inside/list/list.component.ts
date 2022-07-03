@@ -1,23 +1,23 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
-import { mergeMap } from 'rxjs';
+import { BehaviorSubject, concatWith, map, merge, mergeMap, subscribeOn } from 'rxjs';
 import { CreateTeamComponent } from 'src/app/components/dialogs/create-team/create-team.component';
 import { PTask } from 'src/app/models/PTask.model';
 import { Team } from 'src/app/models/Team.model';
 import { PTaskService } from 'src/app/services/ptask.service';
 import { TeamService } from 'src/app/services/team.service';
 
+import { FormBuilder } from '@angular/forms';
 
-export interface EditUser {
-  currentData?: PTask;
-  originalData: PTask;
-  editable: boolean;
-  validator: FormGroup;
+export interface TableData {
+  from: Date;
+  to: Date;
+  text:string
 }
 
 @Component({
@@ -27,146 +27,105 @@ export interface EditUser {
 })
 export class ListComponent implements OnInit {
 
-  ELEMENT_DATA_FROM_BACK: PTask[] = [];
-  ELEMENT_DATA: EditUser[] = [];
-  displayedColumns: string[] = ['id','startDate','endDate','title','description','priorityId','stateId','teamId','action'];
-  dataSource!: MatTableDataSource<EditUser>;
-  selected = 'option1';
+  data: TableData[] = [ { from: new Date(), to: new Date(),text:"some text" } ];
+  dataSource = new BehaviorSubject<AbstractControl[]>([]);
+  displayColumns = ['from', 'to', 'text'];
+  rows: FormArray = this.fb.array([]);
+  form: FormGroup = this.fb.group({ dates: this.rows });
 
-  @ViewChild(MatPaginator, { static: true })
-  paginator!: MatPaginator;
-  @ViewChild(MatSort, { static: true })
-  sort!: MatSort;
-  editForm!: FormGroup;
-
-  editForm2!:any;
-  currentTeam: Team;
-  constructor(private pTaskService: PTaskService,private teamService: TeamService,public dialog: MatDialog, private route:Router) {
-    const editForm = (e: PTask) => new FormGroup({
-      id: new FormControl(e.id,Validators.required),
-      startDate: new FormControl(e.startDate,Validators.required),
-      endDate: new FormControl(e.endDate,Validators.required),
-      title: new FormControl(e.title,Validators.required),
-      description: new FormControl(e.description,Validators.required),
-      priorityId: new FormControl(e.priorityId,Validators.required),
-      stateId: new FormControl(e.stateId,Validators.required),
-      teamId: new FormControl(e.teamId,Validators.required),
-    });
-    this.editForm2=editForm;
+  constructor(private fb: FormBuilder) { }
+  keyup()
+  {
+    
   }
+  testChange(row:FormGroup,index:number){
+    console.log(index,row);
+    console.log(row.value)
 
+    const myFormArray = <FormArray>this.form.get("dates");
+    console.log(myFormArray.controls)
+
+    this.dataSource.subscribe(val=>console.log(val,"dataSource"))
+  }
   ngOnInit() {
-    //this.editForm2.get('id').valueChanges.debounceTime(400).subscribe(value => {console.log()})
+    this.data.forEach((d: TableData) => this.addRow(d, false));
+    this.updateView();
 
+
+
+    const myFormArray = <FormArray>this.form.get("dates");
+    // myFormArray.controls
+
+    //     myFormArray.controls.forEach(control=>{
+    //   control.valueChanges.subscribe(value => console.log(value));
+    // });
+
+    // myFormArray.valueChanges.pipe(map((z:AbstractControl, index: number)=> ({ rowIndex: index,control: z})  ))
+    // .subscribe(res=>console.log(res));
+
+    // myFormArray.valueChanges.subscribe(res=>console.log(res));
     
 
-    this.teamService.currentTeam$.subscribe(res=>{this.currentTeam=res;});
-    //this.pTaskService.GetAllByTeamId(this.currentTeam.id).subscribe(res=>{console.log(res)})
 
-    this.pTaskService.GetAllByTeamId(this.currentTeam.id).subscribe({
-      next:(x:PTask[])=>{
-        this.ELEMENT_DATA_FROM_BACK=x;
-        this.ELEMENT_DATA.splice(0);
-        this.ELEMENT_DATA_FROM_BACK.forEach(element => {
-          console.log(element)
-        this.ELEMENT_DATA.push({currentData: element, 
-                                originalData: element, 
-                                editable: false, 
-                                validator: this.editForm2(element)
-                              });
+    // controls.forEach(control=>{
+    //   control.valueChanges.subscribe(value => console.log(value));
+    // });
+    
+    // .map((control: AbstractControl, index: number)=>
+    // control.valueChanges.subscribe(changes => {
+    // console.log(changes,"plus index", index);
+    // }));
 
-                                  
-        });
-        //this.table.renderRows();
-        // to było w push
-        this.dataSource = new MatTableDataSource(this.ELEMENT_DATA.slice());
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-        //
-        this.dataSource.filterPredicate = (data:EditUser, filterValue: string) => data.originalData.title.indexOf(filterValue) != -1;//filter neeed
 
-      },
-      error: (v)=>console.log(v)
+
+    //formGroupName
+    //console.log(myFormArray);
+
+
+
+
+    
+  //   .valueChanges.pipe().
+  //   subscribe((value) => {
+  //     console.log("myFormArrayvalue = ",value);
+  //  });
+  //  const myFormArray2 = <FormArray>this.form.get("dates");
+  //  console.log(myFormArray2);
+   //<FormArray>this.form.get("dates").
+  //   this.form.valueChanges.subscribe((value:FormGroup) => {
+  //     console.log("form = ",
+  //                 JSON.stringify(value));
+  //  });
+   //merge
+   //merge(myFormArray.controls.map(control=>{control.valueChanges})).subscribe(res=>console.log(res));
+  //  .subscribe((value:FormGroup) => {
+  //   console.log("form = ",
+  //               JSON.stringify(value));
+//  });
+   //console.log(myFormArray,"myFormArray")
+  }
+
+  emptyTable() {
+    while (this.rows.length !== 0) {
+      this.rows.removeAt(0);
+    }
+  }
+
+  addRow(d?: TableData, noUpdate?: boolean) {
+
+    const row = this.fb.group({
+      'from'   : [d && d.from ? d.from : null, [Validators.required]],/// [d && d.from ? d.from : null, [validator....]]
+      'to'     : [d && d.to   ? d.to   : null, []],
+      'text'     : [d && d.text   ? d.text   : null, []],
     });
-
-  }
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    if(filterValue==null)
-    {
-      return;
-    }
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-        if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
+    this.rows.push(row);
+    if (!noUpdate) { this.updateView(); }
   }
 
-  deleteRow(index: number,row:any) {
+  updateView() {
+    this.dataSource.next(this.rows.controls);
 
-    // const team:PTask = row.currentData;
-    // this.teamService.DeleteTeam(team).subscribe(()=>{
-
-    //   const data = this.dataSource.data;
-    //   data.splice((this.paginator.pageIndex * this.paginator.pageSize) + index, 1);
-    //   this.dataSource.data = data;
-
-    //   this.ELEMENT_DATA.splice((this.paginator.pageIndex * this.paginator.pageSize) + index, 1);
-    //   this.dataSource.filterPredicate = (data:EditUser, filterValue: string) => data.originalData.name.indexOf(filterValue) != -1;
-    // })
+    //this.dataSource.subscribe(re=>console.log("this.dataSource",re))
+    //console.log("sdfsdfs",this.rows.controls,"this.rows.controls");
   }
-
-    confirmEditCreate(row: any) {
-      row.editable = false;
-      // save form control values to data object
-      Object.keys(row.validator.controls).forEach(item => {
-        row.currentData[item] = row.validator.controls[item].value;
-      });
-    }
-
-    startEdit(row : any) {
-      row.editable = true;
-    }
-
-    cancelOrDelete(row: any, i: any) {
-      if (row.editable) {
-        row.editable = false;
-        // cancel - reset form control values to data object
-        Object.keys(row.validator.controls).forEach(item => {
-          row.validator.controls[item].patchValue(row.currentData[item]);
-        });
-      }
-      else {
-        // delete
-        this.deleteRow(i,row);
-      }
-    }
-    addData()
-    {
-      //this.openDialog();
-    }
-    openDialog(): void {
-      // const dialogRef = this.dialog.open(CreateTeamComponent, {
-      //   width: '250px',
-      //   data: {name: ""},
-      // });
-
-      // dialogRef.afterClosed().subscribe(
-      //   (teamName:string)=>{
-      //   let team :PTask ={ name:teamName};
-      //   this.teamService.CreateTeam(team).subscribe((response:PTask)=>{
-      //     this.ELEMENT_DATA.push({
-      //       currentData: response, 
-      //       originalData: response, 
-      //       editable: false, 
-      //       validator: this.editForm2(response)
-      //     });
-      //     this.dataSource = new MatTableDataSource(this.ELEMENT_DATA.slice());
-      //     this.dataSource.paginator = this.paginator;
-      //     this.dataSource.sort = this.sort;
-      //     this.dataSource.filterPredicate = (data:EditUser, filterValue: string) => data.originalData.name.indexOf(filterValue) != -1;
-      //   })
-      // })
-    }
-
 }
