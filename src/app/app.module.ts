@@ -32,6 +32,10 @@ import { TeamService } from './services/team.service';
 import { CreateTeamComponent } from './components/dialogs/create-team/create-team.component';
 import { ListComponent } from './views/inside/list/list.component';
 import { TeamHomeComponent } from './views/inside/team-home/team-home.component';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 //
 @NgModule({
   declarations: [
@@ -45,11 +49,12 @@ import { TeamHomeComponent } from './views/inside/team-home/team-home.component'
     TeamsManagmentComponent,
     CreateTeamComponent,
     ListComponent,
-    TeamHomeComponent
+    TeamHomeComponent,
   ],
   imports: [
- 
+    MatProgressSpinnerModule,
     BrowserModule,
+    MatNativeDateModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     LayoutModule,
@@ -66,6 +71,7 @@ import { TeamHomeComponent } from './views/inside/team-home/team-home.component'
     MatPaginatorModule ,
     MatInputModule,
     MatDialogModule ,
+    MatDatepickerModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: function  tokenGetter() { 

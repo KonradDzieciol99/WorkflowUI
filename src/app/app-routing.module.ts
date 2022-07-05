@@ -26,6 +26,8 @@ const routes: Routes = [
         { path: "dashboard", component: DashboardComponent},
         { path: "list", component: ListComponent},
         { path: "", redirectTo: "dashboard", pathMatch: "full" },
+
+        
       ]},
       { path: "", redirectTo: "teams-managment", pathMatch: "full" },
     ],
