@@ -8,6 +8,9 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { JwtInterceptorInterceptor } from './interceptors/jwt-interceptor.interceptor';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import { ErrorHandlingInterceptor } from './interceptors/error-handling.interceptor';
+import { CollapseModule } from 'ngx-bootstrap/collapse';
+import { ReactiveFormsModule } from '@angular/forms';
+import { ButtonsModule } from 'ngx-bootstrap/buttons';
 
 
 @NgModule({
@@ -18,6 +21,9 @@ import { ErrorHandlingInterceptor } from './interceptors/error-handling.intercep
   imports: [
     CommonModule,
     RouterModule,
+    CollapseModule.forRoot(),
+    ReactiveFormsModule,
+    ButtonsModule.forRoot(),
   ],
   exports: [HeaderComponent],
   providers:[

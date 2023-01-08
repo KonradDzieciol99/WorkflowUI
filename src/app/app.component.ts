@@ -22,6 +22,34 @@ export class AppComponent implements OnInit {
         this.showFooter = this.activatedRoute.firstChild?.snapshot.data['showFooter']!== false ? this.showFooter=true:this.showFooter=false;
       }
     });
+
+    // if (window.matchMedia('(prefers-color-scheme: dark)')) {
+    //   this.addEventListenerToPrefersColorScheme("dark");
+    // }
+    // else if (window.matchMedia('(prefers-color-scheme: light)')) {
+    //   this.addEventListenerToPrefersColorScheme("light");
+    // }
+    // else{
+    //   throw new Error("cannot match any color scheme");
+    // }
+
+    this.setTheme();
+    this.addEventListenerToPrefersColorScheme();
+  }
+  setTheme():void {
+    let theme = localStorage.getItem("theme");
+    if (theme==="dark"||theme==="light") {
+      document.documentElement.setAttribute('data-bs-theme', theme);
+    }
+  }
+  addEventListenerToPrefersColorScheme():void{
+    window.matchMedia(`(prefers-color-scheme: dark)`).addEventListener('change', event => {
+      let theme = localStorage.getItem("theme")
+      if (!(theme === "dark" || theme === "light")) {
+        const newColorScheme = event.matches ? "dark" : "light";
+        document.documentElement.setAttribute('data-bs-theme', newColorScheme);
+      }
+  });
   }
 
 }
