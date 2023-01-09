@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InputCustomComponent } from './components/input-custom/input-custom.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 
 
@@ -11,11 +12,12 @@ import { ReactiveFormsModule } from '@angular/forms';
   ],
   imports: [
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TooltipModule.forRoot(),
   ]
   ,exports:[
     InputCustomComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ]
 })
 export class SharedModule { }

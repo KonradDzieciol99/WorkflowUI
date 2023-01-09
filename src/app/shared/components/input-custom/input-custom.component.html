@@ -16,3 +16,30 @@
         </div>
     </ng-container>
 </div>
+
+
+<!-- <div class="input-group has-validation mb-3">
+    <span class="input-group-text">@</span>
+    <div [formGroup]="formGroup" class="form-floating"
+    [class.is-invalid]="formGroup.get(nameFormControl)?.invalid && (formGroup.get(nameFormControl)?.dirty || formGroup.get(nameFormControl)?.touched) && !readonly"
+    >
+    <input [type]="type" 
+        [id]="nameFormControl"
+        [readonly]="readonly"
+        class="form-control"
+        [placeholder]="label"
+        [formControlName]="nameFormControl" 
+        [class.is-valid]="formGroup.get(nameFormControl)?.valid && (formGroup.get(nameFormControl)?.dirty || formGroup.get(nameFormControl)?.touched) && !readonly"
+        [class.is-invalid]="formGroup.get(nameFormControl)?.invalid && (formGroup.get(nameFormControl)?.dirty || formGroup.get(nameFormControl)?.touched) && !readonly" />
+        <label [for]="nameFormControl">{{label}}</label>
+    </div>
+    <div class="invalid-feedback">
+        <ng-container *ngIf="formGroup.get(nameFormControl)?.invalid &&(formGroup.get(nameFormControl)?.dirty || formGroup.get(nameFormControl)?.touched) "> 
+            <div *ngFor="let validator of validatorsKeyValue" >
+                <span *ngIf="formGroup.controls[nameFormControl]?.errors?.[validator.key]">
+                    {{validator.value}}
+                </span>
+            </div>
+        </ng-container>
+    </div>
+</div> -->

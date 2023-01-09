@@ -1,21 +1,23 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '../core/guards/auth.guard';
-import { HomeComponent } from './home.component';
+import { MessagesComponent } from './messages.component';
 
 const routes: Routes = [
   {
     path: '',
     canActivateChild:[AuthGuard],
-    children: [
-      { path: '', component: HomeComponent },
+    component: MessagesComponent,
+    // children: [
+    //   //{ path: '', component: MessagesComponent },
 
-    ]
+    // ]
   },
   { path: '**', redirectTo: '', pathMatch: 'full' },
 ]
+
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class HomeRoutingModule { }
+export class MessagesRoutingModule { }

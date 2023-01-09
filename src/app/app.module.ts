@@ -8,7 +8,6 @@ import { CoreModule } from './core/core.module';
 import { HttpClientModule } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
 import { NgxSpinnerModule } from 'ngx-spinner';
-import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 
 @NgModule({
@@ -26,7 +25,6 @@ import { ButtonsModule } from 'ngx-bootstrap/buttons';
       progressBar:true
     }),
     NgxSpinnerModule.forRoot({ type: 'ball-clip-rotate-multiple' }),
-    TooltipModule.forRoot(),
     ButtonsModule.forRoot()
 
   ],
