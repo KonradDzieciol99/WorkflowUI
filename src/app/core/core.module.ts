@@ -11,6 +11,7 @@ import { ErrorHandlingInterceptor } from './interceptors/error-handling.intercep
 import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import { ButtonsModule } from 'ngx-bootstrap/buttons';
     CollapseModule.forRoot(),
     ReactiveFormsModule,
     ButtonsModule.forRoot(),
+    TooltipModule.forRoot(),
   ],
   exports: [HeaderComponent],
   providers:[

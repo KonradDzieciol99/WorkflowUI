@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, map, merge, mergeMap, Observable, skip, takeUntil, throwError, timer } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, merge, mergeMap, Observable, skip, skipWhile, take, takeUntil, tap, throwError, timer } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { IRegisterUser } from '../shared/models/IRegisterUser';
 import { IUser } from '../shared/models/IUser';
@@ -15,9 +15,11 @@ export class AuthenticationService {
   private baseUrl = environment.apiUrl;
   private currentUserSource = new BehaviorSubject<IUser|undefined>(undefined);
   currentUser$ = this.currentUserSource.asObservable();
-  constructor(private http: HttpClient, private router: Router,private toastrService:ToastrService,private cookieService: CookieService) {
-
-  }
+  constructor(private http: HttpClient,
+     private router: Router,
+     private toastrService:ToastrService,
+     private cookieService: CookieService) {
+   }
 
   setAutoLogOutAndReminders(token:string){
    
@@ -27,29 +29,35 @@ export class AuthenticationService {
 
     let timeNowInMiliseconds= new Date().valueOf()
     let logoutTime:Date = new Date(timeNowInMiliseconds + (environment.AUTO_LOGOUT_TIME_IN_MINUTES * 60 * 1000));
-    let reminderTime = new Date(logoutTime.valueOf() - (2 * 60 * 1000));
+    let reminderTime = new Date(logoutTime.valueOf() - (1 * 60 * 1000));
 
     let logoutTimer$ = timer(logoutTime).pipe(
+      takeUntil(this.currentUserSource.pipe(skip(1))),
       map(()=>{
        this.toastrService.info("sesja się zakończyła")
        this.logout();
       })
     );
     let reminderTimer$ = timer(reminderTime).pipe(
+      take(1),
+      takeUntil(this.currentUserSource.pipe(skipWhile(user=>user!==undefined))),
       mergeMap(()=>{
-        let activeToast = this.toastrService.info(`sesja zakończy się w mniej niż minutę z powodu braku aktywności kliknij aby wydłużyć sesję`,undefined,{timeOut:0,extendedTimeOut:0});
+        let activeToast = this.toastrService.info(`Z powodu braku aktywności sesja zakończy się w mniej niż minutę kliknij aby wydłużyć sesję`,undefined,{timeOut:0,extendedTimeOut:0});
         return activeToast.onTap.pipe(
-          mergeMap(()=>{return this.refreshCurrentUser()}),
-          map(()=>{this.toastrService.info("Wydłużam sesję")})
+          mergeMap(()=>{
+            return this.refreshCurrentUser()
+          }),
+          tap(()=>{
+            this.toastrService.info("Wydłużam sesję")
+          })
           )
       })
     );
 
-    merge(logoutTimer$,reminderTimer$).pipe(
-      takeUntil(this.currentUserSource.pipe(skip(1)))
-    ).subscribe((value) => {
+    merge(logoutTimer$,reminderTimer$).subscribe((value) => {
       console.log(value);
     })
+    
   }
   refreshCurrentUser() {
 
@@ -97,3 +105,22 @@ export class AuthenticationService {
     this.cookieService.delete("isLoginIn");
   }
 }
+
+// merge(logoutTimer$,reminderTimer$).pipe(
+//   takeUntil(this.currentUserSource.pipe(skip(1)))
+// ).subscribe((value) => {
+//   console.log(value);
+// })
+
+    // logoutTimer$.pipe(
+    //   takeUntil(this.currentUserSource.pipe(skip(1)))
+    // ).subscribe((value) => {
+    //   console.log(value);
+    // })
+    
+    // reminderTimer$.pipe(
+    //   take(1),
+    //   takeUntil(this.currentUserSource.pipe(skipWhile(user=>user!==undefined)))
+    // ).subscribe((value) => {
+    //   console.log(value);
+    // })
