@@ -8,7 +8,7 @@ body {
     height: 100%;
 }
 
-#registerForm , #loginForm{
+#loginForm{
     .form-floating:focus-within {
         z-index: 2;
     }
@@ -23,7 +23,27 @@ body {
         border-top-right-radius: 0;
     }
 }
-
+#registerForm {
+    .form-floating:focus-within {
+        z-index: 2;
+    }
+    input[type="email"] {
+        margin-bottom: -1px;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+    input[type="password"]:not([id="repeatedPassword"]) {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+    input[id="repeatedPassword"] {
+        margin-bottom: 10px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+}
 
 @media only screen and (max-width: 992px) { 
     #messages-container { 
@@ -38,9 +58,3 @@ body {
         height: calc(100% - 62px);
     }  
 }
-
-
-
-// #testtest{
-//     height: calc(100% - 62px);
-// }

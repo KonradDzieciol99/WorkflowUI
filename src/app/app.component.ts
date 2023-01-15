@@ -17,9 +17,9 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-        this.showHeader = this.activatedRoute.firstChild?.snapshot.data['showHeader']!== false ? this.showHeader=true:this.showHeader=false;
-        this.showSidebar = this.activatedRoute.firstChild?.snapshot.data['showSidebar']!== false ? this.showSidebar=true:this.showSidebar=false;
-        this.showFooter = this.activatedRoute.firstChild?.snapshot.data['showFooter']!== false ? this.showFooter=true:this.showFooter=false;
+        this.showHeader = this.activatedRoute.firstChild?.snapshot.data['showHeader']!== false ? true : false;
+        this.showSidebar = this.activatedRoute.firstChild?.snapshot.data['showSidebar']!== false ? true : false;
+        this.showFooter = this.activatedRoute.firstChild?.snapshot.data['showFooter']!== false ? true : false;
       }
     });
 

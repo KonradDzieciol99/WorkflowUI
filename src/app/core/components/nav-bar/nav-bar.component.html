@@ -37,13 +37,13 @@
         <li class="nav-item me-auto mb-2 ">
           <form *ngIf="themeForm" [formGroup]="themeForm" class="d-flex ms-auto me-3">
             <div class="btn-group" btnRadioGroup formControlName="radio">
-              <button btnRadio="light" class="btn btn-outline-primary"  tooltip="Light mode">
+              <button btnRadio="light" class="btn btn-outline-primary" container="body" tooltip="Light mode">
                 <i class="fa-solid fa-sun"></i>
               </button>
-              <button btnRadio="dark" class="btn btn-outline-primary"  tooltip="Dark mode">
+              <button btnRadio="dark" class="btn btn-outline-primary" container="body" tooltip="Dark mode" >
                 <i class="fa-solid fa-cloud-moon"></i>
               </button>
-              <button btnRadio="auto" class="btn btn-outline-primary"  tooltip="Auto mode">
+              <button btnRadio="auto" class="btn btn-outline-primary" container="body" tooltip="Auto mode"  > 
                 <i class="fa-solid fa-right-left"></i>
               </button>
             </div>

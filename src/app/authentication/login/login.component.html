@@ -1,6 +1,8 @@
-
 <div class="h-100 d-flex">
     <form id="loginForm" class="text-center form " [formGroup]="loginForm" (ngSubmit)="onSubmit(loginForm)" style="width:330px; margin: auto; ">
+        <div  class="alert alert-danger" role="alert" *ngIf="loginForm.errors?.['serverError']">
+          {{ loginForm.errors?.['serverError']}}
+        </div>
         <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
           <div>
             <app-input-custom
@@ -26,14 +28,21 @@
             >
             </app-input-custom>
           </div>
+          
+          <p class="text-end mb-0">
+            <a type="button" class="link-primary" routerLink="../reset-password">Forgot your password?</a>
+          </p>
         <button class="w-100 btn btn-lg btn-primary mt-3" type="submit">Sign in</button>
-        <p class="mt-5 mb-3 text-muted">
+        <p class="mt-3 mb-3 text-muted">
+          <a href="#" class="link-primary" routerLink="../register">Don't have a Workflow account? Sign up now!</a>
+        </p>
+        <p class="mt-2 mb-3 text-muted">
           &copy; 
-          <a href="https://www.linkedin.com/in/konrad-dzięcioł-235a8523a" class="link-primary"><!-- <fa-icon [icon]="faLinkedin"></fa-icon>--></a> 
+          <a href="https://www.linkedin.com/in/konrad-dzięcioł-235a8523a" class="link-primary"><i class="fa-brands fa-linkedin"></i></a> 
         </p>
     </form>
 </div>
 <button class="w-100 btn btn-lg btn-primary mt-3" routerLink="/home" type="submit">homepage</button>
-
+<button class="w-100 btn btn-lg btn-primary mt-3" (click)="click()" type="submit">click</button>
 
 

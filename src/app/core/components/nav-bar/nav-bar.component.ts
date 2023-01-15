@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 import { AuthenticationService } from 'src/app/authentication/authentication.service';
 import { HomeService } from 'src/app/home/home.service';
 
@@ -51,7 +51,7 @@ export class NavBarComponent implements OnInit, OnDestroy  {
     })
   }
   logout():void{
-    this.authenticationService.logout();
+    this.authenticationService.logout().pipe(take(1)).subscribe();
   }
   ngOnDestroy(): void {
     if (this.themeFormValueChangesSub) {
