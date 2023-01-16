@@ -13,6 +13,10 @@ import { IUser } from '../shared/models/IUser';
   providedIn: 'root'
 })
 export class AuthenticationService {
+
+
+
+
   private baseUrl = environment.apiUrl;
   private currentUserSource = new BehaviorSubject<IUser|undefined>(undefined);
   currentUser$ = this.currentUserSource.asObservable();

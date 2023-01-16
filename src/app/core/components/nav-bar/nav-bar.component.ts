@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { OAuthService } from 'angular-oauth2-oidc';
 import { Subscription, take } from 'rxjs';
 import { AuthenticationService } from 'src/app/authentication/authentication.service';
 import { HomeService } from 'src/app/home/home.service';
@@ -16,7 +17,7 @@ export class NavBarComponent implements OnInit, OnDestroy  {
     radio:"auto"
   });
   themeFormValueChangesSub: Subscription | undefined;
-  constructor(private homeService:HomeService,
+  constructor(private readonly oAuthService: OAuthService,private homeService:HomeService,
       private authenticationService:AuthenticationService,
       private formBuilder: FormBuilder)
     {
@@ -51,7 +52,14 @@ export class NavBarComponent implements OnInit, OnDestroy  {
     })
   }
   logout():void{
-    this.authenticationService.logout().pipe(take(1)).subscribe();
+    // this.oAuthService.silentRefresh().then(()=>{
+    //   console.log("fdg");
+    // })
+    // var sdf =this.oAuthService.getRefreshToken();
+    // console.log(sdf);
+     this.oAuthService.logOut()
+    // this.oAuthService.revokeTokenAndLogout()
+    //this.authenticationService.logout().pipe(take(1)).subscribe();
   }
   ngOnDestroy(): void {
     if (this.themeFormValueChangesSub) {

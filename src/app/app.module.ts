@@ -9,6 +9,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
+import { OAuthModule } from 'angular-oauth2-oidc';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { ButtonsModule } from 'ngx-bootstrap/buttons';
       progressBar:true
     }),
     NgxSpinnerModule.forRoot({ type: 'ball-clip-rotate-multiple' }),
-    ButtonsModule.forRoot()
+    ButtonsModule.forRoot(),
+    OAuthModule.forRoot()
 
   ],
   providers: [],
