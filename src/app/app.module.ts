@@ -27,7 +27,12 @@ import { OAuthModule } from 'angular-oauth2-oidc';
     }),
     NgxSpinnerModule.forRoot({ type: 'ball-clip-rotate-multiple' }),
     ButtonsModule.forRoot(),
-    OAuthModule.forRoot()
+    OAuthModule.forRoot({
+      resourceServer: {
+        allowedUrls: ['https://localhost:8080/api'],
+        sendAccessToken: true
+      }
+    }),
 
   ],
   providers: [],

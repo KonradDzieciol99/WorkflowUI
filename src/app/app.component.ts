@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { GoogleAuthService } from './authentication/google-auth.service';
+import { MicrosoftOpeinIDAuthService } from './authentication/microsoft-opein-id-auth.service';
 
 @Component({
   selector: 'app-root',
@@ -13,11 +14,13 @@ export class AppComponent implements OnInit {
   showSidebar = false;
   showFooter = false;
 
-  constructor(private readonly googleAuthService: GoogleAuthService,private router: Router,private activatedRoute: ActivatedRoute ) {
-    googleAuthService.userProfileSubject.subscribe( info => {
-      console.log(info)
-      //this.userInfo = info
-    })
+  constructor(private readonly microsoftOpeinIDAuthService: MicrosoftOpeinIDAuthService,private router: Router,private activatedRoute: ActivatedRoute ) {
+
+    // private readonly googleAuthService: GoogleAuthService
+    // googleAuthService.userProfileSubject.subscribe( info => {
+    //   console.log(info)
+    //   //this.userInfo = info
+    // })
   }
   ngOnInit(): void {
     this.router.events.subscribe(event => {
