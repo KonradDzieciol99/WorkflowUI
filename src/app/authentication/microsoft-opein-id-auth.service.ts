@@ -8,11 +8,17 @@ export const authConfig: AuthConfig = {
   issuer: 'https://login.microsoftonline.com/5d3aafdf-d077-4419-bd3c-622d8000bc09/v2.0',
   //redirectUri: window.location.origin + '/home',
   redirectUri:"https://localhost:4200/home",
-  clientId: '252df27f-5077-4892-a74f-b686e0d8cf69',
+  clientId: '16d44edc-9af3-4c4f-9626-66bd339b5f79',
   responseType: 'code',
   strictDiscoveryDocumentValidation: false,
-  scope: 'openid api://252df27f-5077-4892-a74f-b686e0d8cf69/app',
-  
+  //scope: 'email openid profile https://graph.microsoft.com/User.Read offline_access api://16d44edc-9af3-4c4f-9626-66bd339b5f79/api ',
+  scope: 'openid ',
+  //https://graph.microsoft.com/User.Read  api://16d44edc-9af3-4c4f-9626-66bd339b5f79/api
+  //api://16d44edc-9af3-4c4f-9626-66bd339b5f79/api
+  // openid offline_access email 
+  //
+  // oidc:false,
+  // gr
 }
 
 export interface UserInfo {
@@ -38,7 +44,7 @@ export class MicrosoftOpeinIDAuthService {
     oAuthService.configure(authConfig);
     // manually configure a logout url, because googles discovery document does not provide it
     oAuthService.logoutUrl = "https://www.google.com/accounts/Logout";
-    oAuthService.userinfoEndpoint=""
+    //oAuthService.userinfoEndpoint=""
     // loading the discovery document from google, which contains all relevant URL for
     // the OAuth flow, e.g. login url
     oAuthService.loadDiscoveryDocument().then( () => {
@@ -63,6 +69,7 @@ export class MicrosoftOpeinIDAuthService {
       // let sdf = new LoginOptions()
       // oAuthService.login
       //oAuthService.configure()
+      //oAuthService.userinfoEndpoint="https://graph.microsoft.com/v2.0"
       oAuthService.tryLoginCodeFlow().then( ()=>{
         if (!oAuthService.hasValidAccessToken()) {
           console.log("sdfsadf");
