@@ -30,7 +30,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
   exports: [HeaderComponent],
   providers:[
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptorInterceptor, multi: true },
+    //{ provide: HTTP_INTERCEPTORS, useClass: JwtInterceptorInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorHandlingInterceptor, multi: true },
   ]
 })

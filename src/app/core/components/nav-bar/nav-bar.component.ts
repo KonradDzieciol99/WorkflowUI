@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { MsalService } from '@azure/msal-angular';
 import { Subscription, take } from 'rxjs';
 import { AuthenticationService } from 'src/app/authentication/authentication.service';
 import { HomeService } from 'src/app/home/home.service';
@@ -16,8 +17,8 @@ export class NavBarComponent implements OnInit, OnDestroy  {
     radio:"auto"
   });
   themeFormValueChangesSub: Subscription | undefined;
-  constructor(private homeService:HomeService,
-      private authenticationService:AuthenticationService,
+  constructor(private msalService: MsalService,private homeService:HomeService,
+      public authenticationService:AuthenticationService,
       private formBuilder: FormBuilder)
     {
       let theme = localStorage.getItem("theme");
@@ -27,6 +28,7 @@ export class NavBarComponent implements OnInit, OnDestroy  {
    }
   ngOnInit(): void {
     this.watchThemeButton();
+    
   }
   watchThemeButton() {
     this.themeFormValueChangesSub=this.themeForm.controls["radio"].valueChanges.subscribe(value=>{
@@ -51,7 +53,9 @@ export class NavBarComponent implements OnInit, OnDestroy  {
     })
   }
   logout():void{
-    this.authenticationService.logout().pipe(take(1)).subscribe();
+    this.msalService.logout()
+
+    //this.authenticationService.logout().pipe(take(1)).subscribe();
   }
   ngOnDestroy(): void {
     if (this.themeFormValueChangesSub) {

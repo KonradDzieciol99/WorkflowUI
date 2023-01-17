@@ -7,7 +7,7 @@
     <div [collapse]="isCollapsed" class="collapse navbar-collapse" [isAnimated]="true">
       <ul class="navbar-nav me-auto mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
+          <a class="nav-link active" aria-current="page" href="#">{{this.authenticationService.currentUser$ | async}}</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">Link</a>
@@ -27,6 +27,7 @@
         </li>
       </ul>
     </div>
+    
     <div [collapse]="isCollapsed" class="collapse navbar-collapse " [isAnimated]="true">
       <ul class="navbar-nav ms-auto mb-lg-0">
         <li class="nav-item me-auto mb-2">

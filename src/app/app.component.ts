@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { MsalService } from '@azure/msal-angular';
+import { IUser } from './shared/models/IUser';
 
 @Component({
   selector: 'app-root',
@@ -12,9 +14,12 @@ export class AppComponent implements OnInit {
   showSidebar = false;
   showFooter = false;
 
-  constructor(private router: Router,private activatedRoute: ActivatedRoute ) {
+  constructor(private msalService: MsalService,private router: Router,private activatedRoute: ActivatedRoute ) {
   }
   ngOnInit(): void {
+
+
+
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.showHeader = this.activatedRoute.firstChild?.snapshot.data['showHeader']!== false ? true : false;

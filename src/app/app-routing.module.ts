@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { MsalRedirectComponent } from '@azure/msal-angular';
 import { AuthGuard } from './core/guards/auth.guard';
 
 const routes: Routes = 
@@ -20,6 +21,10 @@ const routes: Routes =
     canActivate: [AuthGuard],
     path: 'messages', 
     loadChildren: () => import("./messages/messages.module").then(mod=>mod.MessagesModule)
+  },
+  {
+    path: 'microsoft-auth', 
+    component: MsalRedirectComponent
   },
   { path: '**', redirectTo: 'auth', pathMatch: 'full' },
 ];
