@@ -19,7 +19,7 @@ export function MSALInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication({
     auth: {
       clientId: '252df27f-5077-4892-a74f-b686e0d8cf69',
-      redirectUri: "https://localhost:4200/microsoft-auth",
+      redirectUri: "https://localhost:4200/home",
       //navigateToLoginRequestUrl:false,
     }
     // , cache: {
