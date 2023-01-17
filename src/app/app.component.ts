@@ -15,6 +15,18 @@ export class AppComponent implements OnInit {
   showFooter = false;
 
   constructor(private msalService: MsalService,private router: Router,private activatedRoute: ActivatedRoute ) {
+        this.msalService.instance.handleRedirectPromise().then( res => {
+      //this.authenticationService.te
+      if (res != null && res.account != null) {
+        this.msalService.instance.setActiveAccount(res.account)
+        let user:IUser={
+          email: res.account?.username!,
+          token: res.accessToken
+        };
+        //this.authenticationService.testnext(user);
+        console.log(res);
+      }
+    })
   }
   ngOnInit(): void {
 
