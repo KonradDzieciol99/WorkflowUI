@@ -5,6 +5,7 @@ import { Observable, Subject } from 'rxjs';
 
 
 export const authConfig: AuthConfig = {
+  //https://login.microsoftonline.com/5d3aafdf-d077-4419-bd3c-622d8000bc09/v2.0
   issuer: 'https://login.microsoftonline.com/5d3aafdf-d077-4419-bd3c-622d8000bc09/v2.0',
   //redirectUri: window.location.origin + '/home',
   redirectUri:"https://localhost:4200/home",
@@ -12,7 +13,10 @@ export const authConfig: AuthConfig = {
   responseType: 'code',
   strictDiscoveryDocumentValidation: false,
   //scope: 'email openid profile https://graph.microsoft.com/User.Read offline_access api://16d44edc-9af3-4c4f-9626-66bd339b5f79/api ',
-  scope: 'openid ',
+  scope: 'api://9ff45ee6-387f-4a22-928b-e3a26abed5d4/api ',
+  //openid 
+  //api://9ff45ee6-387f-4a22-928b-e3a26abed5d4/api <----- working
+  //9ff45ee6-387f-4a22-928b-e3a26abed5d4/api
   //https://graph.microsoft.com/User.Read  api://16d44edc-9af3-4c4f-9626-66bd339b5f79/api
   //api://16d44edc-9af3-4c4f-9626-66bd339b5f79/api
   // openid offline_access email 
@@ -47,7 +51,8 @@ export class MicrosoftOpeinIDAuthService {
     //oAuthService.userinfoEndpoint=""
     // loading the discovery document from google, which contains all relevant URL for
     // the OAuth flow, e.g. login url
-    oAuthService.loadDiscoveryDocument().then( () => {
+    //oAuthService.resd
+    oAuthService.loadDiscoveryDocument("https://login.microsoftonline.com/5d3aafdf-d077-4419-bd3c-622d8000bc09/v2.0/.well-known/openid-configuration").then( () => {
       // // This method just tries to parse the token(s) within the url when
       // // the auth-server redirects the user back to the web-app
       // // It doesn't send the user the the login page
@@ -70,11 +75,15 @@ export class MicrosoftOpeinIDAuthService {
       // oAuthService.login
       //oAuthService.configure()
       //oAuthService.userinfoEndpoint="https://graph.microsoft.com/v2.0"
+
+      
       oAuthService.tryLoginCodeFlow().then( ()=>{
         if (!oAuthService.hasValidAccessToken()) {
           console.log("sdfsadf");
           oAuthService.initLoginFlow()
         } else {
+          //oAuthService.scope="";
+          console.log(this.oAuthService.getIdentityClaims());
           oAuthService.loadUserProfile().then( (userProfile) => {
             console.log(userProfile);
             this.userProfileSubject.next(userProfile as UserInfo)

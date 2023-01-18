@@ -9,4 +9,9 @@ export class HomeService {
 
   private baseUrl = environment.apiUrl;
   constructor(private http: HttpClient) { }
+
+
+  getWeather(){
+    return this.http.get<any>(this.baseUrl + 'WeatherForecast');
+  }
 }
