@@ -11,9 +11,11 @@ export class HomeComponent implements OnInit {
   constructor(private homeService:HomeService) {
   }
   ngOnInit(): void {
+
+  }
+  test(){
     this.homeService.getWeather().subscribe(x=>{
       console.log(x);
     })
   }
-
 }
