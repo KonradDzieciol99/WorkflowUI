@@ -27,22 +27,22 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
       return this.basicAuth();
   }
   private basicAuth(){
+    return true;
+  //   return this.authenticationService.currentUser$.pipe(
+  //     mergeMap(auth=> {
+  //       if (auth) {return of(true);}
 
-    return this.authenticationService.currentUser$.pipe(
-      mergeMap(auth=> {
-        if (auth) {return of(true);}
-
-        return this.authenticationService.refreshCurrentUser().pipe(
-          map(()=>{
-            this.toastrService.success("session restored");
-            return true;
-          }),
-          catchError(()=>{
-            this.router.navigate(['../auth/login']);
-            return of(false);
-          })
-        )
-      }),
-    )
+  //       return this.authenticationService.refreshCurrentUser().pipe(
+  //         map(()=>{
+  //           this.toastrService.success("session restored");
+  //           return true;
+  //         }),
+  //         catchError(()=>{
+  //           this.router.navigate(['../auth/login']);
+  //           return of(false);
+  //         })
+  //       )
+  //     }),
+  //   )
   }
 }

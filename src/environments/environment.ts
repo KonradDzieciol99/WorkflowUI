@@ -6,7 +6,11 @@ export const environment = {
   apiUrl: 'https://localhost:44346/api/',
   COOKIE_REFRESH_TOKEN_NAME:"Workflow-Refresh-Token",
   AUTO_LOGOUT_TIME_IN_MINUTES:10,
-  production: false
+  production: false,
+  API_SERVER_URL:"http://localhost:6060",
+  AUTH0_DOMAIN:"AUTH0-DOMAIN",
+  AUTH0_CLIENT_ID:"AUTH0-CLIENT-ID",
+  AUTH0_CALLBACK_URL:"http://localhost:4040/callback"
 };
 
 /*

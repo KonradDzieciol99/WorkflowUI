@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '@auth0/auth0-angular';
 import { CookieService } from 'ngx-cookie-service';
 import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs';
@@ -18,13 +19,28 @@ export class LoginComponent implements OnInit {
     email: new FormControl<string>('',[Validators.required, Validators.email,Validators.minLength(6)]),
     password: new FormControl<string>('',[Validators.required,Validators.minLength(6)]),
   });
-  constructor(private authenticationService:AuthenticationService,
+  constructor(private authenticationService:AuthenticationService,private auth0: AuthService,
     private toastrService: ToastrService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
+
+    // this.auth.loginWithRedirect({
+    //   appState: {
+    //     target: '/profile',
+    //   },
+    //   screen_hint: 'signup',
+    // });
+
+    this.auth0.loginWithRedirect(
+      {
+      appState: {
+        target: '/home',
+      },
+    }
+    );
   }
   click(){
     this.authenticationService.test().pipe(take(1)).subscribe(x=>{
