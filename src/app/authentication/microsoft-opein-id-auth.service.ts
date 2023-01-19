@@ -90,8 +90,6 @@ export class MicrosoftOpeinIDAuthService {
         //console.log(this.oAuthService.getIdentityClaims());
         oAuthService.loadUserProfile().then( (userProfile) => {
           this.userProfileSubject.next(userProfile as UserInfo)
-
-
         })
       }
     })
@@ -99,26 +97,26 @@ export class MicrosoftOpeinIDAuthService {
 
 
 
-    this.oAuthService.events.subscribe(event => {
-      if (event instanceof OAuthSuccessEvent && event.type==="user_profile_loaded") {
+    // this.oAuthService.events.subscribe(event => {
+    //   if (event instanceof OAuthSuccessEvent && event.type==="user_profile_loaded") {
 
-        oAuthService.scope="api://9ff45ee6-387f-4a22-928b-e3a26abed5d4/api"
-        oAuthService.refreshToken().then(x=>{
-          console.log(x);
-        })
-        // oAuthService.configure(authConfigForMyApi);
-        // oAuthService.tryLoginCodeFlow().then( ()=>{
-        //   console.log("sdfsadf");
-        //   oAuthService.initLoginFlow();
-        // })
+    //     oAuthService.scope="api://9ff45ee6-387f-4a22-928b-e3a26abed5d4/api"
+    //     oAuthService.refreshToken().then(x=>{
+    //       console.log(x);
+    //     })
+    //     // oAuthService.configure(authConfigForMyApi);
+    //     // oAuthService.tryLoginCodeFlow().then( ()=>{
+    //     //   console.log("sdfsadf");
+    //     //   oAuthService.initLoginFlow();
+    //     // })
        
-        // this.oAuthService.events.subscribe(event2 => {
-        //   if (event2 instanceof OAuthSuccessEvent && event2.type==="token_received") {
-        //     console.log();
-        //   }
-        // });
-      }
-    });
+    //     // this.oAuthService.events.subscribe(event2 => {
+    //     //   if (event2 instanceof OAuthSuccessEvent && event2.type==="token_received") {
+    //     //     console.log();
+    //     //   }
+    //     // });
+    //   }
+    // });
 
     // this.oAuthService.events.subscribe(event => {
     //   // if (event instanceof OAuthErrorEvent) {

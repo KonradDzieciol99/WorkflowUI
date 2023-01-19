@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { Auth0OpenIDService } from './authentication/auth0-open-id.service';
 import { GoogleAuthService } from './authentication/google-auth.service';
 import { MicrosoftOpeinIDAuthService } from './authentication/microsoft-opein-id-auth.service';
 
@@ -14,7 +15,7 @@ export class AppComponent implements OnInit {
   showSidebar = false;
   showFooter = false;
 
-  constructor(private readonly microsoftOpeinIDAuthService: MicrosoftOpeinIDAuthService,private router: Router,private activatedRoute: ActivatedRoute ) {
+  constructor(private readonly microsoftOpeinIDAuthService: Auth0OpenIDService,private router: Router,private activatedRoute: ActivatedRoute ) {
 
     // private readonly googleAuthService: GoogleAuthService
     // googleAuthService.userProfileSubject.subscribe( info => {

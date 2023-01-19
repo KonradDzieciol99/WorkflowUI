@@ -57,7 +57,11 @@ export class NavBarComponent implements OnInit, OnDestroy  {
     // })
     // var sdf =this.oAuthService.getRefreshToken();
     // console.log(sdf);
-     this.oAuthService.logOut()
+     this.oAuthService.logOut(false)
+    //  this.oAuthService.revokeTokenAndLogout({
+    //   client_id: this.oAuthService.clientId,
+    //   returnTo: this.oAuthService.redirectUri
+    // });
     // this.oAuthService.revokeTokenAndLogout()
     //this.authenticationService.logout().pipe(take(1)).subscribe();
   }
