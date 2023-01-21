@@ -30,7 +30,7 @@ import { AuthHttpInterceptor, AuthModule } from '@auth0/auth0-angular';
     AuthModule.forRoot({
       domain: 'dev-b8y3ge9o.eu.auth0.com',
       clientId: '3b3Fk8P2knWjPc31HBwz8L78ccY85BCo',
-      redirectUri:'https://localhost:4200/home',
+      redirectUri:'https://localhost:4200/auth/callback',
       audience: 'https://localhost:44346',
       scope: 'read:current_user',
       useRefreshTokens: true,

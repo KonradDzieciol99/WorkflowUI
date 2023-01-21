@@ -1,9 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { CallbackComponent } from './authentication/callback/callback.component';
 import { AuthGuard } from './core/guards/auth.guard';
 
 const routes: Routes = 
 [
+ 
+  {path: 'testauth', component: CallbackComponent},
   { 
     path: 'auth', 
     loadChildren: () => import("./authentication/authentication.module").then(mod=>mod.AuthenticationModule),

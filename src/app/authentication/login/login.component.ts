@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthService } from '@auth0/auth0-angular';
+import { AuthService, User } from '@auth0/auth0-angular';
 import { CookieService } from 'ngx-cookie-service';
 import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs';
@@ -26,21 +26,8 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-
-    // this.auth.loginWithRedirect({
-    //   appState: {
-    //     target: '/profile',
-    //   },
-    //   screen_hint: 'signup',
-    // });
-
-    this.auth0.loginWithRedirect(
-      {
-      appState: {
-        target: '/home',
-      },
-    }
-    );
+    //this.auth0.user$.subscribe((x:User)=>x.)
+    this.auth0.loginWithRedirect({appState: { target: '/home' }});
   }
   click(){
     this.authenticationService.test().pipe(take(1)).subscribe(x=>{

@@ -29,13 +29,13 @@
     </div>
     <div [collapse]="isCollapsed" class="collapse navbar-collapse " [isAnimated]="true">
       <ul class="navbar-nav ms-auto mb-lg-0">
-        <li class="nav-item me-auto mb-2">
+        <li class="nav-item mb-2">
           <a class="btn btn-outline-success me-3" type="submit" routerLink="./messages" routerLinkActive="active" tooltip="Messages">
             <i class="fa-regular fa-comments"></i>
           </a>
         </li>
-        <li class="nav-item me-auto mb-2 ">
-          <form *ngIf="themeForm" [formGroup]="themeForm" class="d-flex ms-auto me-3">
+        <li class="nav-item mb-2 me-3">
+          <form *ngIf="themeForm" [formGroup]="themeForm" class="d-flex ">
             <div class="btn-group" btnRadioGroup formControlName="radio">
               <button btnRadio="light" class="btn btn-outline-primary" container="body" tooltip="Light mode">
                 <i class="fa-solid fa-sun"></i>
@@ -49,8 +49,11 @@
             </div>
           </form>
         </li>
-        <li class="nav-item me-auto">
+        <li class="nav-item mb-2 me-3 ">
           <button class="btn btn-outline-warning" type="submit" (click)="logout()">Logout</button>
+        </li>
+        <li class="nav-item">
+          <img [src]="(user|async)?.picture" alt="" width="38" height="38" class=" rounded me-auto" container="body" [tooltip]="(user|async)?.email"  >
         </li>
       </ul>
     </div>

@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Subscription, take } from 'rxjs';
+import { AuthService, User } from '@auth0/auth0-angular';
+import { Observable, Subscription, take } from 'rxjs';
 import { AuthenticationService } from 'src/app/authentication/authentication.service';
 import { HomeService } from 'src/app/home/home.service';
 
@@ -11,12 +12,14 @@ import { HomeService } from 'src/app/home/home.service';
 })
 export class NavBarComponent implements OnInit, OnDestroy  {
 
+  user:Observable<User | null | undefined>
   isCollapsed:boolean = true;
   public themeForm:FormGroup=this.formBuilder.nonNullable.group({
     radio:"auto"
   });
   themeFormValueChangesSub: Subscription | undefined;
   constructor(private homeService:HomeService,
+      private auth0Service:AuthService,
       private authenticationService:AuthenticationService,
       private formBuilder: FormBuilder)
     {
@@ -24,6 +27,7 @@ export class NavBarComponent implements OnInit, OnDestroy  {
       if (theme==="dark"||theme==="light") {
         this.themeForm.controls["radio"].setValue(theme);
       }
+      this.user=auth0Service.user$
    }
   ngOnInit(): void {
     this.watchThemeButton();
@@ -51,7 +55,8 @@ export class NavBarComponent implements OnInit, OnDestroy  {
     })
   }
   logout():void{
-    this.authenticationService.logout().pipe(take(1)).subscribe();
+    this.auth0Service.logout()
+    //this.authenticationService.logout().pipe(take(1)).subscribe();
   }
   ngOnDestroy(): void {
     if (this.themeFormValueChangesSub) {

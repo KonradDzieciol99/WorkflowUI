@@ -13,7 +13,7 @@ import { AuthService } from '@auth0/auth0-angular';
 @Injectable()
 export class JwtInterceptorInterceptor implements HttpInterceptor {
 
-  constructor(private busyService: BusyService,private auth0Service: AuthService) {}
+  constructor(private auth0Service: AuthService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     

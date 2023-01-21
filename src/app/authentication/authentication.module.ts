@@ -7,6 +7,8 @@ import { RegisterComponent } from './register/register.component';
 import { SharedModule } from '../shared/shared.module';
 import { VerifyEmailComponent } from './verify-email/verify-email.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { CallbackComponent } from './callback/callback.component';
+import { TestauthComponent } from './testauth/testauth.component';
 
 
 @NgModule({
@@ -14,7 +16,9 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
     LoginComponent,
     RegisterComponent,
     VerifyEmailComponent,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    CallbackComponent,
+    TestauthComponent
   ],
   imports: [
     CommonModule,
