@@ -14,8 +14,11 @@ import { IUser } from '../shared/models/IUser';
 })
 export class AuthenticationService {
 
+  // private isAuthenticatedSubject$ = new BehaviorSubject<boolean>(false);
+  // public isAuthenticated$ = this.isAuthenticatedSubject$.asObservable();
 
-
+  // private isDoneLoadingSubject$ = new BehaviorSubject<boolean>(false);
+  // public isDoneLoading$ = this.isDoneLoadingSubject$.asObservable();
 
   private baseUrl = environment.apiUrl;
   private currentUserSource = new BehaviorSubject<IUser|undefined>(undefined);
