@@ -8,28 +8,36 @@ import {
 import { delay, finalize, mergeMap, Observable, take } from 'rxjs';
 import { AuthenticationService } from 'src/app/authentication/authentication.service';
 import { BusyService } from '../services/busy.service';
+import { OAuthService } from 'angular-oauth2-oidc';
 
 @Injectable()
 export class JwtInterceptorInterceptor implements HttpInterceptor {
 
-  constructor(private busyService: BusyService) {}
+  constructor(private readonly oAuthService: OAuthService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    // if (request.method === 'POST') {
-    //   return next.handle(request);
+
+    if (request.url.includes('openid-configuration')) {
+      return next.handle(request);
+    }
+
+    const userToken = this.oAuthService.getAccessToken();
+    const modifiedReq = request.clone({
+      headers: request.headers.set('Authorization', `Bearer ${userToken}`),
+    });
+
+    return next.handle(modifiedReq);
+
+    // const token = localStorage.getItem('token');
+
+    // if (token) {
+    //   request = request.clone({
+    //     setHeaders: {
+    //       Authorization: `Bearer ${token}`
+    //     }
+    //   })
     // }
-    // if (request.method === 'DELETE') {
-    //   return next.handle(request);
-    // }
-    // if (request.method === 'PUT') {
-    //   return next.handle(request);
-    // }
-    this.busyService.busy();
-    return next.handle(request).pipe(
-      delay(250),
-      finalize(() => {
-        this.busyService.idle();
-      })
-    );
+
+    // return next.handle(request);
   }
 }

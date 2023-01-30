@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
@@ -12,6 +12,8 @@ import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { authAppInitializerFactory } from './initializers/auth-app-initializer.factory';
+import { IdentityServerService } from '../authentication/identity-server.service';
 
 
 @NgModule({
@@ -32,6 +34,9 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptorInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorHandlingInterceptor, multi: true },
+    { provide: APP_INITIALIZER, useFactory: authAppInitializerFactory, deps: [IdentityServerService],
+      multi: true
+    }
   ]
 })
 export class CoreModule { }
