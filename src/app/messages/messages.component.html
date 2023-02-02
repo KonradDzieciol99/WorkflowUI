@@ -1,17 +1,129 @@
 <div class="container-fluid" id="messages-container">
-    <div class="row h-100">
-        <div class="col-4 border border-end-0 ">
-            <div>
-                <h6>chats</h6>
-            </div>
+    <div class="row h-100 ">
+        <div class="col-sm-4 border border-end-0 p-0 h-100" >
+            <form [formGroup]="messagesForm">
+                <accordion  [closeOthers]="true">
+                    <accordion-group  panelClass="border border-0" >
+                        <div accordion-heading class="justify-content-between d-flex align-items-center" style="width:100%;">
+                            <span>Find people <i class="fa-solid fa-user-plus fa-xs ms-1"></i></span>
+                        </div>
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text rounded-0"><i class="fa-solid fa-magnifying-glass"></i></span>
+                            <input type="text" formControlName="searchNewUsers" class="form-control rounded-0" placeholder="Search...">
+                        </div>
+                        <!-- {{searchNewUsers$|async}} style="height: 45px;" style="height: 50px; width: 50px;"-->
+                        <!-- <div class="card mb-3" style="height: 50px;"  > -->
+                            <!-- height="auto" width="100%" -->
+                            <!-- <div class="row g-0 h-100"> 
+                            <div class="col-2 h-100" style="" > -->
+                                <!-- <img src="https://a.allegroimg.com/original/1196f4/c13377a34b4d93aaacceb63317c9/NAKLEJKA-NA-OKNO-LUSTRO-SZYBE-POKEMONY-PIKACHU" height="auto" width="100%" class=" rounded-start" alt="..."> -->
+                                <!-- <img src="https://www.gravatar.com/avatar/fbf8a00447f06d11836b1cd57ec59fae?s=140&d=retro" height="auto" width="100%" class=" rounded-start" alt="...">  width="100%"-->
+                                <!-- <div style="height: 100%; width: 33%;"   > -->
+                                    <!-- <img src="https://www.gravatar.com/avatar/fbf8a00447f06d11836b1cd57ec59fae?s=140&d=retro"  alt="..." class="img-fluid"> -->
+                                <!-- </div> -->
 
-            <div class="input-group input-group-sm mb-3">
-                <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
-                <input type="text" class="form-control" placeholder="Search">
-            </div>
+                            <!-- </div>
+                                <div class="col-10">
+                                    <h5 class="card-title">Card title</h5>
 
+                            </div>
+                            </div>
+                        </div> -->
+                        <!-- <div style="height: 50px; width: 50px;"   >
+                            <img src="https://www.gravatar.com/avatar/fbf8a00447f06d11836b1cd57ec59fae?s=140&d=retro"  alt="..." class="img-fluid">
+                        </div> -->
+                        {{searchNewUsers$ |async|json}}
+                        <div *ngFor="let searchUser of searchNewUsers$ |async" class="border border-1 ">
+                            <div class="d-flex flex-row justify-content-start">
+                                <div class="me-2" style="">
+                                    <div class="p-1"  style="width: 40px; height: 40px;">
+                                        <img src="https://a.allegroimg.com/original/1196f4/c13377a34b4d93aaacceb63317c9/NAKLEJKA-NA-OKNO-LUSTRO-SZYBE-POKEMONY-PIKACHU" class="img-fluid rounded-circle border border-1" alt="...">
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 d-flex align-items-center overflow-hidden ">
+                                    <div class="text-truncate">{{searchUser.email}}</div>
+                                </div>
+                                <div class="d-flex align-items-center me-2" >
+                                    <ng-template [ngIf]="searchUser.isAlreadyInvited===false">
+                                        <button (click)="addUserToFriends(searchUser)" type="button" class="btn btn-outline-success btn-sm" container="body" tooltip="Add to friends." >
+                                            <i class="fa-solid fa-user-plus"></i>
+                                        </button>
+                                    </ng-template>                                      
+                                    <ng-template [ngIf]="searchUser.isAlreadyInvited===true && searchUser.confirmed===false">
+                                        <span class="loader" container="body" tooltip="Waiting for confirmation."></span>
+                                    </ng-template>
+                                    <ng-template [ngIf]="searchUser.isAlreadyInvited===true && searchUser.confirmed===true">
+                                        <button  type="text" class="btn btn-outline-success btn-sm" container="body" tooltip="Friend." >
+                                            <i class="fa-solid fa-user-check"></i>
+                                        </button>
+                                    </ng-template>
+                                </div>
+                            </div>
+
+                        </div>
+                    </accordion-group>
+                    <accordion-group class="" panelClass="border border-0">
+                        <div accordion-heading class="justify-content-between d-flex align-items-center">
+                            <span>My chats <i class="ms-1 fa-brands fa-rocketchat fa-xs"></i></span>
+                        </div>
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text rounded-0"><i class="fa-solid fa-magnifying-glass"></i></span>
+                            <input type="text" class="form-control rounded-0" placeholder="Search...">
+                        </div>
+                         <!-- sadfsadf     -->
+                        {{friends$ |async|json}}
+                        <div *ngFor="let invitation of friends$ |async" (click)="" id="friend-card" type="button"  class="border border-1 ">
+                            <!-- btn btn-outline-secondary border border-0 p-0  -->
+                            <div class="d-flex flex-row justify-content-start " style="">
+                                <div class="me-2" >
+                                    <div class="p-1"  style="width: 40px; height: 40px;">
+                                        <img [src]="(invitation.inviterPhotoUrl === userClaims['picture'] ? invitation.invitedPhotoUrl : invitation.inviterPhotoUrl) " class="img-fluid rounded-circle border border-1" alt="...">
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 d-flex align-items-center overflow-hidden ">
+                                    <div class="text-truncate">{{invitation.inviterUserEmail === userClaims['email'] ? invitation.invitedUserEmail : invitation.inviterUserEmail}} </div>
+                                </div>
+                                <div class="d-flex align-items-center me-2" >
+                                    <button (click)="declineFriendInvitation(invitation)" type="button" class="btn btn-outline-danger btn-sm" style="width: 35px;" container="body" tooltip="Remove friend." >
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- sdfsdf -->
+                    </accordion-group>
+                    <accordion-group class="" panelClass="border border-0">
+                        <div accordion-heading class="justify-content-between d-flex align-items-center">
+                            <span>Notifications <i class="fa-regular fa-bell fa-xs"></i></span>
+                        </div>
+                        <!-- sadfsadf     -->
+                        {{invitations$ |async|json}}
+                        <div *ngFor="let invitation of invitations$ |async" class="border border-1 ">
+                            <div class="d-flex flex-row justify-content-start">
+                                <div class="me-2" >
+                                    <div class="p-1"  style="width: 40px; height: 40px;">
+                                        <img src="https://a.allegroimg.com/original/1196f4/c13377a34b4d93aaacceb63317c9/NAKLEJKA-NA-OKNO-LUSTRO-SZYBE-POKEMONY-PIKACHU" class="img-fluid rounded-circle border border-1" alt="...">
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 d-flex align-items-center overflow-hidden ">
+                                    <div class="text-truncate">{{invitation.inviterUserEmail}}</div>
+                                </div>
+                                <div class="d-flex align-items-center me-2" >
+                                    <button (click)="acceptFriendInvitation(invitation)" type="button" class="btn btn-outline-success btn-sm" style="width: 35px;" container="body" tooltip="Accept friend invitation." >
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+                                    <button (click)="declineFriendInvitation(invitation)" type="button" class="btn btn-outline-danger btn-sm" style="width: 35px;" container="body" tooltip="Cancel friend invitation." >
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- sdfsdf -->
+                    </accordion-group>
+                </accordion>
+            </form>
         </div>
-        <div class="col-8 border d-flex flex-column ">
+        <div class="col-sm-8 border d-flex flex-column ">
             <div class="h-100 bg-success">
                 dfg
             </div>
