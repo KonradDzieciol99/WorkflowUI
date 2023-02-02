@@ -10,17 +10,37 @@ export const authConfigForMyApi: AuthConfig = {
   clientId: 'interactive',
   responseType: 'code',
   strictDiscoveryDocumentValidation: false,
-  scope: 'openid offline_access',
+  scope: 'openid offline_access email_access_token profile email',//emailweatherapi
   showDebugInformation: true,
   sessionChecksEnabled: true,
   clearHashAfterLogin: false,
   useSilentRefresh: true,
+  
   //silentRefreshRedirectUri: window.location.origin + '/silent-refresh.html',
   //useSilentRefresh: true,
   //silentRefreshTimeout: 5000, // For faster testing
   //timeoutFactor: 0.25, // For faster testing
 }
-
+// export const authConfigForMyApi: AuthConfig = {
+//   //https://login.microsoftonline.com/5d3aafdf-d077-4419-bd3c-622d8000bc09/v2.0
+//   issuer: 'https://login.microsoftonline.com/5d3aafdf-d077-4419-bd3c-622d8000bc09/v2.0',
+//   //redirectUri: window.location.origin + '/home',
+//   redirectUri:"https://localhost:7122/signin-microsoft",
+//   clientId: '8d5e37cb-cb3f-4c5b-b083-e3dd6fb7732d',
+//   responseType: 'code',
+//   strictDiscoveryDocumentValidation: false,
+//   //scope: 'email openid profile https://graph.microsoft.com/User.Read offline_access api://16d44edc-9af3-4c4f-9626-66bd339b5f79/api ',
+//   scope: 'openid email profile',
+//   //openid 
+//   //api://9ff45ee6-387f-4a22-928b-e3a26abed5d4/api <----- working
+//   //9ff45ee6-387f-4a22-928b-e3a26abed5d4/api
+//   //https://graph.microsoft.com/User.Read  api://16d44edc-9af3-4c4f-9626-66bd339b5f79/api
+//   //api://16d44edc-9af3-4c4f-9626-66bd339b5f79/api
+//   // openid offline_access email 
+//   //
+//   // oidc:false,
+//   // gr
+// }
 @Injectable({
   providedIn: 'root'
 })
@@ -95,8 +115,8 @@ export class IdentityServerService {
   public runInitialLoginSequence(): Promise<void> {
 
     this.oAuthService.configure(authConfigForMyApi);
-
-    return this.oAuthService.loadDiscoveryDocument("https://localhost:7122/.well-known/openid-configuration").then( () => {
+//"https://localhost:7122/.well-known/openid-configuration"
+    return this.oAuthService.loadDiscoveryDocument().then( () => {
 
     return this.oAuthService.tryLoginCodeFlow() // (which picks up the fact that the user was just redirected from the B2C, and grabs the tokens)
       .then( ()=>{

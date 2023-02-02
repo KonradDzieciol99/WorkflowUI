@@ -1,5 +1,5 @@
 export interface IPerson{
-    photoUrl: string;
-    lastActive: Date;
-    name:string
+    photoUrl?: string;
+    email: string;
+    id:string,
 }

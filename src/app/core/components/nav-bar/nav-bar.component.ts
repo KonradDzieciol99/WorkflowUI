@@ -26,9 +26,18 @@ export class NavBarComponent implements OnInit, OnDestroy  {
         this.themeForm.controls["radio"].setValue(theme);
       }
    }
+   userPicture:string="https://w7.pngwing.com/pngs/419/473/png-transparent-computer-icons-user-profile-login-user-heroes-sphere-black-thumbnail.png"
   ngOnInit(): void {
     this.watchThemeButton();
+    let idToken=this.oAuthService.getIdentityClaims();
+    let picture=idToken['picture'] as string;
+    let test=idToken['dsfsdfsadfasd'];
+    if (picture){
+      this.userPicture=picture;
+    }
   }
+  
+ 
   watchThemeButton() {
     this.themeFormValueChangesSub=this.themeForm.controls["radio"].valueChanges.subscribe(value=>{
    

@@ -8,11 +8,11 @@ export const authConfigForGraph: AuthConfig = {
   issuer: 'https://login.microsoftonline.com/5d3aafdf-d077-4419-bd3c-622d8000bc09/v2.0',
   //redirectUri: window.location.origin + '/home',
   redirectUri:"https://localhost:4200/home",
-  clientId: '16d44edc-9af3-4c4f-9626-66bd339b5f79',
+  clientId: '8d5e37cb-cb3f-4c5b-b083-e3dd6fb7732d',
   responseType: 'code',
   strictDiscoveryDocumentValidation: false,
   //scope: 'email openid profile https://graph.microsoft.com/User.Read offline_access api://16d44edc-9af3-4c4f-9626-66bd339b5f79/api ',
-  scope: 'openid',
+  scope: 'openid email profile',
   //openid 
   //api://9ff45ee6-387f-4a22-928b-e3a26abed5d4/api <----- working
   //9ff45ee6-387f-4a22-928b-e3a26abed5d4/api
