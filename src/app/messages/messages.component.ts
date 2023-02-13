@@ -4,6 +4,7 @@ import { OAuthService } from 'angular-oauth2-oidc';
 import { ToastrService } from 'ngx-toastr';
 import { debounceTime, distinctUntilChanged, Observable, of, switchMap, take } from 'rxjs';
 import { IFriendInvitation } from '../shared/models/IFriendInvitation';
+import { Message } from '../shared/models/IMessage';
 import { IPerson } from '../shared/models/IPerson';
 import { ISearchedFriend } from '../shared/models/ISearchedFriend';
 import { IUser } from '../shared/models/IUser';
@@ -24,8 +25,10 @@ export class MessagesComponent implements OnInit {
   invitations$: Observable<Array<IFriendInvitation>> ;
   friends$: Observable<Array<IFriendInvitation>> ;
   userClaims: Record<string, any>;
-  
-  constructor(private messagesService:MessagesService,
+  messageContent:FormControl;
+  loading:boolean;
+  //currentMessageThread$:Observable<Message[]>|undefined;
+  constructor(public messagesService:MessagesService,
     private toastrService: ToastrService,
     private readonly oAuthService: OAuthService)
     {
@@ -33,12 +36,13 @@ export class MessagesComponent implements OnInit {
       this.invitations$ = new Observable<Array<IFriendInvitation>>();
       this.friends$ = new Observable<Array<IFriendInvitation>>();
       this.userClaims = this.oAuthService.getIdentityClaims();
-      
+      this.messageContent = new FormControl('Hello');
+      this.loading=false;
     }
 
 
   ngOnInit(): void {
-
+    
     this.searchNewUsers$=this.messagesForm.controls['searchNewUsers'].valueChanges.pipe(
       debounceTime(300),
       distinctUntilChanged(),
@@ -74,4 +78,14 @@ export class MessagesComponent implements OnInit {
       this.toastrService.success("Invitation canceled.")
     });
   }
+   currentRecipientEmail:string|undefined;
+  onFriendSelected(recipientEmail:string){
+
+    if (this.currentRecipientEmail!=recipientEmail) {
+      this.messagesService.stopHubConnection();
+      this.messagesService.createHubConnection(recipientEmail, this.oAuthService.getAccessToken());
+      this.currentRecipientEmail=recipientEmail;
+    }
+  }
+
 }

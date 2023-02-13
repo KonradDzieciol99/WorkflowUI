@@ -1,0 +1,38 @@
+.me{
+    .speech-bubble{
+        border-radius: 10px 0 0 10px;
+    }
+    .fa-eye{
+        visibility:hidden;
+    }
+    &.end {
+        .speech-bubble{
+            border-bottom-right-radius: 10px; 
+        }
+    }
+    &.start {
+        .speech-bubble{
+            border-top-right-radius: 10px;
+        }
+    }
+    &.last-read{
+        .fa-eye{
+            visibility:visible;
+        }
+    }
+}
+.him{
+    .speech-bubble{
+        border-radius: 0 10px 10px 0;
+    }
+    &.end {
+        .speech-bubble{
+            border-bottom-left-radius: 10px; 
+        }
+    }
+    &.start {
+        .speech-bubble{
+            border-top-left-radius: 10px;
+        }
+    }
+}
