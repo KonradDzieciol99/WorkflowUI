@@ -72,7 +72,7 @@
                         </div>
                          <!-- sadfsadf     -->
                         {{friends$ |async|json}}
-                        <div *ngFor="let invitation of friends$ |async" (click)="" id="friend-card" type="button"  class="border border-1 ">
+                        <div *ngFor="let invitation of friends$ |async" (click)="onFriendSelected(invitation.inviterUserEmail === userClaims['email'] ? invitation.invitedUserEmail : invitation.inviterUserEmail)"  id="friend-card" type="button"  class="border border-1 ">
                             <!-- btn btn-outline-secondary border border-0 p-0  -->
                             <div class="d-flex flex-row justify-content-start " style="">
                                 <div class="me-2" >
@@ -123,12 +123,13 @@
                 </accordion>
             </form>
         </div>
-        <div class="col-sm-8 border d-flex flex-column ">
-            <div class="h-100 bg-success">
-                dfg
-            </div>
-            <div class="h-100 bg-warning">
-                dsf
+        <!-- col-sm-4 border border-end-0 p-0 h-100 -->
+        <div class="col-sm-8 border d-flex flex-column p-0 h-100">
+            <div class="h-100">
+                <!-- {{messagesService.messageThread$|async|json}} -->
+                <!-- // -->
+                <app-chat *ngIf="currentRecipientEmail" [currentRecipientEmail]="currentRecipientEmail"></app-chat>
+                <!-- // userClaims['email']-->
             </div>
         </div>
     </div>

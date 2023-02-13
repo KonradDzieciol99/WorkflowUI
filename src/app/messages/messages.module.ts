@@ -6,11 +6,13 @@ import { SharedModule } from '../shared/shared.module';
 import { MessagesComponent } from './messages.component';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { ChatComponent } from './components/chat/chat.component';
 
 
 @NgModule({
   declarations: [
-    MessagesComponent
+    MessagesComponent,
+    ChatComponent
   ],
   imports: [
     CommonModule,

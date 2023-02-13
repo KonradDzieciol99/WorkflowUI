@@ -5,6 +5,7 @@
 export const environment = {
   apiUrl: 'https://localhost:44346/api/',
   socialApiUrl: 'https://localhost:7260/',
+  socialApihubUrl: 'https://localhost:7260/hub/',
   COOKIE_REFRESH_TOKEN_NAME:"Workflow-Refresh-Token",
   AUTO_LOGOUT_TIME_IN_MINUTES:10,
   production: false
