@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { ToastrService } from 'ngx-toastr';
-import { debounceTime, distinctUntilChanged, Observable, of, switchMap, take } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, of, retry, switchMap, take } from 'rxjs';
 import { IFriendInvitation } from '../shared/models/IFriendInvitation';
 import { Message } from '../shared/models/IMessage';
 import { IPerson } from '../shared/models/IPerson';
 import { ISearchedFriend } from '../shared/models/ISearchedFriend';
 import { IUser } from '../shared/models/IUser';
 import { MessagesService } from './messages.service';
+import { ChatService } from './services/chat.service';
 
 @Component({
   selector: 'app-messages',
@@ -30,7 +31,8 @@ export class MessagesComponent implements OnInit {
   //currentMessageThread$:Observable<Message[]>|undefined;
   constructor(public messagesService:MessagesService,
     private toastrService: ToastrService,
-    private readonly oAuthService: OAuthService)
+    private readonly oAuthService: OAuthService,
+    public chatService:ChatService,)
     {
       this.searchNewUsers$ = new Observable<Array<ISearchedFriend>>();
       this.invitations$ = new Observable<Array<IFriendInvitation>>();
@@ -42,7 +44,10 @@ export class MessagesComponent implements OnInit {
 
 
   ngOnInit(): void {
-    
+    this.messagesService.stopHubConnection();
+    this.messagesService.createHubConnection(this.oAuthService.getAccessToken())
+
+
     this.searchNewUsers$=this.messagesForm.controls['searchNewUsers'].valueChanges.pipe(
       debounceTime(300),
       distinctUntilChanged(),
@@ -79,12 +84,17 @@ export class MessagesComponent implements OnInit {
     });
   }
    currentRecipientEmail:string|undefined;
-  onFriendSelected(recipientEmail:string){
-
+   onFriendSelected(recipientEmail:string){
+    
     if (this.currentRecipientEmail!=recipientEmail) {
-      this.messagesService.stopHubConnection();
-      this.messagesService.createHubConnection(recipientEmail, this.oAuthService.getAccessToken());
-      this.currentRecipientEmail=recipientEmail;
+      this.chatService.stopHubConnection();
+      this.chatService.createHubConnection(recipientEmail, this.oAuthService.getAccessToken()).then(()=>{
+        this.currentRecipientEmail=recipientEmail;
+        this.chatService.getMessageThreadAndAssign(recipientEmail).pipe(
+          take(1)
+          //retry({count: 5, delay: 500}),
+        ).subscribe();
+      });
     }
   }
 

@@ -57,7 +57,7 @@
 
 <div class="card h-100 border-0">
     <div class="card-body pe-0 overflow-auto" #chat>
-        <div *ngIf="(messagesService.messageThread$| async)?.length === 0">
+        <div *ngIf="(chatService.messageThread$| async)?.length === 0">
             No messages yet... say hi by using the message box below
         </div>
 <!-- sdfs -->
@@ -89,11 +89,11 @@
 
         -->
 
-        <div *ngIf="(messagesService.messageThread$ | async)!.length > 0" class="d-flex flex-column chat" id="test1" >
-            <div *ngFor="let message of (messagesService.messageThread$ | async); let i = index;" 
+        <div *ngIf="(chatService.messageThread$ | async)!.length > 0 && indexOfLastDisplayed" class="d-flex flex-column chat" id="test1" >
+            <div *ngFor="let message of (chatService.messageThread$ | async); let i = index;" 
             [ngClass]="message.senderEmail !== currentRecipientEmail ? 'align-self-end me' : 'align-self-start him'"
-            [class.start]="(messagesService.messageThread$ | async)?.[i-1]?.senderEmail===message.senderEmail ? false : true"
-            [class.end]="(messagesService.messageThread$ | async)?.[i+1]?.senderEmail===message.senderEmail ?false: true "
+            [class.start]="(chatService.messageThread$ | async)?.[i-1]?.senderEmail===message.senderEmail ? false : true"
+            [class.end]="(chatService.messageThread$ | async)?.[i+1]?.senderEmail===message.senderEmail ?false: true "
             class="w-75 mb-1 "
             [class.last-read]="indexOfLastDisplayed===i"
             #messages

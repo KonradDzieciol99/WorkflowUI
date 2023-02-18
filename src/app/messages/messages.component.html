@@ -1,3 +1,4 @@
+{{messagesService.onlineUsers$|async|json}}
 <div class="container-fluid" id="messages-container">
     <div class="row h-100 ">
         <div class="col-sm-4 border border-end-0 p-0 h-100" >
@@ -72,8 +73,8 @@
                         </div>
                          <!-- sadfsadf     -->
                         {{friends$ |async|json}}
-                        <div *ngFor="let invitation of friends$ |async" (click)="onFriendSelected(invitation.inviterUserEmail === userClaims['email'] ? invitation.invitedUserEmail : invitation.inviterUserEmail)"  id="friend-card" type="button"  class="border border-1 ">
-                            <!-- btn btn-outline-secondary border border-0 p-0  -->
+                        <div *ngFor="let invitation of friends$ |async;" (click)="onFriendSelected(invitation.inviterUserEmail === userClaims['email'] ? invitation.invitedUserEmail : invitation.inviterUserEmail)"  id="friend-card" type="button"  class="border border-1 ">
+                            <!-- tutaj PIPEE MOZNA  zrobić -->
                             <div class="d-flex flex-row justify-content-start " style="">
                                 <div class="me-2" >
                                     <div class="p-1"  style="width: 40px; height: 40px;">
@@ -83,6 +84,9 @@
                                 <div class="flex-grow-1 d-flex align-items-center overflow-hidden ">
                                     <div class="text-truncate">{{invitation.inviterUserEmail === userClaims['email'] ? invitation.invitedUserEmail : invitation.inviterUserEmail}} </div>
                                 </div>
+                                <!-- <div class="" *ngIf="(chatService.onlineUsers$|async)?.includes(invitation.inviterUserEmail === userClaims['email'] ? invitation.invitedUserEmail : invitation.inviterUserEmail) " >
+                                    <span class="badge text-bg-success">Success</span>
+                                </div> -->
                                 <div class="d-flex align-items-center me-2" >
                                     <button (click)="declineFriendInvitation(invitation)" type="button" class="btn btn-outline-danger btn-sm" style="width: 35px;" container="body" tooltip="Remove friend." >
                                         <i class="fa-solid fa-xmark"></i>

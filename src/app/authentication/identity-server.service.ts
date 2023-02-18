@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthConfig, OAuthService, UserInfo } from 'angular-oauth2-oidc';
 import { BehaviorSubject, filter, Subject } from 'rxjs';
+import { PresenceService } from '../shared/services/presence.service';
 
 export const authConfigForMyApi: AuthConfig = {
   issuer: 'https://localhost:7122',
@@ -11,7 +12,7 @@ export const authConfigForMyApi: AuthConfig = {
   responseType: 'code',
   strictDiscoveryDocumentValidation: false,
   scope: 'openid offline_access email_access_token profile email',//emailweatherapi
-  showDebugInformation: true,
+  showDebugInformation: false,
   sessionChecksEnabled: true,
   clearHashAfterLogin: false,
   useSilentRefresh: true,
@@ -50,8 +51,7 @@ export class IdentityServerService {
   public isDoneLoading$ = this.isDoneLoadingSubject$.asObservable();
   userProfileSubject = new Subject<UserInfo>();
 
-  constructor(private readonly oAuthService: OAuthService, private readonly httpClient: HttpClient,private router: Router ) {
-
+  constructor(private readonly oAuthService: OAuthService, private readonly httpClient: HttpClient,private router: Router, private presenceService:PresenceService ) {
     this.load()
   }
   load(){
@@ -129,9 +129,13 @@ export class IdentityServerService {
           //oAuthService.scope="";
           //console.log(this.oAuthService.getIdentityClaims());
           this.isDoneLoadingSubject$.next(true);
+          
           // return this.oAuthService.loadUserProfile().then( (userProfile) => {
           //   this.userProfileSubject.next(userProfile as UserInfo)
           // })
+
+          //presence
+          this.presenceService.createHubConnection(this.oAuthService.getAccessToken());
         }
       });
     });
