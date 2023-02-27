@@ -208,26 +208,35 @@
     </div>
 
     <div class="card-footer">
-        <!-- <form #messageForm="ngForm" (ngSubmit)="sendMessage()" autocomplete="off"> -->
-            <div class="input-group">
-                <input 
-                    name="messageContent"
-                    required
-                    [formControl]="messageContent"
-                    type="text" 
-                    class="form-control input-sm" 
-                    placeholder="Send a private message">
-                <div class="input-group-append">
-                    <button [disabled]="!messageContent.valid || loading"
-                        (click)="sendMessage()" 
-                        class="btn btn-primary"
-                        type="submit"
-                        style="border-bottom-left-radius: 0; border-top-left-radius: 0; "
-                        >
-                        Send <i *ngIf="loading" class="fa fa-spinner fa-spin"></i>
-                    </button>
+        <div class="d-flex">
+            <div class="d-flex align-items-center justify-content-center me-2"  *ngIf="this.chatService.recipientIsWatching$|async">
+                <div class="bg-success border border-1 rounded-circle is-wathing" style="width:15px; height: 15px;" container="body" tooltip="User is watching!" >
+                    <span class="visually-hidden">User is watching</span>
                 </div>
             </div>
-        <!-- </form> -->
+            <!-- <form #messageForm="ngForm" (ngSubmit)="sendMessage()" autocomplete="off">  -->
+            <div class="flex-grow-1">
+                <div class="input-group ">
+                    <input 
+                        name="messageContent"
+                        required
+                        [formControl]="messageContent"
+                        type="text" 
+                        class="form-control input-sm" 
+                        placeholder="Send a private message">
+                    <div class="input-group-append">
+                        <button [disabled]="!messageContent.valid || loading"
+                            (click)="sendMessage()" 
+                            class="btn btn-primary"
+                            type="submit"
+                            style="border-bottom-left-radius: 0; border-top-left-radius: 0; "
+                            >
+                            Send <i *ngIf="loading" class="fa fa-spinner fa-spin"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- </form> -->
+        </div>
     </div>
 </div>

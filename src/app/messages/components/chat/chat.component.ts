@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { IPerson } from 'src/app/shared/models/IPerson';
@@ -10,7 +10,7 @@ import { ChatService } from '../../services/chat.service';
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
-export class ChatComponent implements OnInit {
+export class ChatComponent implements OnInit, OnDestroy {
   @Input("currentRecipientEmail") currentRecipientEmail!: string;
   oAuthService: any;
   messageContent: FormControl<string | null>
@@ -24,6 +24,7 @@ export class ChatComponent implements OnInit {
   constructor(public chatService:ChatService,private toastrService: ToastrService){
       this.messageContent = new FormControl('Hello');
       this.loading=false;
+      
     }
   ngOnInit(): void {
     
@@ -73,7 +74,9 @@ export class ChatComponent implements OnInit {
     });
     }
   }
-
+  ngOnDestroy(): void {
+    this.chatService.stopHubConnectionAndDeleteMessageThread();
+  }
   // sendMessage() {
   //   if (this.currentRecipientEmail && this.messageContent.value) {
   //     this.loading = true;

@@ -4,6 +4,7 @@ import { OAuthService } from 'angular-oauth2-oidc';
 import { Subscription, take } from 'rxjs';
 import { AuthenticationService } from 'src/app/authentication/authentication.service';
 import { HomeService } from 'src/app/home/home.service';
+import { PresenceService } from 'src/app/shared/services/presence.service';
 
 @Component({
   selector: 'app-nav-bar',
@@ -17,9 +18,11 @@ export class NavBarComponent implements OnInit, OnDestroy  {
     radio:"auto"
   });
   themeFormValueChangesSub: Subscription | undefined;
+  isNotificationsPanelExpanded:boolean=false;
   constructor(private readonly oAuthService: OAuthService,private homeService:HomeService,
       private authenticationService:AuthenticationService,
-      private formBuilder: FormBuilder)
+      private formBuilder: FormBuilder,
+      private presenceService : PresenceService)
     {
       let theme = localStorage.getItem("theme");
       if (theme==="dark"||theme==="light") {
@@ -35,6 +38,8 @@ export class NavBarComponent implements OnInit, OnDestroy  {
     if (picture){
       this.userPicture=picture;
     }
+
+    this.presenceService.notifications$
   }
   
  

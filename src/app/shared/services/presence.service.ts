@@ -4,6 +4,7 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microso
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, take } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { INotification } from '../models/INotification';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,8 @@ export class PresenceService {
   private hubConnection?: HubConnection;
   private onlineUsersSource = new BehaviorSubject<string[]>([]);
   onlineUsers$ = this.onlineUsersSource.asObservable();
-
+  private notificationsSource = new BehaviorSubject<INotification[]>([]);
+  notifications$ = this.notificationsSource.asObservable();
   constructor(private toastr: ToastrService, private router: Router) { }
 
   createHubConnection(userAccessToken:string) {
@@ -54,6 +56,34 @@ export class PresenceService {
         })
     });
 
+    this.hubConnection.on('NewInvitationToFriendsReceived', ({inviterEmail}) => {
+      this.toastr.info(`${inviterEmail} sent you a friend request.`)
+        .onTap
+        .pipe(take(1))
+        .subscribe({
+          ///////////////!!!!!!!!!!!!!!!!!!!!!!
+          //next: () => this.router.navigateByUrl('/members/' + username + '?tab=Messages')//!!!!!!!!!!!!!!!!!
+        })
+    });
+    // this.hubConnection.on('NewChatNotificationReceived', (notification:INotification) => {
+    //   this.onlineUsersSource.next(usernames);
+    // })
+    this.hubConnection.on('NewNotificationReceived', (notification:INotification) => {
+      this.notifications$.pipe(take(1)).subscribe(notifications=>{
+        this.notificationsSource.next([...notifications,notification]);
+      })
+    });
+    this.hubConnection.on('NotificationThread', (notifications:INotification[]) => {
+      // this.toastr.info(`${notification.content}`)
+      //   .onTap
+      //   .pipe(take(1))
+      //   .subscribe({
+      //     ///////////////!!!!!!!!!!!!!!!!!!!!!!
+      //     //next: () => this.router.navigateByUrl('/members/' + username + '?tab=Messages')//!!!!!!!!!!!!!!!!!
+      //   })
+      console.log(notifications);
+      this.notificationsSource.next(notifications);
+    });
     var hubConnectionState = this.hubConnection.start()
     .catch(error => console.log(error))
     .finally(/*() => this.busyService.idle()*/);

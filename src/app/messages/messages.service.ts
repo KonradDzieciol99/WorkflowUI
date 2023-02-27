@@ -2,21 +2,25 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, map, Observable, take, tap } from 'rxjs';
+import { BehaviorSubject, map, mergeMap, Observable, of, take, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { IFriendInvitation } from '../shared/models/IFriendInvitation';
 //import { Group } from '../shared/models/IGroup';
 import { Message } from '../shared/models/IMessage';
 import { IPerson } from '../shared/models/IPerson';
 import { ISearchedFriend } from '../shared/models/ISearchedFriend';
+import { ISimplePerson } from '../shared/models/ISimplePerson';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MessagesService {
   //private baseUrl = environment.apiUrl;
-  private onlineUsersSource = new BehaviorSubject<IPerson[]>([]);
+  private onlineUsersSource = new BehaviorSubject<ISimplePerson[]>([]);
   onlineUsers$ = this.onlineUsersSource.asObservable();
+  private invitationsSource = new BehaviorSubject<IFriendInvitation[]>([]);
+  invitations$ = this.invitationsSource.asObservable();
+  //invitations$: Observable<Array<IFriendInvitation>> ;
   private chatUrl:string;
   private hubUrl:string; 
   private hubConnection: HubConnection|undefined;
@@ -35,24 +39,42 @@ export class MessagesService {
   findUsersByEmailAndCheckState(email:string){
     return this.http.get<Array<ISearchedFriend>>(`${this.chatUrl}api/Users/test/${email}`);
   }
-  addUserToFriends(user:IPerson){
+  sendInvitation(user:IPerson){
     return this.http.post(`${this.chatUrl}api/FriendInvitation`,user);
   }
   getAllFriendInvitation(){
-    return this.http.get<Array<IFriendInvitation>>(`${this.chatUrl}api/FriendInvitation/GetAllInvitations`);
+    return this.http.get<IFriendInvitation[]>(`${this.chatUrl}api/FriendInvitation/GetAllInvitations`).pipe(
+      tap(invitations=>this.invitationsSource.next(invitations))
+    );
   }
   acceptFriendInvitation(invitation:IFriendInvitation){
-    return this.http.post(`${this.chatUrl}api/FriendInvitation/AcceptFriendInvitation`,invitation);
+    return this.http.post(`${this.chatUrl}api/FriendInvitation/AcceptFriendInvitation`,invitation).pipe(
+      mergeMap(()=> {
+        return this.invitations$.pipe(
+          take(1),
+          map(invitations=>invitations.filter(x=>x!==invitation)),
+          tap(invitations=>this.invitationsSource.next(invitations)))
+      }),
+    );
   }
   declineFriendInvitation(invitation:IFriendInvitation){
-    return this.http.post(`${this.chatUrl}api/FriendInvitation/DeclineFriendInvitation`,invitation);
+    return this.http.post(`${this.chatUrl}api/FriendInvitation/DeclineFriendInvitation`,invitation).pipe(
+      mergeMap(()=> {
+        return this.invitations$.pipe(
+          take(1),
+          map(invitations=>invitations.filter(x=>x!==invitation)),
+          tap(invitations=>this.invitationsSource.next(invitations)))
+      }),
+    );
   }
+  declineAcceptedFriendInvitation(invitation:IFriendInvitation){
+    return this.http.post(`${this.chatUrl}api/FriendInvitation/DeclineFriendInvitation`,invitation)
+  }
+
   getAllFriends(){
-    return this.http.get<Array<IFriendInvitation>>(`${this.chatUrl}api/FriendInvitation/GetAllFriends`);
+    return this.http.get<IFriendInvitation[]>(`${this.chatUrl}api/FriendInvitation/GetAllFriends`);
   }
   createHubConnection(userAccessToken:string):Promise<void> {
-    //this.busyService.busy();
-    //user: IPerson,
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(this.hubUrl +'Messages', {
         accessTokenFactory: () => userAccessToken,
@@ -93,24 +115,35 @@ export class MessagesService {
     //   })
     // });
 
-    this.hubConnection.on('UserIsOnline', (person:IPerson) => {
+    this.hubConnection.on('UserIsOnline', (person:ISimplePerson) => {
       this.onlineUsers$.pipe(take(1)).subscribe(x => {
-        var z = x.findIndex(x=>x.email == person.email)
+        var z = x.findIndex(x=>x.userEmail == person.userEmail)
         if (z == -1){
           this.onlineUsersSource.next([...x, person]);
         }
       })
-    })
+    });
 
-    this.hubConnection.on('UserIsOffline', (person:IPerson) => {
+    this.hubConnection.on('UserIsOffline', (person:ISimplePerson) => {
       this.onlineUsers$.pipe(take(1)).subscribe(x => {
-        this.onlineUsersSource.next([...x.filter(x => x.email !== person.email)]);
+        this.onlineUsersSource.next([...x.filter(x => x.userEmail !== person.userEmail)]);
       })
-    })
+    });
 
-    this.hubConnection.on('GetOnlineUsers', (persons: IPerson[]) => {
+    this.hubConnection.on('GetOnlineUsers', (persons: ISimplePerson[]) => {
       this.onlineUsersSource.next(persons);
-    })
+    });
+
+    this.hubConnection.on('FriendInvitationAccepted', (invitation: IFriendInvitation) => { ///FriendActeptedmyInvitation
+      this.invitations$.pipe(take(1)).subscribe(invitations=>{///FriendActeptedmyInvitation
+        this.invitationsSource.next([...invitations,invitation]);
+      })//totaj nie intations tylko friends!!
+    });
+    this.hubConnection.on('NewInvitationToFriendsReceived', (invitation: IFriendInvitation) => { ///FriendActeptedmyInvitation
+      this.invitations$.pipe(take(1)).subscribe(invitations=>{///FriendActeptedmyInvitation
+        this.invitationsSource.next([...invitations,invitation]);
+      })
+    });
     var hubConnectionState = this.hubConnection.start()
       .catch(error => console.log(error))
       .finally(/*() => this.busyService.idle()*/);

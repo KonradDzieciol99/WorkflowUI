@@ -46,7 +46,7 @@
                                 </div>
                                 <div class="d-flex align-items-center me-2" >
                                     <ng-template [ngIf]="searchUser.isAlreadyInvited===false">
-                                        <button (click)="addUserToFriends(searchUser)" type="button" class="btn btn-outline-success btn-sm" container="body" tooltip="Add to friends." >
+                                        <button (click)="sendInvitation(searchUser)" type="button" class="btn btn-outline-success btn-sm" container="body" tooltip="Add to friends." >
                                             <i class="fa-solid fa-user-plus"></i>
                                         </button>
                                     </ng-template>                                      
@@ -71,38 +71,43 @@
                             <span class="input-group-text rounded-0"><i class="fa-solid fa-magnifying-glass"></i></span>
                             <input type="text" class="form-control rounded-0" placeholder="Search...">
                         </div>
-                         <!-- sadfsadf     -->
-                        {{friends$ |async|json}}
-                        <div *ngFor="let invitation of friends$ |async;" (click)="onFriendSelected(invitation.inviterUserEmail === userClaims['email'] ? invitation.invitedUserEmail : invitation.inviterUserEmail)"  id="friend-card" type="button"  class="border border-1 ">
-                            <!-- tutaj PIPEE MOZNA  zrobić -->
-                            <div class="d-flex flex-row justify-content-start " style="">
-                                <div class="me-2" >
-                                    <div class="p-1"  style="width: 40px; height: 40px;">
-                                        <img [src]="(invitation.inviterPhotoUrl === userClaims['picture'] ? invitation.invitedPhotoUrl : invitation.inviterPhotoUrl) " class="img-fluid rounded-circle border border-1" alt="...">
-                                    </div>
-                                </div>
-                                <div class="flex-grow-1 d-flex align-items-center overflow-hidden ">
-                                    <div class="text-truncate">{{invitation.inviterUserEmail === userClaims['email'] ? invitation.invitedUserEmail : invitation.inviterUserEmail}} </div>
-                                </div>
-                                <!-- <div class="" *ngIf="(chatService.onlineUsers$|async)?.includes(invitation.inviterUserEmail === userClaims['email'] ? invitation.invitedUserEmail : invitation.inviterUserEmail) " >
-                                    <span class="badge text-bg-success">Success</span>
-                                </div> -->
-                                <div class="d-flex align-items-center me-2" >
-                                    <button (click)="declineFriendInvitation(invitation)" type="button" class="btn btn-outline-danger btn-sm" style="width: 35px;" container="body" tooltip="Remove friend." >
-                                        <i class="fa-solid fa-xmark"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- sdfsdf -->
+                         <!-- sadfsadf tutututututututututut    -->
+                         {{friends$ |async|json}}
+                         <div *ngFor="let friend of friends$ |async; let i = index" (click)="onFriendSelected(friend.email)"  id="friend-card" type="button"  class="border border-1 ">
+                             <div class="d-flex flex-row justify-content-start " style="">
+                                 <div class="me-2" >
+                                     <div class="p-1"  style="width: 40px; height: 40px;">
+                                         <img [src]="friend.photoUrl" class="img-fluid rounded-circle border border-1" alt="...">
+                                     </div>
+                                 </div>
+                                 <div class="flex-grow-1 d-flex align-items-center overflow-hidden ">
+                                     <div class="text-truncate">{{friend.email}} </div>
+                                 </div>
+                                 <div class="d-flex align-items-center justify-content-center me-3" *ngIf="friend.isOnline" >
+                                     <div class="bg-success border border-1 rounded-circle is-online" style="width:15px; height: 15px;" container="body" tooltip="User is online!" >
+                                        <span class="visually-hidden">User is online</span>
+                                     </div>
+                                 </div>
+                                 <div class="d-flex align-items-center me-2" >
+                                     <button (click)="declineAcceptedFriendInvitation(friend,i)" type="button" class="btn btn-outline-danger btn-sm" style="width: 35px;" container="body" tooltip="Remove friend." >
+                                         <i class="fa-solid fa-xmark"></i>
+                                     </button>
+                                 </div>
+                             </div>
+                         </div>
+                         <!-- sadfsadf tutututututututututut    -->
                     </accordion-group>
                     <accordion-group class="" panelClass="border border-0">
                         <div accordion-heading class="justify-content-between d-flex align-items-center">
-                            <span>Notifications <i class="fa-regular fa-bell fa-xs"></i></span>
+                            <span>Notifications 
+                                <i class="fa-regular fa-bell fa-xs"
+                                [class.green]="(messagesService.invitations$|async)?.length!== 0"
+                                ></i>
+                            </span>
                         </div>
                         <!-- sadfsadf     -->
-                        {{invitations$ |async|json}}
-                        <div *ngFor="let invitation of invitations$ |async" class="border border-1 ">
+                        {{messagesService.invitations$ |async|json}}
+                        <div *ngFor="let invitation of messagesService.invitations$ |async" class="border border-1 ">
                             <div class="d-flex flex-row justify-content-start">
                                 <div class="me-2" >
                                     <div class="p-1"  style="width: 40px; height: 40px;">
@@ -138,3 +143,27 @@
         </div>
     </div>
 </div>
+
+
+<!-- {{friends$ |async|json}}
+<div *ngFor="let invitation of friends$ |async;" (click)="onFriendSelected(invitation.inviterUserEmail === userClaims['email'] ? invitation.invitedUserEmail : invitation.inviterUserEmail)"  id="friend-card" type="button"  class="border border-1 "> -->
+    <!-- tutaj PIPEE MOZNA  zrobić -->
+    <!-- <div class="d-flex flex-row justify-content-start " style="">
+        <div class="me-2" >
+            <div class="p-1"  style="width: 40px; height: 40px;">
+                <img [src]="(invitation.inviterPhotoUrl === userClaims['picture'] ? invitation.invitedPhotoUrl : invitation.inviterPhotoUrl) " class="img-fluid rounded-circle border border-1" alt="...">
+            </div>
+        </div>
+        <div class="flex-grow-1 d-flex align-items-center overflow-hidden ">
+            <div class="text-truncate">{{invitation.inviterUserEmail === userClaims['email'] ? invitation.invitedUserEmail : invitation.inviterUserEmail}} </div>
+        </div> -->
+        <!-- <div class="" *ngIf="(chatService.onlineUsers$|async)?.includes(invitation.inviterUserEmail === userClaims['email'] ? invitation.invitedUserEmail : invitation.inviterUserEmail) " >
+            <span class="badge text-bg-success">Success</span>
+        </div> -->
+        <!-- <div class="d-flex align-items-center me-2" >
+            <button (click)="declineFriendInvitation(invitation)" type="button" class="btn btn-outline-danger btn-sm" style="width: 35px;" container="body" tooltip="Remove friend." >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </div>
+</div> -->

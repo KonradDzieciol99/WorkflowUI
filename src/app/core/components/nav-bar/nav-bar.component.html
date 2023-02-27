@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
+   <div class="container-fluid "> <!-- !! position relativesdf  position-relative -->
     <a class="navbar-brand" href="#">Navbar</a>
     <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed">
       <span class="navbar-toggler-icon"></span>
@@ -34,6 +34,11 @@
             <i class="fa-regular fa-comments"></i>
           </a>
         </li>
+        <li class="nav-item mb-2">
+          <button class="btn btn-outline-info me-3" (click)="isNotificationsPanelExpanded = !isNotificationsPanelExpanded" type="button" tooltip="Notifications">
+            <i class="fa-solid fa-bell"></i>
+          </button>
+        </li>
         <li class="nav-item mb-2 ">
           <form *ngIf="themeForm" [formGroup]="themeForm" class="d-flex ms-auto me-3">
             <div class="btn-group" btnRadioGroup formControlName="radio">
@@ -61,3 +66,132 @@
     </div>
   </div>
 </nav>
+
+<div *ngIf="isNotificationsPanelExpanded">
+  <div class="border border-1 rounded z-3 position-absolute notifications-panel overflow-auto position-absolute"
+  style="right:50px; max-height: calc(100% - 90px); width: 290px;"
+  >
+    <div class="bg-body-secondary">
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+    ddd
+    <br>
+  </div>
+</div>
+</div>
+
+<!-- float-end  h-50 w-25 -->

@@ -3,6 +3,10 @@
 @import "../node_modules/ngx-toastr/toastr.css";
 @import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
+@import '../node_modules/bootstrap/scss/functions';
+@import '../node_modules/bootstrap/scss/variables';
+@import '../node_modules/bootstrap/scss/mixins'; //??
+
 html,
 body {
     height: 100%;
@@ -100,6 +104,45 @@ body {
     }
 }
 
+@include media-breakpoint-down(lg) {
+    .notifications-panel{
+        width: 100% !important;
+        left: 0 !important;
+    }
+  }
+
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+  }
+  /* Track */
+  ::-webkit-scrollbar-track {
+     //box-shadow: inset 0 0 5px grey; 
+    //border-radius: 10px;
+    // border: 1px solid;
+    // border-left: 0;
+    // border-top: 0;
+    // border-color: var(--bs-border-color);
+    background-color: rgba(var(--bs-tertiary-bg-rgb));
+    // z-index: -1;
+    // border-radius: var(--bs-border-radius);
+    // border-top-left-radius: 0;
+    // border-bottom-left-radius: 0;
+    //background-color: rgba(var(--bs-secondary-bg-rgb))!important;
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: grey; 
+    border-radius: 10px;
+    //border-radius: var(--bs-border-radius);
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background:rgb(101, 101, 101); 
+  }
 
 
 // #messages-container{

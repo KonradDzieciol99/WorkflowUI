@@ -11,8 +11,8 @@ import { environment } from 'src/environments/environment';
 })
 export class ChatService {
 
-  private onlineUsersSource = new BehaviorSubject<IPerson[]>([]);
-  onlineUsers$ = this.onlineUsersSource.asObservable();
+  // private onlineUsersSource = new BehaviorSubject<IPerson[]>([]);
+  // onlineUsers$ = this.onlineUsersSource.asObservable();
   private chatUrl:string;
   private hubUrl:string; 
   private hubConnection: HubConnection|undefined;
@@ -87,7 +87,7 @@ export class ChatService {
       tap(messages => this.messageThreadSource.next(messages))
     );
   }
-  stopHubConnection() {
+  stopHubConnectionAndDeleteMessageThread() {
     if (this.hubConnection) {
       this.messageThreadSource.next([]);
       this.hubConnection.stop();
