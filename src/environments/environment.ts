@@ -4,6 +4,8 @@
 
 export const environment = {
   apiUrl: 'https://localhost:44346/api/',
+  chatUrl: 'https://localhost:7282/',
+  signalRhubUrl: 'https://localhost:7024/hub/',
   socialApiUrl: 'https://localhost:7260/',
   socialApihubUrl: 'https://localhost:7260/hub/',
   COOKIE_REFRESH_TOKEN_NAME:"Workflow-Refresh-Token",

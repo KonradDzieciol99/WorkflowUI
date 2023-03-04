@@ -1,0 +1,56 @@
+<div class="card">
+  <!-- style="max-width: 540px" border-0 col-4  p-2 pe-0-->
+  <div class="row g-0">
+    <div class="d-none d-sm-flex col-sm-1 col-lg-3 d-flex align-items-center justify-content-center ps-2">
+      <div style="max-width: 90%">
+        <img
+          [src]="notification?.notificationSender?.userPhotoUrl ??'./assets/user.png'"
+          class="img-fluid rounded-circle"
+          alt="..."
+        />
+      </div>
+    </div>
+    <div class="col-12 col-sm-11 col-lg-9">
+      <div class="card-body">
+        <!-- <h5 class="card-title">Card title</h5> col-8 col-sm-10 col-sm-2 -->
+
+        <!-- <p class="card-text mb-0">
+          This is a wider card with supporting text below as a natural lead-in
+        </p>-->
+
+        <ng-container [ngSwitch]="notification?.eventType">
+          <ng-container *ngSwitchCase="Events.FriendInvitationAcceptedEvent">
+            <ng-container
+              *ngTemplateOutlet="friendInvitationAcceptedEventTemplate"
+            ></ng-container>
+          </ng-container>
+          <ng-container *ngSwitchCase="Events.InviteUserToFriendsEvent">
+            <ng-container
+              *ngTemplateOutlet="inviteUserToFriendsEventTemplate"
+            ></ng-container>
+          </ng-container>
+          <!-- <div *ngSwitchDefault>This is Default</div> -->
+        </ng-container>
+        <p class="card-text">
+          <small class="text-muted">{{ notification?.messageCreated }}</small>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #inviteUserToFriendsEventTemplate>
+  <p class="card-text mb-0">
+    {{ notification?.notificationSender?.userEmail }} has sent you a friend
+    request.
+  </p>
+  <div class="d-flex flex-row mt-1">
+      <button type="button" (click)="acceptFriendInvitation(notification!)" class="btn btn-success btn-sm">Accept</button>
+      <button type="button" (click)="rejectFriendInvitation(notification!)" class="btn btn-danger btn-sm ms-2">Reject </button>
+  </div>
+</ng-template>
+<ng-template #friendInvitationAcceptedEventTemplate>
+  <p class="card-text mb-0">
+    {{ notification?.notificationSender?.userEmail }} has accepted your
+    invitation.
+  </p>
+</ng-template>

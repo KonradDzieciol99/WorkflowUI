@@ -57,7 +57,7 @@
 
 <div class="card h-100 border-0">
     <div class="card-body pe-0 overflow-auto" #chat>
-        <div *ngIf="(messagesService.messageThread$| async)?.length === 0">
+        <div *ngIf="(chatService.messageThread$| async)?.length === 0">
             No messages yet... say hi by using the message box below
         </div>
 <!-- sdfs -->
@@ -89,11 +89,11 @@
 
         -->
 
-        <div *ngIf="(messagesService.messageThread$ | async)!.length > 0" class="d-flex flex-column chat" id="test1" >
-            <div *ngFor="let message of (messagesService.messageThread$ | async); let i = index;" 
+        <div *ngIf="(chatService.messageThread$ | async)!.length > 0 && indexOfLastDisplayed" class="d-flex flex-column chat" id="test1" >
+            <div *ngFor="let message of (chatService.messageThread$ | async); let i = index;" 
             [ngClass]="message.senderEmail !== currentRecipientEmail ? 'align-self-end me' : 'align-self-start him'"
-            [class.start]="(messagesService.messageThread$ | async)?.[i-1]?.senderEmail===message.senderEmail ? false : true"
-            [class.end]="(messagesService.messageThread$ | async)?.[i+1]?.senderEmail===message.senderEmail ?false: true "
+            [class.start]="(chatService.messageThread$ | async)?.[i-1]?.senderEmail===message.senderEmail ? false : true"
+            [class.end]="(chatService.messageThread$ | async)?.[i+1]?.senderEmail===message.senderEmail ?false: true "
             class="w-75 mb-1 "
             [class.last-read]="indexOfLastDisplayed===i"
             #messages
@@ -208,26 +208,35 @@
     </div>
 
     <div class="card-footer">
-        <!-- <form #messageForm="ngForm" (ngSubmit)="sendMessage()" autocomplete="off"> -->
-            <div class="input-group">
-                <input 
-                    name="messageContent"
-                    required
-                    [formControl]="messageContent"
-                    type="text" 
-                    class="form-control input-sm" 
-                    placeholder="Send a private message">
-                <div class="input-group-append">
-                    <button [disabled]="!messageContent.valid || loading"
-                        (click)="sendMessage()" 
-                        class="btn btn-primary"
-                        type="submit"
-                        style="border-bottom-left-radius: 0; border-top-left-radius: 0; "
-                        >
-                        Send <i *ngIf="loading" class="fa fa-spinner fa-spin"></i>
-                    </button>
+        <div class="d-flex">
+            <div class="d-flex align-items-center justify-content-center me-2"  *ngIf="this.chatService.recipientIsWatching$|async">
+                <div class="bg-success border border-1 rounded-circle is-wathing" style="width:15px; height: 15px;" container="body" tooltip="User is watching!" >
+                    <span class="visually-hidden">User is watching</span>
                 </div>
             </div>
-        <!-- </form> -->
+            <!-- <form #messageForm="ngForm" (ngSubmit)="sendMessage()" autocomplete="off">  -->
+            <div class="flex-grow-1">
+                <div class="input-group ">
+                    <input 
+                        name="messageContent"
+                        required
+                        [formControl]="messageContent"
+                        type="text" 
+                        class="form-control input-sm" 
+                        placeholder="Send a private message">
+                    <div class="input-group-append">
+                        <button [disabled]="!messageContent.valid || loading"
+                            (click)="sendMessage()" 
+                            class="btn btn-primary"
+                            type="submit"
+                            style="border-bottom-left-radius: 0; border-top-left-radius: 0; "
+                            >
+                            Send <i *ngIf="loading" class="fa fa-spinner fa-spin"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- </form> -->
+        </div>
     </div>
 </div>

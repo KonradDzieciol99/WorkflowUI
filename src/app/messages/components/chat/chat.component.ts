@@ -1,15 +1,16 @@
-import { Component, ElementRef, Input, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { IPerson } from 'src/app/shared/models/IPerson';
 import { MessagesService } from '../../messages.service';
+import { ChatService } from '../../services/chat.service';
 
 @Component({
   selector: 'app-chat[currentRecipientEmail]',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.scss']
 })
-export class ChatComponent implements OnInit {
+export class ChatComponent implements OnInit, OnDestroy {
   @Input("currentRecipientEmail") currentRecipientEmail!: string;
   oAuthService: any;
   messageContent: FormControl<string | null>
@@ -19,12 +20,15 @@ export class ChatComponent implements OnInit {
   @ViewChildren('messages') messages: QueryList<ElementRef> | undefined;
   @ViewChild('chat') chat: ElementRef | undefined;
 
-  constructor(public messagesService:MessagesService,private toastrService: ToastrService){
+  //public messagesService:MessagesService,
+  constructor(public chatService:ChatService,private toastrService: ToastrService){
       this.messageContent = new FormControl('Hello');
       this.loading=false;
+      
     }
   ngOnInit(): void {
-    this.messagesService.messageThread$.subscribe(x=>{
+    
+    this.chatService.messageThread$.subscribe(x=>{
     //console.log(x.filter(v=>v.senderEmail !== this.currentRecipientEmail && v.dateRead).ind)
       const indexes = [];
       for (let index = 0; index < x.length; index++) {
@@ -60,12 +64,25 @@ export class ChatComponent implements OnInit {
   }
   sendMessage() {
     if (this.currentRecipientEmail && this.messageContent.value) {
-
       this.loading = true;
-      this.messagesService.sendMessage(this.currentRecipientEmail, this.messageContent.value).then(() => {
-        this.messageContent?.reset();
-      }).finally(() => this.loading = false);
-
+      this.chatService.sendMessage(this.currentRecipientEmail, this.messageContent.value).subscribe({
+        next: () => {this.messageContent?.reset();},
+        complete: () =>{
+          this.loading = false;
+          console.info('Wysłano wiadomość');
+        } 
+    });
     }
   }
+  ngOnDestroy(): void {
+    this.chatService.stopHubConnectionAndDeleteMessageThread();
+  }
+  // sendMessage() {
+  //   if (this.currentRecipientEmail && this.messageContent.value) {
+  //     this.loading = true;
+  //     this.messagesService.sendMessage(this.currentRecipientEmail, this.messageContent.value).then(() => {
+  //       this.messageContent?.reset();
+  //     }).finally(() => this.loading = false);
+  //   }
+  // }
 }

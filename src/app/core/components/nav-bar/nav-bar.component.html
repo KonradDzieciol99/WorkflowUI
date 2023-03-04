@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
+   <div class="container-fluid "> <!-- !! position relativesdf  position-relative -->
     <a class="navbar-brand" href="#">Navbar</a>
     <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed">
       <span class="navbar-toggler-icon"></span>
@@ -34,6 +34,11 @@
             <i class="fa-regular fa-comments"></i>
           </a>
         </li>
+        <li class="nav-item mb-2">
+          <button class="btn btn-outline-info me-3" #notificationsPanelNutton (click)="isNotificationsPanelExpanded = !isNotificationsPanelExpanded" type="button" tooltip="Notifications">
+            <i class="fa-solid fa-bell"></i>
+          </button>
+        </li>
         <li class="nav-item mb-2 ">
           <form *ngIf="themeForm" [formGroup]="themeForm" class="d-flex ms-auto me-3">
             <div class="btn-group" btnRadioGroup formControlName="radio">
@@ -61,3 +66,39 @@
     </div>
   </div>
 </nav>
+
+<app-notifications-panel 
+ *ngIf="isNotificationsPanelExpanded" 
+ [buttonReference]="notificationsPanelNutton" 
+ (isNotificationsPanelExpanded)="isNotificationsPanelExpanded=$event">
+</app-notifications-panel>
+<!-- 
+ -->
+<!-- <div *ngIf="isNotificationsPanelExpanded" #notificationsPanel>
+  <div class="border border-1 rounded z-3 position-absolute notifications-panel overflow-auto position-absolute"
+  style="right:15px; max-height: calc(100% - 90px); width: 325px;"
+  >
+    <div class="bg-body-secondary">
+      <div *ngFor="let notification of notifications$|async;">
+        <app-notification-card [notification]="notification"></app-notification-card>
+      </div>
+  </div>
+</div>
+</div> -->
+
+<!-- ;openModal(template) -->
+<!-- <ng-template #template>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Modal</h4>
+    <button type="button" class="close btn-close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    Just a modal with a bunch of words inside, nothing serious.
+  </div>
+</ng-template> -->
+
+
+
+<!-- float-end  h-50 w-25 -->

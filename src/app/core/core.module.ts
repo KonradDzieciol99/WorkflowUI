@@ -14,14 +14,20 @@ import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { authAppInitializerFactory } from './initializers/auth-app-initializer.factory';
 import { IdentityServerService } from '../authentication/identity-server.service';
+import { NotificationCardComponent } from './components/notification-card/notification-card.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { NotificationsPanelComponent } from './components/notifications-panel/notifications-panel.component';
 
 
 @NgModule({
   declarations: [
     NavBarComponent,
-    HeaderComponent
+    HeaderComponent,
+    NotificationCardComponent,
+    NotificationsPanelComponent
   ],
   imports: [
+    ModalModule.forRoot(),
     CommonModule,
     RouterModule,
     CollapseModule.forRoot(),

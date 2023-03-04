@@ -1,9 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { OAuthService } from 'angular-oauth2-oidc';
-import { Subscription, take } from 'rxjs';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { Observable, Subscription, take } from 'rxjs';
 import { AuthenticationService } from 'src/app/authentication/authentication.service';
 import { HomeService } from 'src/app/home/home.service';
+import { INotification } from 'src/app/shared/models/INotification';
+import { PresenceService } from 'src/app/shared/services/presence.service';
 
 @Component({
   selector: 'app-nav-bar',
@@ -17,14 +20,27 @@ export class NavBarComponent implements OnInit, OnDestroy  {
     radio:"auto"
   });
   themeFormValueChangesSub: Subscription | undefined;
+  isNotificationsPanelExpanded:boolean=false;
+  // notifications$: Observable<INotification[]>;
+  // @ViewChild('notificationsPanel') notificationsPanel: ElementRef<HTMLDivElement> | undefined;
+
+  // modalRef?: BsModalRef;
+  // config = {
+  //   backdrop: false,
+  //   ignoreBackdropClick: false
+  // };
   constructor(private readonly oAuthService: OAuthService,private homeService:HomeService,
       private authenticationService:AuthenticationService,
-      private formBuilder: FormBuilder)
+      private formBuilder: FormBuilder,
+      private presenceService : PresenceService,
+      // private modalService: BsModalService
+      )
     {
       let theme = localStorage.getItem("theme");
       if (theme==="dark"||theme==="light") {
         this.themeForm.controls["radio"].setValue(theme);
       }
+      // this.notifications$=this.presenceService.notifications$;//destroy
    }
    userPicture:string="https://w7.pngwing.com/pngs/419/473/png-transparent-computer-icons-user-profile-login-user-heroes-sphere-black-thumbnail.png"
   ngOnInit(): void {
@@ -35,8 +51,12 @@ export class NavBarComponent implements OnInit, OnDestroy  {
     if (picture){
       this.userPicture=picture;
     }
+
+    
   }
-  
+  // openModal(template: TemplateRef<any>) {
+  //   this.modalRef = this.modalService.show(template, this.config);
+  // }
  
   watchThemeButton() {
     this.themeFormValueChangesSub=this.themeForm.controls["radio"].valueChanges.subscribe(value=>{
@@ -60,6 +80,19 @@ export class NavBarComponent implements OnInit, OnDestroy  {
       }
     })
   }
+
+  // @HostListener('document:click', ['$event.target']) //to musi być w komponencie od notificationsPanel
+  // onClick(targetElement: HTMLElement) {
+  //   if (this.notificationsPanel) {
+  //     const clickedInside = this.notificationsPanel.nativeElement.contains(targetElement);
+  //     if (!clickedInside) {
+  //       // kod do wykonania, gdy użytkownik kliknie poza divem
+  //       this.isNotificationsPanelExpanded=false;
+  //       console.log("inside");
+  //     }  
+  //     console.log("outside");
+  //   }
+  // }
   logout():void{
     // this.oAuthService.silentRefresh().then(()=>{
     //   console.log("fdg");
