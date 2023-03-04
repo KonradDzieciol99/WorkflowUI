@@ -150,11 +150,11 @@ export class MessagesComponent implements OnInit {
     
   }
   acceptFriendInvitation(invitation:IFriendInvitation){
-    this.messagesService.acceptFriendInvitation(invitation).subscribe(()=>{
-      this.toastrService.success("Invitation accepted.")
-      //this.invitations$=this.invitations$.pipe(map(invitations=>invitations.filter(x=>x===invitation)));
-      //this.invitations$=
-    });
+    // this.messagesService.acceptFriendInvitation(invitation).subscribe(()=>{
+    //   this.toastrService.success("Invitation accepted.")
+    //   //this.invitations$=this.invitations$.pipe(map(invitations=>invitations.filter(x=>x===invitation)));
+    //   //this.invitations$=
+    // });
   }
   declineAcceptedFriendInvitation(friend:IPerson,index:number){
     this.allFriendsInvitations$.pipe(

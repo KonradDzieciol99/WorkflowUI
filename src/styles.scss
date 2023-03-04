@@ -125,11 +125,13 @@ body {
     // border-top: 0;
     // border-color: var(--bs-border-color);
     background-color: rgba(var(--bs-tertiary-bg-rgb));
-    // z-index: -1;
+    //z-index: -1;
     // border-radius: var(--bs-border-radius);
     // border-top-left-radius: 0;
     // border-bottom-left-radius: 0;
     //background-color: rgba(var(--bs-secondary-bg-rgb))!important;
+    ///  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+
   }
    
   /* Handle */
@@ -144,6 +146,18 @@ body {
     background:rgb(101, 101, 101); 
   }
 
+// ::-webkit-scrollbar-track {
+//   //background-color: var(--bs-body-bg);
+//   //background-color: none;
+//   z-index: -100;
+//   //border-radius: var(--bs-border-radius);
+//   border-radius: 0;
+//   border-top-left-radius: 0;
+//   border-bottom-left-radius: 0;
+//   //overflow: hidden;
+// //   clip-path: inset(8% 20% 21% 19%);
+//   z-index: 0;
+// }
 
 // #messages-container{
 //     .accordion-toggle[aria-expanded="true"]:after {

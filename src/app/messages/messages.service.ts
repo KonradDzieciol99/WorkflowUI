@@ -47,14 +47,24 @@ export class MessagesService {
       tap(invitations=>this.invitationsSource.next(invitations))
     );
   }
-  acceptFriendInvitation(invitation:IFriendInvitation){
-    return this.http.post(`${this.chatUrl}api/FriendInvitation/AcceptFriendInvitation`,invitation).pipe(
-      mergeMap(()=> {
-        return this.invitations$.pipe(
-          take(1),
-          map(invitations=>invitations.filter(x=>x!==invitation)),
-          tap(invitations=>this.invitationsSource.next(invitations)))
-      }),
+  // acceptFriendInvitation(invitation:IFriendInvitation){
+  //   return this.http.post(`${this.chatUrl}api/FriendInvitation/AcceptFriendInvitation`,invitation).pipe(
+  //     mergeMap(()=> {
+  //       return this.invitations$.pipe(
+  //         take(1),
+  //         map(invitations=>invitations.filter(x=>x!==invitation)),
+  //         tap(invitations=>this.invitationsSource.next(invitations)))
+  //     }),
+  //   );
+  // }
+  acceptFriendInvitation(invitationSenderId:string){
+    return this.http.post(`${this.chatUrl}api/FriendInvitation/AcceptFriendInvitation`,{invitationSenderId}).pipe(
+      // mergeMap(()=> {
+      //   return this.invitations$.pipe(
+      //     take(1),
+      //     map(invitations=>invitations.filter(x=>x!==invitation)),
+      //     tap(invitations=>this.invitationsSource.next(invitations)))
+      // }),
     );
   }
   declineFriendInvitation(invitation:IFriendInvitation){
