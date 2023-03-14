@@ -29,6 +29,8 @@ export class NavBarComponent implements OnInit, OnDestroy  {
   //   backdrop: false,
   //   ignoreBackdropClick: false
   // };
+  notifications$: Observable<INotification[]>;
+  test:string;
   constructor(private readonly oAuthService: OAuthService,private homeService:HomeService,
       private authenticationService:AuthenticationService,
       private formBuilder: FormBuilder,
@@ -41,9 +43,16 @@ export class NavBarComponent implements OnInit, OnDestroy  {
         this.themeForm.controls["radio"].setValue(theme);
       }
       // this.notifications$=this.presenceService.notifications$;//destroy
+      this.notifications$=this.presenceService.notifications$;
+      this.notifications$.subscribe
+      this.test="d";
    }
    userPicture:string="https://w7.pngwing.com/pngs/419/473/png-transparent-computer-icons-user-profile-login-user-heroes-sphere-black-thumbnail.png"
-  ngOnInit(): void {
+  
+   test33(e:any){
+    console.log("sdfsadfsadfssssssssssssssss")
+   }
+   ngOnInit(): void {
     this.watchThemeButton();
     let idToken=this.oAuthService.getIdentityClaims();
     let picture=idToken['picture'] as string;

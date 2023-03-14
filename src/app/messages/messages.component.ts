@@ -6,7 +6,7 @@ import { BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, fil
 import { IFriendInvitation } from '../shared/models/IFriendInvitation';
 import { Message } from '../shared/models/IMessage';
 import { IPerson } from '../shared/models/IPerson';
-import { ISearchedFriend } from '../shared/models/ISearchedFriend';
+import { ISearchedUser, UserFriendStatusType } from '../shared/models/ISearchedUser';
 import { IUser } from '../shared/models/IUser';
 import { MessagesService } from './messages.service';
 import { ChatService } from './services/chat.service';
@@ -22,7 +22,7 @@ export class MessagesComponent implements OnInit {
     searchNewUsers: new FormControl<string>('',[]),
   });
   custom="border border-0";
-  searchNewUsers$: Observable<Array<ISearchedFriend>> ;
+  searchNewUsers$: Observable<Array<ISearchedUser>> ;
   //invitations$: Observable<Array<IFriendInvitation>> ;
   friends$: Observable<Array<IPerson>>;
   userClaims: Record<string, any>;
@@ -30,6 +30,8 @@ export class MessagesComponent implements OnInit {
   loading:boolean;
   private allFriendsInvitationsSource : BehaviorSubject<IFriendInvitation[]>;
   allFriendsInvitations$:Observable<IFriendInvitation[]>;
+  UserFriendStatusTypes: typeof UserFriendStatusType = UserFriendStatusType;
+
   constructor(public messagesService:MessagesService,
     private toastrService: ToastrService,
     private readonly oAuthService: OAuthService,
@@ -38,7 +40,7 @@ export class MessagesComponent implements OnInit {
       this.allFriendsInvitationsSource = new BehaviorSubject<IFriendInvitation[]>([]);
       this.allFriendsInvitations$ = this.allFriendsInvitationsSource.asObservable();
 
-      this.searchNewUsers$ = new Observable<Array<ISearchedFriend>>();
+      this.searchNewUsers$ = new Observable<Array<ISearchedUser>>();
       //this.invitations$ = new Observable<Array<IFriendInvitation>>();
       //this.friends$ = new Observable<Array<IFriendInvitation>>();
       this.friends$ = new Observable<Array<IPerson>>();
@@ -134,7 +136,7 @@ export class MessagesComponent implements OnInit {
          
         );
   }
-  sendInvitation(searchUser:ISearchedFriend){
+  sendInvitation(searchUser:ISearchedUser){
 
     let user:IPerson={
       email: searchUser.email,
@@ -145,7 +147,8 @@ export class MessagesComponent implements OnInit {
       take(1),
     ).subscribe(()=>{
       this.toastrService.success("The invitation has been sent.")
-      searchUser.isAlreadyInvited=true;
+      //searchUser.isAlreadyInvited=true;
+      searchUser.status=UserFriendStatusType.InvitedByYou;
     });
     
   }

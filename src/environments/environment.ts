@@ -3,6 +3,8 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
+  identityServerUrl:'https://localhost:7122/api',
+  notificationUrl:'https://localhost:44344/api/',
   apiUrl: 'https://localhost:44346/api/',
   chatUrl: 'https://localhost:7282/',
   signalRhubUrl: 'https://localhost:7024/hub/',

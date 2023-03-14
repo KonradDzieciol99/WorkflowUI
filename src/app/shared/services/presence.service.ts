@@ -1,8 +1,9 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, take } from 'rxjs';
+import { BehaviorSubject, take, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { INotification } from '../models/INotification';
 
@@ -12,12 +13,20 @@ import { INotification } from '../models/INotification';
 export class PresenceService {
 
   hubUrl = environment.signalRhubUrl;
+  notificationUrl = environment.notificationUrl;
   private hubConnection?: HubConnection;
   private onlineUsersSource = new BehaviorSubject<string[]>([]);
   onlineUsers$ = this.onlineUsersSource.asObservable();
   private notificationsSource = new BehaviorSubject<INotification[]>([]);
   notifications$ = this.notificationsSource.asObservable();
-  constructor(private toastr: ToastrService, private router: Router) { }
+
+  constructor(private toastr: ToastrService, private router: Router,private http: HttpClient) { }
+
+  getAllNotifications(){
+    return this.http.get<INotification[]>(`${this.notificationUrl}AppNotification`).pipe(
+      tap(notifications=>this.notificationsSource.next(notifications))
+    );
+  }
 
   createHubConnection(userAccessToken:string) {
     this.hubConnection = new HubConnectionBuilder()
@@ -73,17 +82,17 @@ export class PresenceService {
         this.notificationsSource.next([...notifications,notification]);
       })
     });
-    this.hubConnection.on('NotificationThread', (notifications:INotification[]) => {
-      // this.toastr.info(`${notification.content}`)
-      //   .onTap
-      //   .pipe(take(1))
-      //   .subscribe({
-      //     ///////////////!!!!!!!!!!!!!!!!!!!!!!
-      //     //next: () => this.router.navigateByUrl('/members/' + username + '?tab=Messages')//!!!!!!!!!!!!!!!!!
-      //   })
-      console.log(notifications);
-      this.notificationsSource.next(notifications);
-    });
+    // this.hubConnection.on('NotificationThread', (notifications:INotification[]) => { //teraz trzba najpierw pobrac po http
+    //   // this.toastr.info(`${notification.content}`)
+    //   //   .onTap
+    //   //   .pipe(take(1))
+    //   //   .subscribe({
+    //   //     ///////////////!!!!!!!!!!!!!!!!!!!!!!
+    //   //     //next: () => this.router.navigateByUrl('/members/' + username + '?tab=Messages')//!!!!!!!!!!!!!!!!!
+    //   //   })
+    //   console.log(notifications);
+    //   this.notificationsSource.next(notifications);
+    // });
     var hubConnectionState = this.hubConnection.start()
     .catch(error => console.log(error))
     .finally(/*() => this.busyService.idle()*/);

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { MessagesService } from 'src/app/messages/messages.service';
-import { EventType, INotification, isINotification } from 'src/app/shared/models/INotification';
+import { EventType, INotification, isINotification, NotificationType } from 'src/app/shared/models/INotification';
 
 @Component({
   selector: 'app-notification-card[notification]',
@@ -12,7 +12,9 @@ export class NotificationCardComponent implements OnInit{
 
   @Input("notification") notificationValue: any;
   notification:INotification|undefined;
-  Events: typeof EventType = EventType;
+
+  //Events: typeof EventType = EventType;
+  notificationsTypes: typeof NotificationType = NotificationType;
   constructor(public messagesService:MessagesService,private toastrService:ToastrService) {
   }
   ngOnChanges(changes: SimpleChanges): void {
@@ -23,18 +25,19 @@ export class NotificationCardComponent implements OnInit{
        this.notification = this.notificationValue;
        
     }
+    
   }
   ngOnInit(): void {
 
   }
-  acceptFriendInvitation(notification:INotification){
-    this.messagesService.acceptFriendInvitation(notification.notificationSender.userId).subscribe(()=>{
+  acceptFriendInvitation(senderId:string){
+    this.messagesService.acceptFriendInvitation(senderId).subscribe(()=>{
       this.toastrService.success("Invitation accepted.")
       //this.invitations$=this.invitations$.pipe(map(invitations=>invitations.filter(x=>x===invitation)));
       //this.invitations$=
     });
   }
-  rejectFriendInvitation(notification:INotification){
+  rejectFriendInvitation(senderId:string){
 
   }
 

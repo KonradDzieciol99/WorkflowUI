@@ -45,7 +45,7 @@
                                     <div class="text-truncate">{{searchUser.email}}</div>
                                 </div>
                                 <div class="d-flex align-items-center me-2" >
-                                    <ng-template [ngIf]="searchUser.isAlreadyInvited===false">
+                                    <!-- <ng-template [ngIf]="searchUser.isAlreadyInvited===false">
                                         <button (click)="sendInvitation(searchUser)" type="button" class="btn btn-outline-success btn-sm" container="body" tooltip="Add to friends." >
                                             <i class="fa-solid fa-user-plus"></i>
                                         </button>
@@ -57,6 +57,27 @@
                                         <button  type="text" class="btn btn-outline-success btn-sm" container="body" tooltip="Friend." >
                                             <i class="fa-solid fa-user-check"></i>
                                         </button>
+                                    </ng-template> -->
+                                    <ng-template [ngIf]="searchUser.status===UserFriendStatusTypes.Stranger">
+                                        <button (click)="sendInvitation(searchUser)" type="button" class="btn btn-outline-success btn-sm" container="body" tooltip="Add to friends." >
+                                            <i class="fa-solid fa-user-plus"></i>
+                                        </button>
+                                    </ng-template>                                      
+                                    <ng-template [ngIf]="searchUser.status===UserFriendStatusTypes.InvitedByYou">
+                                        <span class="loader" container="body" tooltip="Waiting for confirmation."></span>
+                                    </ng-template>
+                                    <ng-template [ngIf]="searchUser.status===UserFriendStatusTypes.Friend">
+                                        <button  type="text" class="btn btn-outline-success btn-sm" container="body" tooltip="Friend." >
+                                            <i class="fa-solid fa-user-check"></i>
+                                        </button>
+                                    </ng-template>
+                                    <ng-template [ngIf]="searchUser.status===UserFriendStatusTypes.InvitedYou"> <!-- TODO!-->
+                                        <button  type="text" class="btn btn-outline-success btn-sm" container="body" tooltip="accept friend request" >
+                                            <i class="fa-solid fa-check"></i>
+                                        </button>
+                                        <!-- <button (click)="declineFriendInvitation(invitation)" type="button" class="btn btn-outline-danger btn-sm" style="width: 35px;" container="body" tooltip="Cancel friend invitation." >
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </button> -->
                                     </ng-template>
                                 </div>
                             </div>
@@ -99,7 +120,7 @@
                     </accordion-group>
                     <accordion-group class="" panelClass="border border-0">
                         <div accordion-heading class="justify-content-between d-flex align-items-center">
-                            <span>Notifications 
+                            <span><del>Notifications</del> Zaproszenia!
                                 <i class="fa-regular fa-bell fa-xs"
                                 [class.green]="(messagesService.invitations$|async)?.length!== 0"
                                 ></i>

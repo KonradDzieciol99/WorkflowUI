@@ -8,7 +8,7 @@ import { IFriendInvitation } from '../shared/models/IFriendInvitation';
 //import { Group } from '../shared/models/IGroup';
 import { Message } from '../shared/models/IMessage';
 import { IPerson } from '../shared/models/IPerson';
-import { ISearchedFriend } from '../shared/models/ISearchedFriend';
+import { ISearchedUser } from '../shared/models/ISearchedUser';
 import { ISimplePerson } from '../shared/models/ISimplePerson';
 
 @Injectable({
@@ -22,6 +22,7 @@ export class MessagesService {
   invitations$ = this.invitationsSource.asObservable();
   //invitations$: Observable<Array<IFriendInvitation>> ;
   private chatUrl:string;
+  private identityServerUrl:string
   private hubUrl:string; 
   private hubConnection: HubConnection|undefined;
   //private messageThreadSource:BehaviorSubject<Message[]>;
@@ -31,13 +32,15 @@ export class MessagesService {
   constructor(private http: HttpClient) {
     this.chatUrl = environment.chatUrl;
     this.hubUrl=environment.signalRhubUrl;
+    this.identityServerUrl=environment.identityServerUrl
     // this.messageThreadSource = new BehaviorSubject<Message[]>([]);
     // this.messageThread$ = this.messageThreadSource.asObservable();
     // this.recipientIsWatchingSource = new BehaviorSubject<boolean>(false);
     // this.recipientIsWatching$ = this.recipientIsWatchingSource.asObservable();
    }
   findUsersByEmailAndCheckState(email:string){
-    return this.http.get<Array<ISearchedFriend>>(`${this.chatUrl}api/Users/test/${email}`);
+    //return this.http.get<Array<ISearchedFriend>>(`${this.chatUrl}api/Users/test/${email}`);
+    return this.http.get<Array<ISearchedUser>>(`${this.identityServerUrl}/IdentityUser/search/${email}`);
   }
   sendInvitation(user:IPerson){
     return this.http.post(`${this.chatUrl}api/FriendInvitation`,user);
