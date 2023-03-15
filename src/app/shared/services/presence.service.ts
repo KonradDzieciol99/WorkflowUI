@@ -14,6 +14,7 @@ export class PresenceService {
 
   hubUrl = environment.signalRhubUrl;
   notificationUrl = environment.notificationUrl;
+  notificationServiceUrl = environment.notificationServiceUrl;
   private hubConnection?: HubConnection;
   private onlineUsersSource = new BehaviorSubject<string[]>([]);
   onlineUsers$ = this.onlineUsersSource.asObservable();
@@ -24,10 +25,36 @@ export class PresenceService {
 
   getAllNotifications(){
     return this.http.get<INotification[]>(`${this.notificationUrl}AppNotification`).pipe(
+      take(1),
       tap(notifications=>this.notificationsSource.next(notifications))
     );
   }
+  markNotificationAsRead(id:string){
+    return this.http.put<void>(`${this.notificationServiceUrl}/AppNotification/${id}`,{}).pipe(
+      take(1),
+      tap(()=>{
+        this.notifications$.pipe(take(1)).subscribe(notifications=>{
+          let nextNotifications = notifications.map((notification) =>
+            notification.id === id ? { ...notification, displayed: true } : notification 
+          );
+          this.notificationsSource.next(nextNotifications);
+        })
 
+      })
+    );
+  }
+  deleteNotification(id:string){
+    return this.http.delete<void>(`${this.notificationServiceUrl}/AppNotification/${id}`).pipe(
+      take(1),
+      tap(()=>{
+        this.notifications$.pipe(take(1)).subscribe(notifications=>{
+          let nextNotifications = notifications.filter(notification => notification.id !== id);
+          this.notificationsSource.next(nextNotifications);
+        })
+
+      })
+    );
+  }
   createHubConnection(userAccessToken:string) {
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(this.hubUrl + 'Presence', {

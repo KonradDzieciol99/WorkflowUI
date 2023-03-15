@@ -2,7 +2,7 @@ import { Component, ElementRef, HostListener, OnDestroy, OnInit, TemplateRef, Vi
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Observable, Subscription, take } from 'rxjs';
+import { filter, map, Observable, Subscription, take } from 'rxjs';
 import { AuthenticationService } from 'src/app/authentication/authentication.service';
 import { HomeService } from 'src/app/home/home.service';
 import { INotification } from 'src/app/shared/models/INotification';
@@ -29,8 +29,9 @@ export class NavBarComponent implements OnInit, OnDestroy  {
   //   backdrop: false,
   //   ignoreBackdropClick: false
   // };
-  notifications$: Observable<INotification[]>;
-  test:string;
+  // notifications$: Observable<INotification[]>;
+  // test:string;
+  notificationsLength$: Observable<number>;
   constructor(private readonly oAuthService: OAuthService,private homeService:HomeService,
       private authenticationService:AuthenticationService,
       private formBuilder: FormBuilder,
@@ -43,9 +44,11 @@ export class NavBarComponent implements OnInit, OnDestroy  {
         this.themeForm.controls["radio"].setValue(theme);
       }
       // this.notifications$=this.presenceService.notifications$;//destroy
-      this.notifications$=this.presenceService.notifications$;
-      this.notifications$.subscribe
-      this.test="d";
+      this.notificationsLength$=this.presenceService.notifications$.pipe(
+        map(x=>{ return x.filter(n=>n.displayed==false).length})
+      );
+      // this.notifications$.subscribe
+      // this.test="d";
    }
    userPicture:string="https://w7.pngwing.com/pngs/419/473/png-transparent-computer-icons-user-profile-login-user-heroes-sphere-black-thumbnail.png"
   

@@ -37,8 +37,8 @@
         <li class="nav-item mb-2 ">
           <button class="btn btn-outline-info me-3 position-relative" #notificationsPanelNutton (click)="isNotificationsPanelExpanded = !isNotificationsPanelExpanded" type="button" tooltip="Notifications" container="body" #pop="bs-tooltip" >
             <i class="fa-solid fa-bell"></i>
-            <span *ngIf="(notifications$|async)?.length !== 0" class="position-absolute top-100 start-100 translate-middle badge rounded-pill bg-danger"> <!-- tooltip="{{(notifications$|async)?.length}} unread notifications" container="body" (mouseenter)="pop.hide()" -->
-              {{(notifications$|async)?.length}}
+            <span *ngIf="(notificationsLength$|async) !== 0" class="position-absolute top-100 start-100 translate-middle badge rounded-pill bg-danger"> <!-- tooltip="{{(notifications$|async)?.length}} unread notifications" container="body" (mouseenter)="pop.hide()" -->
+              {{notificationsLength$|async}}
               <span class="visually-hidden">unread messages</span>
             </span>
           </button>

@@ -2,6 +2,7 @@ import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { MessagesService } from 'src/app/messages/messages.service';
 import { EventType, INotification, isINotification, NotificationType } from 'src/app/shared/models/INotification';
+import { PresenceService } from 'src/app/shared/services/presence.service';
 
 @Component({
   selector: 'app-notification-card[notification]',
@@ -15,7 +16,7 @@ export class NotificationCardComponent implements OnInit{
 
   //Events: typeof EventType = EventType;
   notificationsTypes: typeof NotificationType = NotificationType;
-  constructor(public messagesService:MessagesService,private toastrService:ToastrService) {
+  constructor(public messagesService:MessagesService,private toastrService:ToastrService,private presenceService:PresenceService) {
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['notificationValue']) {
@@ -40,6 +41,15 @@ export class NotificationCardComponent implements OnInit{
   rejectFriendInvitation(senderId:string){
 
   }
-
+  markNotificationAsRead(id:string){
+    this.presenceService.markNotificationAsRead(id).subscribe(()=>{
+      this.toastrService.success("Notification marked as read.")
+    });
+  }
+  deleteNotification(id:string){
+    this.presenceService.deleteNotification(id).subscribe(()=>{
+      this.toastrService.success("Notification has been removed.")
+    });
+  }
 
 }
