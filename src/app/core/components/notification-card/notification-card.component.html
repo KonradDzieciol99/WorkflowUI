@@ -30,14 +30,18 @@
             ></ng-container>
           </ng-container>
           <ng-container *ngSwitchCase="notificationsTypes.NewFriendAdded">
-            <ng-container
-              *ngTemplateOutlet="newFriendAddedNotificationTemplate"
-            ></ng-container>
+            <ng-container *ngTemplateOutlet="newFriendAddedNotificationTemplate"></ng-container>
           </ng-container>
-          <div *ngSwitchDefault>This is Default</div>
+          <ng-container *ngSwitchCase="notificationsTypes.WelcomeNotification">
+            <ng-container *ngTemplateOutlet="WelcomeNotificationTemplate"></ng-container>
+          </ng-container>
+          <!-- <ng-container *ngSwitchCase="notificationsTypes.RemovedFromFriend">
+            <ng-container *ngTemplateOutlet="WelcomeNotificationTemplate"></ng-container>
+          </ng-container> -->
+          <div *ngSwitchDefault>{{ notification.description }}</div>
         </ng-container>
         <p class="card-text">
-          <small class="text-muted">{{ notification.creationDate }}</small>
+          <small class="text-muted">{{ notification.creationDate | date:'medium' }}</small>
         </p>
       </div>
     </div>
@@ -81,8 +85,8 @@
     {{ notification?.notificationPartner?.userEmail }} has sent you a friend request.
   </p>
   <div class="d-flex flex-row mt-1">
-      <button type="button" (click)="acceptFriendInvitation(notification?.notificationPartner?.userId!)" class="btn btn-success btn-sm">Accept</button>
-      <button type="button" (click)="rejectFriendInvitation(notification?.notificationPartner?.userId!)" class="btn btn-danger btn-sm ms-2">Reject </button>
+      <button type="button" (click)="acceptFriendInvitation(notification?.objectId)" class="btn btn-success btn-sm">Accept</button>
+      <button type="button" (click)="rejectFriendInvitation(notification?.objectId)" class="btn btn-danger btn-sm ms-2">Reject </button>
   </div>
 </ng-template>
 <ng-template #friendRequestSentNotificationTemplate>
@@ -95,7 +99,11 @@
     you are now friends with {{ notification?.notificationPartner?.userEmail }}
   </p>
 </ng-template>
-
+<ng-template #WelcomeNotificationTemplate>
+  <p class="card-text mb-0">
+    {{ notification?.description }}
+  </p>
+</ng-template>
 
 
 

@@ -1,0 +1,39 @@
+<!-- <div class="typing-animation">
+    <div class="dot dot-1"></div>
+    <div class="dot dot-2"></div>
+    <div class="dot dot-3"></div>
+</div> -->
+
+<!-- [class.start]="isStartMessage"
+[class.end]="isEndMessage"
+[class.last-read]="isLastRead" -->
+<ng-container *ngIf="chatRecipient">
+  <div class="mb-1 text-break w-75" [ngClass]="'me-auto him'">
+    <div
+      class="d-flex flex-row justify-content-start align-items-end"
+
+      >
+      <img
+        class="border border-1 rounded-circle me-2"
+        src="{{ chatRecipient.photoUrl || './assets/user.png' }}"
+        alt="image of user"
+        style="max-height: 28px"
+        [tooltip]="chatRecipient.email"
+        placement="bottom"
+      />
+      <div
+        class="border p-2 speech-bubble bg-secondary rounded-4" 
+        tooltip="{{chatRecipient.email}} is typing"
+        container="body"> 
+        <!-- <span style="font-size: 20px">
+                {{ message.content }}
+            </span> -->
+        <div class="typing-animation" style="height: 22px;">
+          <div class="dot dot-1"></div>
+          <div class="dot dot-2"></div>
+          <div class="dot dot-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

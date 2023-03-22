@@ -37,15 +37,17 @@ export class NotificationCardComponent implements OnInit{
   ngOnInit(): void {
 
   }
-  acceptFriendInvitation(senderId:string){
-    this.messagesService.acceptFriendInvitation(senderId).subscribe(()=>{
+  acceptFriendInvitation(invitationId:{inviterUserId:string,invitedUserId:string}){
+    this.messagesService.acceptFriendInvitation(invitationId).subscribe(()=>{
       this.toastrService.success("Invitation accepted.")
       //this.invitations$=this.invitations$.pipe(map(invitations=>invitations.filter(x=>x===invitation)));
       //this.invitations$=
     });
   }
-  rejectFriendInvitation(senderId:string){
-
+  rejectFriendInvitation(invitationId:{inviterUserId:string,invitedUserId:string}){
+    this.messagesService.declineFriendInvitation(invitationId).subscribe(()=>{
+      this.toastrService.success("Invitation declined.")
+    });
   }
   markNotificationAsRead(id:string){
     this.presenceService.markNotificationAsRead(id).subscribe(()=>{

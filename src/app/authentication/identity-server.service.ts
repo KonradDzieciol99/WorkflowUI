@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthConfig, OAuthService, UserInfo } from 'angular-oauth2-oidc';
 import { BehaviorSubject, filter, Subject, take } from 'rxjs';
+import { MessagesService } from '../messages/messages.service';
 import { PresenceService } from '../shared/services/presence.service';
 
 export const authConfigForMyApi: AuthConfig = {
@@ -51,7 +52,11 @@ export class IdentityServerService {
   public isDoneLoading$ = this.isDoneLoadingSubject$.asObservable();
   userProfileSubject = new Subject<UserInfo>();
 
-  constructor(private readonly oAuthService: OAuthService, private readonly httpClient: HttpClient,private router: Router, private presenceService:PresenceService ) {
+  constructor(private readonly oAuthService: OAuthService,
+     private readonly httpClient: HttpClient,
+     private router: Router,
+     private presenceService:PresenceService,
+     private messagesService:MessagesService ) {
     this.load()
   }
   load(){
@@ -136,7 +141,11 @@ export class IdentityServerService {
 
           //presence
           this.presenceService.createHubConnection(this.oAuthService.getAccessToken());
-          this.presenceService.getAllNotifications().pipe(take(1)).subscribe()
+
+          this.presenceService.getAllNotifications().pipe(take(1)).subscribe();
+
+          //this.messagesService.stopHubConnection();
+          this.messagesService.createHubConnection(this.oAuthService.getAccessToken())
         }
       });
     });

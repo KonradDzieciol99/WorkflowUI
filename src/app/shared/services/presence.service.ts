@@ -104,9 +104,15 @@ export class PresenceService {
     // this.hubConnection.on('NewChatNotificationReceived', (notification:INotification) => {
     //   this.onlineUsersSource.next(usernames);
     // })
-    this.hubConnection.on('NewNotificationReceived', (notification:INotification) => {
+    this.hubConnection.on('NewNotificationReceived', (newNotification:INotification) => {
       this.notifications$.pipe(take(1)).subscribe(notifications=>{
-        this.notificationsSource.next([...notifications,notification]);
+        let oldNotificationIndex=notifications.findIndex(x=>x.id===newNotification.id);
+
+        if (oldNotificationIndex !== -1) {
+          notifications.splice(oldNotificationIndex, 1);
+        }
+        
+        this.notificationsSource.next([...notifications,newNotification]);
       })
     });
     // this.hubConnection.on('NotificationThread', (notifications:INotification[]) => { //teraz trzba najpierw pobrac po http

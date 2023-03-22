@@ -1,0 +1,36 @@
+@keyframes wave {
+    0% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-6px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+  
+.typing-animation {
+    display: flex;
+    align-items: center;
+  
+    .dot {
+      width: 6px;
+      height: 6px;
+      background-color: var(--bs-primary);
+      border-radius: 50%;
+      margin-right: 4px;
+      animation: wave 1s infinite;
+
+      &.dot-1 {
+        animation-delay: 0ms;
+      }
+      &.dot-2 {
+        animation-delay: 200ms;
+      }
+      &.dot-3 {
+        animation-delay: 400ms;
+      }
+      
+    }
+}

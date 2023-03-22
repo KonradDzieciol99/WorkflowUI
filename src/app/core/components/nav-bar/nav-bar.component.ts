@@ -5,6 +5,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { filter, map, Observable, Subscription, take } from 'rxjs';
 import { AuthenticationService } from 'src/app/authentication/authentication.service';
 import { HomeService } from 'src/app/home/home.service';
+import { MessagesService } from 'src/app/messages/messages.service';
 import { INotification } from 'src/app/shared/models/INotification';
 import { PresenceService } from 'src/app/shared/services/presence.service';
 
@@ -15,6 +16,7 @@ import { PresenceService } from 'src/app/shared/services/presence.service';
 })
 export class NavBarComponent implements OnInit, OnDestroy  {
 
+  isNumberOfOnlineUsersTooltipVisible=false;
   isCollapsed:boolean = true;
   public themeForm:FormGroup=this.formBuilder.nonNullable.group({
     radio:"auto"
@@ -32,12 +34,12 @@ export class NavBarComponent implements OnInit, OnDestroy  {
   // notifications$: Observable<INotification[]>;
   // test:string;
   notificationsLength$: Observable<number>;
+  numberOfOnlineUsers$: Observable<number>;
   constructor(private readonly oAuthService: OAuthService,private homeService:HomeService,
       private authenticationService:AuthenticationService,
       private formBuilder: FormBuilder,
-      private presenceService : PresenceService,
-      // private modalService: BsModalService
-      )
+      private readonly presenceService : PresenceService,
+      private readonly messagesService:MessagesService)
     {
       let theme = localStorage.getItem("theme");
       if (theme==="dark"||theme==="light") {
@@ -47,6 +49,8 @@ export class NavBarComponent implements OnInit, OnDestroy  {
       this.notificationsLength$=this.presenceService.notifications$.pipe(
         map(x=>{ return x.filter(n=>n.displayed==false).length})
       );
+      this.numberOfOnlineUsers$=this.messagesService.onlineUsers$.pipe(map(x=>x.length));
+
       // this.notifications$.subscribe
       // this.test="d";
    }

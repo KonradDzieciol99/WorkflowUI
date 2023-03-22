@@ -94,7 +94,7 @@
                         </div>
                          <!-- sadfsadf tutututututututututut    -->
                          {{friends$ |async|json}}
-                         <div *ngFor="let friend of friends$ |async; let i = index" (click)="onFriendSelected(friend.email)"  id="friend-card" type="button"  class="border border-1 ">
+                         <div *ngFor="let friend of friends$ |async; let i = index" (click)="onFriendSelected(friend)"  id="friend-card" type="button"  class="border border-1 ">
                              <div class="d-flex flex-row justify-content-start " style="">
                                  <div class="me-2" >
                                      <div class="p-1"  style="width: 40px; height: 40px;">
@@ -110,7 +110,7 @@
                                      </div>
                                  </div>
                                  <div class="d-flex align-items-center me-2" >
-                                     <button (click)="declineAcceptedFriendInvitation(friend,i)" type="button" class="btn btn-outline-danger btn-sm" style="width: 35px;" container="body" tooltip="Remove friend." >
+                                     <button (click)="declineAcceptedFriendInvitation(friend)" type="button" class="btn btn-outline-danger btn-sm" style="width: 35px;" container="body" tooltip="Remove friend." >
                                          <i class="fa-solid fa-xmark"></i>
                                      </button>
                                  </div>
@@ -122,13 +122,13 @@
                         <div accordion-heading class="justify-content-between d-flex align-items-center">
                             <span><del>Notifications</del> Zaproszenia!
                                 <i class="fa-regular fa-bell fa-xs"
-                                [class.green]="(messagesService.invitations$|async)?.length!== 0"
+                                [class.green]="(messagesService.invitationRequests$|async)?.length!== 0"
                                 ></i>
                             </span>
                         </div>
                         <!-- sadfsadf     -->
-                        {{messagesService.invitations$ |async|json}}
-                        <div *ngFor="let invitation of messagesService.invitations$ |async" class="border border-1 ">
+                        {{messagesService.invitationRequests$ |async|json}}
+                        <div *ngFor="let invitation of messagesService.invitationRequests$ |async" class="border border-1 ">
                             <div class="d-flex flex-row justify-content-start">
                                 <div class="me-2" >
                                     <div class="p-1"  style="width: 40px; height: 40px;">
@@ -158,7 +158,7 @@
             <div class="h-100">
                 <!-- {{messagesService.messageThread$|async|json}} -->
                 <!-- // -->
-                <app-chat *ngIf="currentRecipientEmail" [currentRecipientEmail]="currentRecipientEmail"></app-chat>
+                <app-chat *ngIf="chatRecipient" [chatRecipient]="chatRecipient"></app-chat>
                 <!-- // userClaims['email']-->
             </div>
         </div>

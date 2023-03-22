@@ -60,59 +60,32 @@
         <div *ngIf="(chatService.messageThread$| async)?.length === 0">
             No messages yet... say hi by using the message box below
         </div>
-<!-- sdfs -->
-        <!-- <ul 
-            *ngIf="(messagesService.messageThread$ | async)!.length > 0" class="chat">
-            <li *ngFor="let message of (messagesService.messageThread$ | async)">
-                <div>
-                    <span class="chat-img float-end">
-                        <img class="rounded-circle" 
-                            src="{{message.senderPhotoUrl || './assets/user.png'}}" 
-                            alt="image of user">
-                    </span>
-                    <div class="chat-body">
-                        <div class="header">
-                            <small class="text-muted">
-                                <span class="fa fa-clock-o">{{message.messageSent }}</span>
-                                <span class="text-danger" *ngIf="!message.dateRead 
-                                    && message.senderEmail !== currentRecipientEmail">(unread)</span>
-                                <span class="text-success" *ngIf="message.dateRead 
-                                    && message.senderEmail !== currentRecipientEmail">(read {{message.dateRead}})</span>
-                            </small>
-                        </div>
-                        <p>{{message.content}}</p>
-                    </div>
-                </div>
-            </li>
-        </ul>    
-                    [attr.id]="message.senderEmail !== currentRecipientEmail ? 'align-self-endTEST' : 'align-self-startTEST'"
+        <div *ngIf="(chatService.messageThread$ | async)!.length > 0 " class="d-flex flex-column chat" id="test1" >
 
-        -->
-
-        <div *ngIf="(chatService.messageThread$ | async)!.length > 0 && indexOfLastDisplayed" class="d-flex flex-column chat" id="test1" >
-            <div *ngFor="let message of (chatService.messageThread$ | async); let i = index;" 
+            <app-message *ngFor="let message of (chatService.messageThread$ | async); let i = index;" 
+            [message]="message"
+            [currentRecipientEmail]="chatRecipient.email"
+            #messages
+            [isMyMessage]="message.senderEmail !== chatRecipient.email"
+            [isStartMessage]="(chatService.messageThread$ | async)?.[i-1]?.senderEmail===message.senderEmail ? false : true"
+            [isEndMessage]="(chatService.messageThread$ | async)?.[i+1]?.senderEmail===message.senderEmail ? false: true"
+            [isLastRead]="indexOfLastDisplayed===i"
+           
+            >
+            <!-- class="d-flex flex-column" -->
+            </app-message>
+            
+            <app-conversation-bubble-type-animation *ngIf=" chatService.recipientIsTyping$ | async" [chatRecipient]="chatRecipient">
+            </app-conversation-bubble-type-animation>
+            <!-- <div *ngFor="let message of (chatService.messageThread$ | async); let i = index;" 
             [ngClass]="message.senderEmail !== currentRecipientEmail ? 'align-self-end me' : 'align-self-start him'"
             [class.start]="(chatService.messageThread$ | async)?.[i-1]?.senderEmail===message.senderEmail ? false : true"
             [class.end]="(chatService.messageThread$ | async)?.[i+1]?.senderEmail===message.senderEmail ?false: true "
             class="w-75 mb-1 "
             [class.last-read]="indexOfLastDisplayed===i"
             #messages
+            style="word-break: break-word;"
             >
-                <!-- <div class="d-flex flex-row">
-                    <img class="rounded-circle" src="{{message.senderPhotoUrl || './assets/user.png'}}" alt="image of user" style="max-height: 40px;">
-                    <span 
-                    style="font-size: 20px;"
-                    class="border rounded p-1"
-                    >{{message.content}}</span>
-                </div>
-
-                <span 
-                style="font-size: 20px;"
-                class="border rounded p-1"
-                >{{message.content}}
-                </span> -->
-                 <!-- {{(messagesService.messageThread$ | async)?.[i-1]?.senderEmail===message.senderEmail ? false : true}}
-                {{i-1}}  -->
                 <div class="d-flex flex-row justify-content-start align-items-end" *ngIf="message.senderEmail === currentRecipientEmail; else textOnTheRight">
                     <img class=" border border-1 rounded-circle me-2" src="{{message.senderPhotoUrl || './assets/user.png'}}" alt="image of user" style="max-height: 28px;"
                     [tooltip]="message.senderEmail"
@@ -138,17 +111,7 @@
                                 {{message.content}}
                             </span>
                         </div>
-
-                        <!-- <img class=" border border-1 rounded-circle me-2" src="{{message.senderPhotoUrl || './assets/user.png'}}" alt="image of user" style="max-height: 28px;"
-                        [tooltip]="message.senderEmail"
-                        placement="bottom"
-                        > -->
-
                         <ng-template [ngIf]="!message.dateRead && message.senderEmail !== currentRecipientEmail" [ngIfElse]="loggedOut">
-                            <!-- <img class=" border border-1 rounded-circle me-2" src="{{message.senderPhotoUrl || './assets/user.png'}}" alt="image of user" style="max-height: 28px;"
-                            tooltip="(unread)"
-                            placement="bottom"
-                            > -->
                         <div>
                             <div style="position: relative; width: 1.5rem;" >
                                 <i  class="fa-solid fa-eye-slash me-2 ms-1 fa-2xs"
@@ -160,7 +123,6 @@
                         </div>
                         </ng-template>
                         <ng-template #loggedOut>
-                            <!-- <span class=" border border-1 rounded-circle me-2"> -->
                         <div>
                             <div style="position: relative; width: 1.5rem; " >
                                 <i  class="fa-solid fa-eye me-2 ms-1 fa-2xs "
@@ -171,42 +133,12 @@
                                 ></i>
                             </div>
                         </div>
-                        <!-- </span> -->
-                            <!-- <i class="fa-solid fa-eye"></i>  style="max-height: 18px;"-->
                         </ng-template>
                     </div>
                 </ng-template>
-
-                <!-- <div> -->
-                    <!-- <span class="chat-img float-end">
-                        <img class="rounded-circle" 
-                            src="{{message.senderPhotoUrl || './assets/user.png'}}" 
-                            alt="image of user">
-                    </span> -->
-                    <!-- <div class="chat-body"> -->
-                        <!-- <div class="header"> -->
-                            <!-- <small class="text-muted">
-                                <span class="fa fa-clock-o">{{message.messageSent }}</span>
-                                <span class="text-danger" *ngIf="!message.dateRead 
-                                    && message.senderEmail !== currentRecipientEmail">(unread)</span>
-                                <span class="text-success" *ngIf="message.dateRead 
-                                    && message.senderEmail !== currentRecipientEmail">(read {{message.dateRead}})</span>
-                            </small> -->
-                        <!-- </div> -->
-                        <!-- <p>{{message.content}}</p>
-                        <span class="chat-img float-end">
-                        <img class="rounded-circle" 
-                            src="{{message.senderPhotoUrl || './assets/user.png'}}" 
-                            alt="image of user">
-                        </span> -->
-                    <!-- </div> -->
-                <!-- </div> -->
-                </div>
+            </div> -->
         </div>
-
-        <!-- sdfs -->
     </div>
-
     <div class="card-footer">
         <div class="d-flex">
             <div class="d-flex align-items-center justify-content-center me-2"  *ngIf="this.chatService.recipientIsWatching$|async">
@@ -214,7 +146,6 @@
                     <span class="visually-hidden">User is watching</span>
                 </div>
             </div>
-            <!-- <form #messageForm="ngForm" (ngSubmit)="sendMessage()" autocomplete="off">  -->
             <div class="flex-grow-1">
                 <div class="input-group ">
                     <input 
@@ -236,7 +167,6 @@
                     </div>
                 </div>
             </div>
-            <!-- </form> -->
         </div>
     </div>
 </div>

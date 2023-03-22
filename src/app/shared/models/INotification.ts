@@ -3,7 +3,7 @@ import { ISimplePerson } from "./ISimplePerson";
 export interface INotification{ //raneme to IAppNotification
     id:string
     userId:string
-    objectId:string
+    objectId:any
     eventType: EventType
     data:any
     creationDate:Date;
@@ -28,6 +28,9 @@ export enum EventType {
 export enum NotificationType {
     FriendRequestSent = "FriendRequestSent",
     FriendRequestReceived = "FriendRequestReceived",
-    NewFriendAdded = "NewFriendAdded"
+    NewFriendAdded = "NewFriendAdded",
+    WelcomeNotification = "WelcomeNotification",
+    RemovedFromFriend = "RemovedFromFriend",
+    YouDeletedFriend = "YouDeletedFriend",
 }
 
