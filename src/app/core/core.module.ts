@@ -34,6 +34,7 @@ import { NotificationsPanelComponent } from './components/notifications-panel/no
     ReactiveFormsModule,
     ButtonsModule.forRoot(),
     TooltipModule.forRoot(),
+    
   ],
   exports: [HeaderComponent],
   providers:[

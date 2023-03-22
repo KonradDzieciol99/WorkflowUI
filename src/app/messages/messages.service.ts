@@ -2,26 +2,31 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, map, mergeMap, Observable, of, take, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, mergeMap, Observable, of, take, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { IFriendInvitation } from '../shared/models/IFriendInvitation';
 //import { Group } from '../shared/models/IGroup';
 import { Message } from '../shared/models/IMessage';
 import { IPerson } from '../shared/models/IPerson';
-import { ISearchedFriend } from '../shared/models/ISearchedFriend';
+import { ISearchedUser } from '../shared/models/ISearchedUser';
 import { ISimplePerson } from '../shared/models/ISimplePerson';
 
 @Injectable({
   providedIn: 'root'
 })
-export class MessagesService {
+export class MessagesService  {
   //private baseUrl = environment.apiUrl;
+  private confirmedInvitationsSource : BehaviorSubject<IFriendInvitation[]>=new BehaviorSubject<IFriendInvitation[]>([]);;
+  confirmedInvitations$:Observable<IFriendInvitation[]> = this.confirmedInvitationsSource.asObservable();
   private onlineUsersSource = new BehaviorSubject<ISimplePerson[]>([]);
   onlineUsers$ = this.onlineUsersSource.asObservable();
-  private invitationsSource = new BehaviorSubject<IFriendInvitation[]>([]);
-  invitations$ = this.invitationsSource.asObservable();
+  private invitationRequestSource = new BehaviorSubject<IFriendInvitation[]>([]);
+  invitationRequests$ = this.invitationRequestSource.asObservable();
+  friends$ = new Observable<Array<IPerson>>();
+
   //invitations$: Observable<Array<IFriendInvitation>> ;
   private chatUrl:string;
+  private identityServerUrl:string
   private hubUrl:string; 
   private hubConnection: HubConnection|undefined;
   //private messageThreadSource:BehaviorSubject<Message[]>;
@@ -31,21 +36,66 @@ export class MessagesService {
   constructor(private http: HttpClient) {
     this.chatUrl = environment.chatUrl;
     this.hubUrl=environment.signalRhubUrl;
+    this.identityServerUrl=environment.identityServerUrl
     // this.messageThreadSource = new BehaviorSubject<Message[]>([]);
     // this.messageThread$ = this.messageThreadSource.asObservable();
     // this.recipientIsWatchingSource = new BehaviorSubject<boolean>(false);
     // this.recipientIsWatching$ = this.recipientIsWatchingSource.asObservable();
    }
   findUsersByEmailAndCheckState(email:string){
-    return this.http.get<Array<ISearchedFriend>>(`${this.chatUrl}api/Users/test/${email}`);
+    //return this.http.get<Array<ISearchedFriend>>(`${this.chatUrl}api/Users/test/${email}`);
+    return this.http.get<Array<ISearchedUser>>(`${this.identityServerUrl}/IdentityUser/search/${email}`);
   }
   sendInvitation(user:IPerson){
     return this.http.post(`${this.chatUrl}api/FriendInvitation`,user);
   }
   getAllFriendInvitation(){
     return this.http.get<IFriendInvitation[]>(`${this.chatUrl}api/FriendInvitation/GetAllInvitations`).pipe(
-      tap(invitations=>this.invitationsSource.next(invitations))
+      take(1),
+      tap(invitations=>this.invitationRequestSource.next(invitations))
     );
+  }
+
+  getFriendsWithActivityStatus(user:IPerson){
+    return combineLatest({confirmedInvitations: this.confirmedInvitations$, activeUsers: this.onlineUsers$})
+    .pipe(
+      map(response=> {
+        return response.confirmedInvitations.map(invitation=>{
+          let friendEmail = invitation.inviterUserEmail === user.email ? invitation.invitedUserEmail : invitation.inviterUserEmail;
+          let friendId =  invitation.inviterUserId === user.id ? invitation.invitedUserId : invitation.inviterUserId;
+          let friendPhoto = invitation.inviterPhotoUrl === user.photoUrl ? invitation.invitedPhotoUrl : invitation.inviterPhotoUrl
+          let person : IPerson ={
+            email: friendEmail,
+            id: friendId,
+            photoUrl: friendPhoto,
+            isOnline: false,
+          }
+          if(response.activeUsers.find(x=>x.userEmail===friendEmail)){person.isOnline=true;}
+          return person;
+        })
+      }),
+    );
+    // this.friends$ = combineLatest({confirmedInvitations: this.confirmedInvitations$, activeUsers: this.onlineUsers$})
+    // .pipe(
+    //   map(response=> {
+    //     return response.confirmedInvitations.map(invitation=>{
+    //       let friendEmail = invitation.inviterUserEmail === user.email ? invitation.invitedUserEmail : invitation.inviterUserEmail;
+    //       let friendId =  invitation.inviterUserId === user.id ? invitation.invitedUserId : invitation.inviterUserId;
+    //       let friendPhoto = invitation.inviterPhotoUrl === user.photoUrl ? invitation.invitedPhotoUrl : invitation.inviterPhotoUrl
+    //       let person : IPerson ={
+    //         email: friendEmail,
+    //         id: friendId,
+    //         photoUrl: friendPhoto,
+    //         isOnline: false,
+    //       }
+    //       if(response.activeUsers.find(x=>x.userEmail===friendEmail)){person.isOnline=true;}
+    //       return person;
+    //     })
+
+
+    //   }),
+     
+    // );
   }
   // acceptFriendInvitation(invitation:IFriendInvitation){
   //   return this.http.post(`${this.chatUrl}api/FriendInvitation/AcceptFriendInvitation`,invitation).pipe(
@@ -57,32 +107,71 @@ export class MessagesService {
   //     }),
   //   );
   // }
-  acceptFriendInvitation(invitationSenderId:string){
-    return this.http.post(`${this.chatUrl}api/FriendInvitation/AcceptFriendInvitation`,{invitationSenderId}).pipe(
-      // mergeMap(()=> {
-      //   return this.invitations$.pipe(
-      //     take(1),
-      //     map(invitations=>invitations.filter(x=>x!==invitation)),
-      //     tap(invitations=>this.invitationsSource.next(invitations)))
-      // }),
-    );
-  }
-  declineFriendInvitation(invitation:IFriendInvitation){
-    return this.http.post(`${this.chatUrl}api/FriendInvitation/DeclineFriendInvitation`,invitation).pipe(
+  acceptFriendInvitation(invitationId:{inviterUserId:string,invitedUserId:string}){
+
+    //{inviterUserId:string,invitedUserId:string}
+    return this.http.post(`${this.chatUrl}api/FriendInvitation/AcceptFriendInvitation`,invitationId).pipe(
       mergeMap(()=> {
-        return this.invitations$.pipe(
+        return this.invitationRequests$.pipe(
           take(1),
-          map(invitations=>invitations.filter(x=>x!==invitation)),
-          tap(invitations=>this.invitationsSource.next(invitations)))
-      }),
+          map(invitations=>{
+            let invitationIndex = invitations.findIndex(invitation=>{
+             return (invitation.inviterUserId===invitationId.invitedUserId && invitation.invitedUserId === invitationId.inviterUserId) 
+             || (invitation.inviterUserId===invitationId.inviterUserId && invitation.invitedUserId === invitationId.invitedUserId)
+            })
+            if (invitationIndex !== -1) {
+              invitations.splice(invitationIndex)
+              this.invitationRequestSource.next(invitations)
+            }
+          }))
+      })
     );
   }
-  declineAcceptedFriendInvitation(invitation:IFriendInvitation){
-    return this.http.post(`${this.chatUrl}api/FriendInvitation/DeclineFriendInvitation`,invitation)
+  declineFriendInvitation(invitationId:{inviterUserId:string,invitedUserId:string}){
+    return this.http.post(`${this.chatUrl}api/FriendInvitation/DeclineFriendInvitation`,invitationId).pipe(
+      mergeMap(()=> {
+        return this.invitationRequests$.pipe(
+          take(1),
+          map(invitations=>{
+            let invitationIndex = invitations.findIndex(invitation=>{
+             return (invitation.inviterUserId===invitationId.invitedUserId && invitation.invitedUserId === invitationId.inviterUserId) 
+             || (invitation.inviterUserId===invitationId.inviterUserId && invitation.invitedUserId === invitationId.invitedUserId)
+            })
+            if (invitationIndex !== -1) {
+              invitations.splice(invitationIndex)
+              this.invitationRequestSource.next(invitations)
+            }
+          }))
+      })
+    );
   }
 
-  getAllFriends(){
-    return this.http.get<IFriendInvitation[]>(`${this.chatUrl}api/FriendInvitation/GetAllFriends`);
+  // declineAcceptedFriendInvitation(invitation:IFriendInvitation){
+  //   return this.http.post(`${this.chatUrl}api/FriendInvitation/DeclineFriendInvitation`,invitation)
+  // }
+
+  declineAcceptedFriendInvitation(invitationId:{inviterUserId:string,invitedUserId:string}){
+
+    return this.http.post(`${this.chatUrl}api/FriendInvitation/DeclineFriendInvitation`,invitationId).pipe(
+      take(1),
+      tap(x=>{this.confirmedInvitations$.pipe(take(1)).subscribe(invitations=>{
+        let invitationIndex = invitations.findIndex(invitation=>{
+          return (invitation.inviterUserId===invitationId.invitedUserId && invitation.invitedUserId === invitationId.inviterUserId) 
+          || (invitation.inviterUserId===invitationId.inviterUserId && invitation.invitedUserId === invitationId.invitedUserId)
+         });
+         if (invitationIndex !== -1) {
+          invitations.splice(invitationIndex)
+          this.confirmedInvitationsSource.next(invitations)
+        }
+      })}
+    ))
+  }
+
+  getAllFriends(){ //zakkceptowane zaproszenia
+    return this.http.get<IFriendInvitation[]>(`${this.chatUrl}api/FriendInvitation/GetAllFriends`).pipe(
+      take(1),
+      tap(friends=>this.confirmedInvitationsSource.next(friends))
+    );
   }
   createHubConnection(userAccessToken:string):Promise<void> {
     this.hubConnection = new HubConnectionBuilder()
@@ -145,13 +234,13 @@ export class MessagesService {
     });
 
     this.hubConnection.on('FriendInvitationAccepted', (invitation: IFriendInvitation) => { ///FriendActeptedmyInvitation
-      this.invitations$.pipe(take(1)).subscribe(invitations=>{///FriendActeptedmyInvitation
-        this.invitationsSource.next([...invitations,invitation]);
+      this.confirmedInvitations$.pipe(take(1)).subscribe(invitations=>{///FriendActeptedmyInvitation
+        this.confirmedInvitationsSource.next([...invitations,invitation]);
       })//totaj nie intations tylko friends!!
     });
     this.hubConnection.on('NewInvitationToFriendsReceived', (invitation: IFriendInvitation) => { ///FriendActeptedmyInvitation
-      this.invitations$.pipe(take(1)).subscribe(invitations=>{///FriendActeptedmyInvitation
-        this.invitationsSource.next([...invitations,invitation]);
+      this.invitationRequests$.pipe(take(1)).subscribe(invitations=>{///FriendActeptedmyInvitation
+        this.invitationRequestSource.next([...invitations,invitation]);
       })
     });
     var hubConnectionState = this.hubConnection.start()
@@ -185,3 +274,14 @@ export class MessagesService {
     //   this.messageThreadSource.next(messages);
     // })
 }
+
+// declineFriendInvitation(invitationId:{inviterUserId:string,invitedUserId:string}){
+//   return this.http.post(`${this.chatUrl}api/FriendInvitation/DeclineFriendInvitation`,invitation).pipe(
+//     mergeMap(()=> {
+//       return this.invitations$.pipe(
+//         take(1),
+//         map(invitations=>invitations.filter(x=>x!==invitation)),
+//         tap(invitations=>this.invitationsSource.next(invitations)))
+//     }),
+//   );
+// }

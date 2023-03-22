@@ -10,5 +10,8 @@
         [notification]="notification"
       ></app-notification-card>
     </div>
+    <div class="text-center" *ngIf="(notifications$ | async)?.length === 0">
+      No notifications.
+    </div>
   </div>
 </div>

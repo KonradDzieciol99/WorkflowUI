@@ -1,11 +1,11 @@
-<div class="card">
+<div *ngIf="notification" class="card position-relative" [class.is-not-displayed]="!notification.displayed">
   <!-- style="max-width: 540px" border-0 col-4  p-2 pe-0-->
   <div class="row g-0">
     <div class="d-none d-sm-flex col-sm-1 col-lg-3 d-flex align-items-center justify-content-center ps-2">
-      <div style="max-width: 90%">
+      <div style="max-width: 90%" >
         <img
-          [src]="notification?.notificationSender?.userPhotoUrl ??'./assets/user.png'"
-          class="img-fluid rounded-circle"
+          [src]="notification.notificationPartner.userPhotoUrl ??'./assets/user.png'"
+          class="img-fluid rounded-circle border border-3"
           alt="..."
         />
       </div>
@@ -18,39 +18,93 @@
           This is a wider card with supporting text below as a natural lead-in
         </p>-->
 
-        <ng-container [ngSwitch]="notification?.eventType">
-          <ng-container *ngSwitchCase="Events.FriendInvitationAcceptedEvent">
+        <ng-container [ngSwitch]="notification.notificationType">
+          <ng-container *ngSwitchCase="notificationsTypes.FriendRequestSent">
             <ng-container
-              *ngTemplateOutlet="friendInvitationAcceptedEventTemplate"
+              *ngTemplateOutlet="friendRequestSentNotificationTemplate"
             ></ng-container>
           </ng-container>
-          <ng-container *ngSwitchCase="Events.InviteUserToFriendsEvent">
+          <ng-container *ngSwitchCase="notificationsTypes.FriendRequestReceived">
             <ng-container
-              *ngTemplateOutlet="inviteUserToFriendsEventTemplate"
+              *ngTemplateOutlet="friendRequestReceivedNotificationTemplate"
             ></ng-container>
           </ng-container>
-          <!-- <div *ngSwitchDefault>This is Default</div> -->
+          <ng-container *ngSwitchCase="notificationsTypes.NewFriendAdded">
+            <ng-container *ngTemplateOutlet="newFriendAddedNotificationTemplate"></ng-container>
+          </ng-container>
+          <ng-container *ngSwitchCase="notificationsTypes.WelcomeNotification">
+            <ng-container *ngTemplateOutlet="WelcomeNotificationTemplate"></ng-container>
+          </ng-container>
+          <!-- <ng-container *ngSwitchCase="notificationsTypes.RemovedFromFriend">
+            <ng-container *ngTemplateOutlet="WelcomeNotificationTemplate"></ng-container>
+          </ng-container> -->
+          <div *ngSwitchDefault>{{ notification.description }}</div>
         </ng-container>
         <p class="card-text">
-          <small class="text-muted">{{ notification?.messageCreated }}</small>
+          <small class="text-muted">{{ notification.creationDate | date:'medium' }}</small>
         </p>
       </div>
     </div>
   </div>
+  <!-- <div #testyy>
+    <button 
+      class="display-button  ">dd
+    </button>
+  </div> left: 50%; left: -50%;-->
+  <!-- <div style="position: absolute; left: 50%;">
+    <button style="position: relative; left: -50%;">
+      I am some 
+    </button>
+  </div> start-50 -->
+  <div  class="display-options position-absolute top-50  translate-middle d-flex flex-column" style="left: 92%; opacity: 0;"  >
+    <div class="bg-body-tertiary mb-1 rounded" >
+      <button style="width: 32px; " 
+              *ngIf="notification?.displayed===false" 
+              (click)="markNotificationAsRead(notification.id)" 
+              type="button" 
+              class="btn btn-outline-info btn-sm " 
+              tooltip="Mark as read" 
+              container="body">
+        <i class="fa-solid fa-check"></i>
+      </button>
+    </div>
+    <div class="bg-body-tertiary rounded">
+      <button style="width: 32px;" 
+              (click)="deleteNotification(notification.id)" 
+              type="button" 
+              class="btn btn-outline-warning btn-sm" 
+              tooltip="Delete notification" 
+              container="body">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  </div>
 </div>
-<ng-template #inviteUserToFriendsEventTemplate>
+<ng-template #friendRequestReceivedNotificationTemplate>
   <p class="card-text mb-0">
-    {{ notification?.notificationSender?.userEmail }} has sent you a friend
-    request.
+    {{ notification?.notificationPartner?.userEmail }} has sent you a friend request.
   </p>
   <div class="d-flex flex-row mt-1">
-      <button type="button" (click)="acceptFriendInvitation(notification!)" class="btn btn-success btn-sm">Accept</button>
-      <button type="button" (click)="rejectFriendInvitation(notification!)" class="btn btn-danger btn-sm ms-2">Reject </button>
+      <button type="button" (click)="acceptFriendInvitation(notification?.objectId)" class="btn btn-success btn-sm">Accept</button>
+      <button type="button" (click)="rejectFriendInvitation(notification?.objectId)" class="btn btn-danger btn-sm ms-2">Reject </button>
   </div>
 </ng-template>
-<ng-template #friendInvitationAcceptedEventTemplate>
+<ng-template #friendRequestSentNotificationTemplate>
   <p class="card-text mb-0">
-    {{ notification?.notificationSender?.userEmail }} has accepted your
-    invitation.
+    You have sent an invitation to {{ notification?.notificationPartner?.userEmail }}.
   </p>
 </ng-template>
+<ng-template #newFriendAddedNotificationTemplate>
+  <p class="card-text mb-0">
+    you are now friends with {{ notification?.notificationPartner?.userEmail }}
+  </p>
+</ng-template>
+<ng-template #WelcomeNotificationTemplate>
+  <p class="card-text mb-0">
+    {{ notification?.description }}
+  </p>
+</ng-template>
+
+
+
+      <!-- translate-middle top-0 start-0 position-absolute top-0 start-0 mx-auto-->

@@ -2,7 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthConfig, OAuthService, UserInfo } from 'angular-oauth2-oidc';
-import { BehaviorSubject, filter, Subject } from 'rxjs';
+import { BehaviorSubject, filter, Subject, take } from 'rxjs';
+import { MessagesService } from '../messages/messages.service';
 import { PresenceService } from '../shared/services/presence.service';
 
 export const authConfigForMyApi: AuthConfig = {
@@ -11,7 +12,7 @@ export const authConfigForMyApi: AuthConfig = {
   clientId: 'interactive',
   responseType: 'code',
   strictDiscoveryDocumentValidation: false,
-  scope: 'openid offline_access email_access_token profile email',//emailweatherapi
+  scope: 'openid offline_access email_access_token profile email IdentityServerApi',//emailweatherapi
   showDebugInformation: false,
   sessionChecksEnabled: true,
   clearHashAfterLogin: false,
@@ -51,7 +52,11 @@ export class IdentityServerService {
   public isDoneLoading$ = this.isDoneLoadingSubject$.asObservable();
   userProfileSubject = new Subject<UserInfo>();
 
-  constructor(private readonly oAuthService: OAuthService, private readonly httpClient: HttpClient,private router: Router, private presenceService:PresenceService ) {
+  constructor(private readonly oAuthService: OAuthService,
+     private readonly httpClient: HttpClient,
+     private router: Router,
+     private presenceService:PresenceService,
+     private messagesService:MessagesService ) {
     this.load()
   }
   load(){
@@ -136,6 +141,11 @@ export class IdentityServerService {
 
           //presence
           this.presenceService.createHubConnection(this.oAuthService.getAccessToken());
+
+          this.presenceService.getAllNotifications().pipe(take(1)).subscribe();
+
+          //this.messagesService.stopHubConnection();
+          this.messagesService.createHubConnection(this.oAuthService.getAccessToken())
         }
       });
     });

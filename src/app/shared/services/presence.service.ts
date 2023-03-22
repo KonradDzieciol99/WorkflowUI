@@ -1,8 +1,9 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, take } from 'rxjs';
+import { BehaviorSubject, take, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { INotification } from '../models/INotification';
 
@@ -12,13 +13,48 @@ import { INotification } from '../models/INotification';
 export class PresenceService {
 
   hubUrl = environment.signalRhubUrl;
+  notificationUrl = environment.notificationUrl;
+  notificationServiceUrl = environment.notificationServiceUrl;
   private hubConnection?: HubConnection;
   private onlineUsersSource = new BehaviorSubject<string[]>([]);
   onlineUsers$ = this.onlineUsersSource.asObservable();
   private notificationsSource = new BehaviorSubject<INotification[]>([]);
   notifications$ = this.notificationsSource.asObservable();
-  constructor(private toastr: ToastrService, private router: Router) { }
 
+  constructor(private toastr: ToastrService, private router: Router,private http: HttpClient) { }
+
+  getAllNotifications(){
+    return this.http.get<INotification[]>(`${this.notificationUrl}AppNotification`).pipe(
+      take(1),
+      tap(notifications=>this.notificationsSource.next(notifications))
+    );
+  }
+  markNotificationAsRead(id:string){
+    return this.http.put<void>(`${this.notificationServiceUrl}/AppNotification/${id}`,{}).pipe(
+      take(1),
+      tap(()=>{
+        this.notifications$.pipe(take(1)).subscribe(notifications=>{
+          let nextNotifications = notifications.map((notification) =>
+            notification.id === id ? { ...notification, displayed: true } : notification 
+          );
+          this.notificationsSource.next(nextNotifications);
+        })
+
+      })
+    );
+  }
+  deleteNotification(id:string){
+    return this.http.delete<void>(`${this.notificationServiceUrl}/AppNotification/${id}`).pipe(
+      take(1),
+      tap(()=>{
+        this.notifications$.pipe(take(1)).subscribe(notifications=>{
+          let nextNotifications = notifications.filter(notification => notification.id !== id);
+          this.notificationsSource.next(nextNotifications);
+        })
+
+      })
+    );
+  }
   createHubConnection(userAccessToken:string) {
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(this.hubUrl + 'Presence', {
@@ -68,22 +104,28 @@ export class PresenceService {
     // this.hubConnection.on('NewChatNotificationReceived', (notification:INotification) => {
     //   this.onlineUsersSource.next(usernames);
     // })
-    this.hubConnection.on('NewNotificationReceived', (notification:INotification) => {
+    this.hubConnection.on('NewNotificationReceived', (newNotification:INotification) => {
       this.notifications$.pipe(take(1)).subscribe(notifications=>{
-        this.notificationsSource.next([...notifications,notification]);
+        let oldNotificationIndex=notifications.findIndex(x=>x.id===newNotification.id);
+
+        if (oldNotificationIndex !== -1) {
+          notifications.splice(oldNotificationIndex, 1);
+        }
+        
+        this.notificationsSource.next([...notifications,newNotification]);
       })
     });
-    this.hubConnection.on('NotificationThread', (notifications:INotification[]) => {
-      // this.toastr.info(`${notification.content}`)
-      //   .onTap
-      //   .pipe(take(1))
-      //   .subscribe({
-      //     ///////////////!!!!!!!!!!!!!!!!!!!!!!
-      //     //next: () => this.router.navigateByUrl('/members/' + username + '?tab=Messages')//!!!!!!!!!!!!!!!!!
-      //   })
-      console.log(notifications);
-      this.notificationsSource.next(notifications);
-    });
+    // this.hubConnection.on('NotificationThread', (notifications:INotification[]) => { //teraz trzba najpierw pobrac po http
+    //   // this.toastr.info(`${notification.content}`)
+    //   //   .onTap
+    //   //   .pipe(take(1))
+    //   //   .subscribe({
+    //   //     ///////////////!!!!!!!!!!!!!!!!!!!!!!
+    //   //     //next: () => this.router.navigateByUrl('/members/' + username + '?tab=Messages')//!!!!!!!!!!!!!!!!!
+    //   //   })
+    //   console.log(notifications);
+    //   this.notificationsSource.next(notifications);
+    // });
     var hubConnectionState = this.hubConnection.start()
     .catch(error => console.log(error))
     .finally(/*() => this.busyService.idle()*/);

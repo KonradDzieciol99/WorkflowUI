@@ -2,9 +2,10 @@ import { Component, ElementRef, HostListener, OnDestroy, OnInit, TemplateRef, Vi
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Observable, Subscription, take } from 'rxjs';
+import { filter, map, Observable, Subscription, take } from 'rxjs';
 import { AuthenticationService } from 'src/app/authentication/authentication.service';
 import { HomeService } from 'src/app/home/home.service';
+import { MessagesService } from 'src/app/messages/messages.service';
 import { INotification } from 'src/app/shared/models/INotification';
 import { PresenceService } from 'src/app/shared/services/presence.service';
 
@@ -15,6 +16,7 @@ import { PresenceService } from 'src/app/shared/services/presence.service';
 })
 export class NavBarComponent implements OnInit, OnDestroy  {
 
+  isNumberOfOnlineUsersTooltipVisible=false;
   isCollapsed:boolean = true;
   public themeForm:FormGroup=this.formBuilder.nonNullable.group({
     radio:"auto"
@@ -29,21 +31,35 @@ export class NavBarComponent implements OnInit, OnDestroy  {
   //   backdrop: false,
   //   ignoreBackdropClick: false
   // };
+  // notifications$: Observable<INotification[]>;
+  // test:string;
+  notificationsLength$: Observable<number>;
+  numberOfOnlineUsers$: Observable<number>;
   constructor(private readonly oAuthService: OAuthService,private homeService:HomeService,
       private authenticationService:AuthenticationService,
       private formBuilder: FormBuilder,
-      private presenceService : PresenceService,
-      // private modalService: BsModalService
-      )
+      private readonly presenceService : PresenceService,
+      private readonly messagesService:MessagesService)
     {
       let theme = localStorage.getItem("theme");
       if (theme==="dark"||theme==="light") {
         this.themeForm.controls["radio"].setValue(theme);
       }
       // this.notifications$=this.presenceService.notifications$;//destroy
+      this.notificationsLength$=this.presenceService.notifications$.pipe(
+        map(x=>{ return x.filter(n=>n.displayed==false).length})
+      );
+      this.numberOfOnlineUsers$=this.messagesService.onlineUsers$.pipe(map(x=>x.length));
+
+      // this.notifications$.subscribe
+      // this.test="d";
    }
    userPicture:string="https://w7.pngwing.com/pngs/419/473/png-transparent-computer-icons-user-profile-login-user-heroes-sphere-black-thumbnail.png"
-  ngOnInit(): void {
+  
+   test33(e:any){
+    console.log("sdfsadfsadfssssssssssssssss")
+   }
+   ngOnInit(): void {
     this.watchThemeButton();
     let idToken=this.oAuthService.getIdentityClaims();
     let picture=idToken['picture'] as string;

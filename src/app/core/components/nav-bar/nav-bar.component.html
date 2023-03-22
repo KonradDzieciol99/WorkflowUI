@@ -30,13 +30,21 @@
     <div [collapse]="isCollapsed" class="collapse navbar-collapse " [isAnimated]="true">
       <ul class="navbar-nav ms-auto mb-lg-0">
         <li class="nav-item mb-2">
-          <a class="btn btn-outline-success me-3" type="submit" routerLink="./messages" routerLinkActive="active" tooltip="Messages">
+          <a class="btn btn-outline-success me-3 position-relative" type="submit" routerLink="./messages" routerLinkActive="active" [tooltip]="isNumberOfOnlineUsersTooltipVisible ? '' : 'Messages'">
             <i class="fa-regular fa-comments"></i>
+            <span *ngIf="(numberOfOnlineUsers$|async) !== 0" class="position-absolute top-100 start-0 translate-middle badge rounded-pill bg-success" tooltip="Online users" (mouseenter)="isNumberOfOnlineUsersTooltipVisible = true" (mouseleave)="isNumberOfOnlineUsersTooltipVisible = false">
+              {{numberOfOnlineUsers$|async}}
+              <span class="visually-hidden">online users</span>
+            </span>
           </a>
         </li>
-        <li class="nav-item mb-2">
-          <button class="btn btn-outline-info me-3" #notificationsPanelNutton (click)="isNotificationsPanelExpanded = !isNotificationsPanelExpanded" type="button" tooltip="Notifications">
+        <li class="nav-item mb-2 ">
+          <button class="btn btn-outline-info me-3 position-relative" #notificationsPanelNutton (click)="isNotificationsPanelExpanded = !isNotificationsPanelExpanded" type="button" tooltip="Notifications" container="body" #pop="bs-tooltip" >
             <i class="fa-solid fa-bell"></i>
+            <span *ngIf="(notificationsLength$|async) !== 0" class="position-absolute top-100 start-100 translate-middle badge rounded-pill bg-danger"> <!-- tooltip="{{(notifications$|async)?.length}} unread notifications" container="body" (mouseenter)="pop.hide()" -->
+              {{notificationsLength$|async}}
+              <span class="visually-hidden">unread messages</span>
+            </span>
           </button>
         </li>
         <li class="nav-item mb-2 ">

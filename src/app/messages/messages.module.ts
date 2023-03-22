@@ -7,12 +7,16 @@ import { MessagesComponent } from './messages.component';
 import { AccordionModule } from 'ngx-bootstrap/accordion';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ChatComponent } from './components/chat/chat.component';
+import { MessageComponent } from './components/message/message.component';
+import { ConversationBubbleTypeAnimationComponent } from './components/conversation-bubble-type-animation/conversation-bubble-type-animation.component';
 
 
 @NgModule({
   declarations: [
     MessagesComponent,
-    ChatComponent
+    ChatComponent,
+    MessageComponent,
+    ConversationBubbleTypeAnimationComponent
   ],
   imports: [
     CommonModule,
