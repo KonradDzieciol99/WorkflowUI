@@ -4,6 +4,7 @@
 
 export const environment = {
   notificationServiceUrl:'https://localhost:7094/api',
+  projectsUrl:'https://localhost:7294/api',
   identityServerUrl:'https://localhost:7122/api',
   notificationUrl:'https://localhost:7094/api/',
   apiUrl: 'https://localhost:44346/api/',
