@@ -1,31 +1,86 @@
 <div class="container-fluid pt-5 pe-5 ps-5 overflow-auto">
     <div class="container-fluid  mb-1" style="min-width: 300px;">
         <div class="d-block d-sm-flex justify-content-between">
-            
+
             <h1 class="flex-grow-1">Projects</h1>
             <div class="m-auto">
-                <button type="button" class="btn btn-primary">
-                Create project
+                <button type="button" class="btn btn-primary" (click)="createProject()">
+                    Create project
                 </button>
             </div>
         </div>
 
         <!-- style="height: 40px;" [dataSource]='data' -->
-
-        <div class="input-group input-group-sm mt-2 mt-sm-4  rounded-circle w-25">
+        <!-- rounded-circle mt-2 mt-sm-4 -->
+        <!-- <div class="input-group input-group-sm   w-25">
             <span class="input-group-text rounded-start"><i class="fa-solid fa-magnifying-glass"></i></span>
-            <input type="text" formControlName="searchNewUsers" class="form-control rounded-end" placeholder="Search...">
-        </div>
+            <input type="text" [formControl]="searchProjects" class="form-control rounded-end" placeholder="Search...">
+            <button class="btn btn-outline-secondary" type="button">Button</button>
+             <button type="button" class="btn-close" aria-label="Close"></button> 
+        </div> -->
 
-        <ejs-grid [dataSource]='data | async' [allowPaging]="true" [allowSorting]="true" [allowSorting]='true'
-        [allowFiltering]="true" [allowGrouping]="true" [pageSettings]='pageSettings' (dataStateChange)= 'dataStateChange($event)'>
-         <e-columns>
-             <e-column field='OrderID' headerText='Order ID' textAlign='Right' width=90></e-column>
-             <e-column field='CustomerID' headerText='Customer ID' width=120></e-column>
-             <e-column field='Freight' headerText='Freight' textAlign='Right' format='C2' width=90></e-column>
-             <e-column field='OrderDate' headerText='Order Date' textAlign='Right' format='yMd' width=120></e-column>
-         </e-columns>
-         </ejs-grid>
+        <div class="input-group input-group-sm w-25 mb-2 mt-4">
+            <span class="input-group-text"><i class="fa-solid fa-magnifying-glass fa-sm"></i></span>
+            <input type="text" [formControl]="searchProjects" class="form-control" placeholder="Search...">
+            <button class="btn btn-outline-secondary btn-sm" type="button" (click)="searchProjects.reset()" >
+                <i class="fa-solid fa-x fa-sm"></i>
+            </button>
+            <!-- <button type="button" class="btn-close"></button> -->
+         </div>
+         
+        <!-- {{ service | async|json}}??
+       {{ service | async}}??
+        <br>
+         -->
+         <!-- {{ (service.projects$ | async) | json}}  -->
+        <ejs-grid #grid [dataSource]='service.projects$ | async'
+         [allowPaging]="true"
+         [allowSorting]="true"
+         [allowFiltering]="false"
+         [allowGrouping]="false"
+         [pageSettings]='pageSettings'
+         [editSettings]='editSettings'
+         (dataStateChange)='dataStateChange($event)'
+         (dataSourceChanged)='dataSourceChanged($event)'
+         [toolbar]='toolbar'>
+            <e-columns>
+                <!-- <e-column field='name' headerText='name' width=120>
+
+            </e-column> -->
+                <e-column headerText='Name' width='150'>
+                    <ng-template #template let-data>
+                        <a routerLink="default.asp">
+                            <div type="button" class="d-flex flex-row">
+                                <div class="image me-2">
+                                    <img class="rounded" src="{{data.iconUrl}}" width="30px" height="30px"
+                                        alt="Project icon" />
+                                </div>
+                                <div class="my-auto">
+                                    {{data.name}}
+                                </div>
+                            </div>
+                        </a>
+                    </ng-template>
+                </e-column>
+                <e-column headerText='Lead' width='150'>
+                    <ng-template #template let-data>
+                        <div class="d-flex flex-row">
+                            <div class="image me-2">
+                                <img class="rounded-circle border border-2"
+                                    src="{{(data.projectMembers|findLeader)?.photoUrl}}" width="30px" height="30px"
+                                    alt="Leader photo" />
+                            </div>
+                            <div class="my-auto">
+                                {{(data.projectMembers|findLeader)?.userEmail}}
+                            </div>
+                        </div>
+                    </ng-template>
+                </e-column>
+                <!-- <e-column field='id' headerText='id' textAlign='Right' width=90></e-column> -->
+                <!-- <e-column field='projectMembers' headerText='projectMembers' textAlign='Right' format='C2' width=90></e-column> -->
+                <!-- <e-column field='OrderDate' headerText='Order Date' textAlign='Right' format='yMd' width=120></e-column> -->
+            </e-columns>
+        </ejs-grid>
 
     </div>
 </div>

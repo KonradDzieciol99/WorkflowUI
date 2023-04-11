@@ -7,9 +7,13 @@ import { ProjectComponent } from './components/project/project.component';
 import { ProjectSummaryComponent } from './components/project-summary/project-summary.component';
 import { ProjectBoardComponent } from './components/project-board/project-board.component';
 import { ProjectListComponent } from './components/project-list/project-list.component';
-import { GridModule } from '@syncfusion/ej2-angular-grids';
+import { EditService, GridModule } from '@syncfusion/ej2-angular-grids';
 //import { DropDownListModule } from '@syncfusion/ej2-angular-dropdowns';
 import { PageService, SortService, FilterService, GroupService, ToolbarService, ExcelExportService } from '@syncfusion/ej2-angular-grids';
+import { CreateProjectModalComponent } from './components/modals/create-project-modal/create-project-modal.component';
+import { SharedModule } from '../shared/shared.module';
+import { IconPickerComponent } from './components/icon-picker/icon-picker.component';
+import { FindLeaderPipe } from './pipes/find-leader.pipe';
 
 @NgModule({
   declarations: [
@@ -17,18 +21,23 @@ import { PageService, SortService, FilterService, GroupService, ToolbarService, 
     ProjectComponent,
     ProjectSummaryComponent,
     ProjectBoardComponent,
-    ProjectListComponent
+    ProjectListComponent,
+    CreateProjectModalComponent,
+    IconPickerComponent,
+    FindLeaderPipe
   ],
   imports: [
     CommonModule,
     GridModule,
     ProjectsRoutingModule,
+    SharedModule,
   ],
   providers: [PageService,
               SortService,
               FilterService,
               GroupService,
               ToolbarService,
-              ExcelExportService]
+              ExcelExportService,
+              EditService,]
 })
 export class ProjectsModule { }

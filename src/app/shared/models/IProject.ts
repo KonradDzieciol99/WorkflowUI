@@ -1,6 +1,9 @@
+import { IProjectMember } from "./IProjectMember";
+
 export interface IProject{
-    //photoUrl?: string;
     name: string;
     id:string,
-    //projectMembers?:boolean
+    iconUrl:string,
+    projectMembers:Array<IProjectMember>,
+    leader:IProjectMember
 }

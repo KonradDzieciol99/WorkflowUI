@@ -1,0 +1,66 @@
+<!-- <div class="modal-header">
+    <h4 class="modal-title pull-left">{{title}}</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <ul *ngIf="list.length">
+      <li *ngFor="let item of list">{{item}}</li>
+    </ul>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="bsModalRef.hide()">close</button>
+  </div>
+
+  tabindextabindex -->
+
+  <!-- <div class="modal">
+    <div class="modal-dialog">
+      <div class="modal-content"> -->
+        <div class="modal-header">
+          <h5 class="modal-title" >Create project</h5>
+          <button type="button" class="btn-close" (click)="bsModalRef.hide()"></button>
+        </div>
+        <div class="modal-body">
+            <!-- <form id="loginForm" class="text-center form " [formGroup]="projektForm" (ngSubmit)="onSubmit(projektForm)" style="width:330px; margin: auto; "> -->
+              <!-- <div class="mb-3">
+                <label for="name" class="form-label">Name:</label>
+                <input type="text" class="form-control" id="name">
+              </div> -->
+              <div class="mb-2">
+                
+                <!-- <app-icon-picker ></app-icon-picker > -->
+                <!-- {{projektForm.get("icon")?.value}} class="img-fluid"-->
+                <div class="d-flex flex-row">
+                  <img class="rounded me-2" [src]="projektForm.get('icon')?.value?.url" [alt]="projektForm.get('icon')?.value?.name" height="90px" width="90px" >
+                  <div class="mt-auto ms-auto">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="openIconPicker()">Change icon</button>
+                  </div>
+                </div> 
+                
+
+              </div>
+
+              <!-- <img src="https://1workflowstorage.blob.core.windows.net/projectsicons/avocado_chair_nw36z0.png" alt="Avocado Chair" class="img-fluid" > -->
+
+              <app-input-custom
+              class="form"
+              [formGroup]="projektForm"
+              [nameFormControl]="'name'"
+              [validatorsKeyValue]="[{key: 'required', value: 'Field is required.'},
+                                    {key: 'minlength', value: 'Minimum password length is 6.'}]"
+              [readonly]="false"
+              [label]="'Name:'"
+              [type]="'text'"
+              > 
+              </app-input-custom>
+            <!-- </form> -->
+          </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="bsModalRef.hide()">Cancel</button>
+          <button type="button" class="btn btn-primary" (click)="createProject()">Create</button>
+        </div>
+      <!-- </div>
+    </div>
+  </div> -->

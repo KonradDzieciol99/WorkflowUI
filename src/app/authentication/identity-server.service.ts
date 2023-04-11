@@ -15,7 +15,7 @@ export const authConfigForMyApi: AuthConfig = {
   clientId: 'interactive',
   responseType: 'code',
   strictDiscoveryDocumentValidation: false,
-  scope: 'openid offline_access email_access_token profile email IdentityServerApi',//emailweatherapi
+  scope: 'openid offline_access email_access_token profile email IdentityServerApi picture_access_token',//emailweatherapi
   showDebugInformation: false,
   sessionChecksEnabled: true,
   clearHashAfterLogin: false,
