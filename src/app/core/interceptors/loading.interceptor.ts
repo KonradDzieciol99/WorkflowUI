@@ -25,13 +25,13 @@ export class LoadingInterceptor implements HttpInterceptor {
     //   return next.handle(request);
     // }
 
-    // this.busyService.busy();
-    // return next.handle(request).pipe(
-    //   delay(250),
-    //   finalize(() => {
-    //     this.busyService.idle();
-    //   })
-    // );
+    this.busyService.busy();
+    return next.handle(request).pipe(
+      //delay(250),
+      finalize(() => {
+        this.busyService.idle();
+      })
+    );
 
     return next.handle(request)//new
   }

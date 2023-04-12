@@ -14,10 +14,8 @@ const routes: Routes = [
     //canActivate:[AuthGuard],
     //component: ProjectsComponent,
     children: [
-      { path: '', component: ProjectsComponent,},
-
-      { path: ':projectname',
-       component: ProjectComponent,
+      { path: '', component: ProjectsComponent,},//diffrent ProjectS
+      { path: ':projectname', component: ProjectComponent,//diffrent ProjecT
        children:[
         { path: 'summary', component: ProjectSummaryComponent,},
         { path: 'board', component: ProjectBoardComponent,},

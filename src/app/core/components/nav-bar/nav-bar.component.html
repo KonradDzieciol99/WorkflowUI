@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
+<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
    <div class="container-fluid "> <!-- !! position relativesdf  position-relative -->
     <a class="navbar-brand" href="#">Navbar</a>
     <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed">
@@ -7,12 +7,14 @@
     <div [collapse]="isCollapsed" class="collapse navbar-collapse" [isAnimated]="true">
       <ul class="navbar-nav me-auto mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link projects position-relative" routerLink="./projects" routerLinkActive="active">Projects</a>
+          <a class="nav-link projects position-relative" routerLink="./projects" routerLinkActive="active">
+            <i class="fa-solid fa-folder-tree"></i> Projects
+          </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">Link</a>
         </li>
-        <li class="nav-item dropdown">
+        <!-- <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button">
             Dropdown
           </a>
@@ -24,7 +26,7 @@
             </li>
             <li><a class="dropdown-item" href="#">Something else here</a></li>
           </ul>
-        </li>
+        </li> -->
       </ul>
     </div>
     <div [collapse]="isCollapsed" class="collapse navbar-collapse " [isAnimated]="true">
