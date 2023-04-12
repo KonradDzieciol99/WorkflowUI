@@ -1,3 +1,4 @@
+import { IfStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { GoogleAuthService } from './authentication/google-auth.service';
@@ -44,23 +45,40 @@ export class AppComponent implements OnInit {
     //   throw new Error("cannot match any color scheme");
     // }
 
-    this.setTheme();
-    this.addEventListenerToPrefersColorScheme();
+   // this.setTheme();
+    //this.addEventListenerToPrefersColorScheme();
   }
-  setTheme():void {
-    let theme = localStorage.getItem("theme");
-    if (theme==="dark"||theme==="light") {
-      document.documentElement.setAttribute('data-bs-theme', theme);
-    }
-  }
-  addEventListenerToPrefersColorScheme():void{
-    window.matchMedia(`(prefers-color-scheme: dark)`).addEventListener('change', event => {
-      let theme = localStorage.getItem("theme")
-      if (!(theme === "dark" || theme === "light")) {
-        const newColorScheme = event.matches ? "dark" : "light";
-        document.documentElement.setAttribute('data-bs-theme', newColorScheme);
-      }
-  });
-  }
+  // setTheme():void {
+  //   // const theme = localStorage.getItem("theme");
+  //   // if (theme==="dark"||theme==="light") {
+  //   //   document.documentElement.setAttribute('data-bs-theme', theme); //bootsrap
+  //   //   document.documentElement.className = theme; //syncfusion
+  //   // } 
+  //   // else if (theme==="auto"){
+  //   //   document.documentElement.setAttribute('data-bs-theme', theme); //bootsrap
+  //   //   document.documentElement.className = theme; //syncfusion
+
+
+  //   // } 
+  //   // else{
+  //   //   const isPreferDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  //   // if (userTheme === 'dark' || userTheme === 'light') {
+  //   //   theme = userTheme;
+  //   // } else {
+  //   //   theme = prefersDark ? 'dark' : 'light';
+  //   // }
+  //   // }
+
+  // }
+  // addEventListenerToPrefersColorScheme():void{ //Prefers color-scheme on Windows
+  //   window.matchMedia(`(prefers-color-scheme: dark)`).addEventListener('change', event => {
+  //     let theme = localStorage.getItem("theme")
+  //     if (!(theme === "dark" || theme === "light")) {
+  //       const newColorScheme = event.matches ? "dark" : "light";
+  //       document.documentElement.setAttribute('data-bs-theme', newColorScheme);
+  //       document.documentElement.className = newColorScheme;
+  //     }
+  // });
+  // }
 
 }

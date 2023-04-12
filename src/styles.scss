@@ -7,6 +7,20 @@
 @import '../node_modules/bootstrap/scss/variables';
 @import '../node_modules/bootstrap/scss/mixins'; //??
 
+// @import '../node_modules/@syncfusion/ej2-base/styles/material.css';  
+// @import '../node_modules/@syncfusion/ej2-buttons/styles/material.css';  
+// @import '../node_modules/@syncfusion/ej2-calendars/styles/material.css';  
+// @import '../node_modules/@syncfusion/ej2-dropdowns/styles/material.css';  
+// @import '../node_modules/@syncfusion/ej2-inputs/styles/material.css';  
+// @import '../node_modules/@syncfusion/ej2-navigations/styles/material.css';
+// @import '../node_modules/@syncfusion/ej2-popups/styles/material.css';
+// @import '../node_modules/@syncfusion/ej2-splitbuttons/styles/material.css';
+// @import '../node_modules/@syncfusion/ej2-notifications/styles/material.css';
+// @import '../node_modules/@syncfusion/ej2-angular-grids/styles/material.css';
+
+@import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
+@import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
+
 html,
 body {
     height: 100%;
@@ -50,22 +64,23 @@ body {
 }
 
 @media only screen and (max-width: 992px) { 
-    #messages-container { 
-        height: calc(100% - 56px);
+    #messages-container, .side-panel-container { 
+        height: calc(100% - 57px);
     }  
 }
 @media only screen and (min-width: 992px) { 
     .navbar { 
         height: 62px;
     }  
-    #messages-container { 
-        height: calc(100% - 62px);
+    #messages-container, .side-panel-container { 
+        height: calc(100% - 63px);
     }  
 }
 @media only screen and (max-width: 576px) { 
-    #messages-container { 
-        height: calc(200% - 62px);
+    #messages-container{ 
+        height: calc(200% - 63px);
     }  
+    
 }
 #messages-container{
     accordion{
@@ -171,4 +186,10 @@ body {
 //     }
 // }
 
-
+.btn-bare{
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0px;
+    font: inherit;
+}

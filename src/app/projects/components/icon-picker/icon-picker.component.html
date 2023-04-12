@@ -1,0 +1,25 @@
+<div class="modal-header">
+    <h5 class="modal-title">Choose an icon</h5>
+    <button type="button" class="btn-close" (click)="bsModalRef.hide()"></button>
+</div>
+<div class="modal-body">
+    <div class="row g-1 m-0">
+        <ng-container *ngFor="let icon of icons | async">
+            <!-- <div class="col-3"> justify-content-between height="70px" width="70px"-->
+                <div class="icon-container col-4 ">
+                    <button class="btn-bare" (click)="selectedIcon=icon">
+                        <img [src]="icon.url" [alt]="icon.name" class="img-fluid rounded" />
+                    </button>
+                </div>
+            <!-- </div> -->
+        </ng-container>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="bsModalRef.hide()">
+        Cancel
+    </button>
+    <button type="button" [disabled]="!selectedIcon" class="btn btn-primary" (click)="select()">
+        select
+    </button>
+</div>

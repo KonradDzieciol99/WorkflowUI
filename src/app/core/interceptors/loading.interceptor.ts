@@ -24,12 +24,15 @@ export class LoadingInterceptor implements HttpInterceptor {
     // if (request.method === 'PUT') {
     //   return next.handle(request);
     // }
+
     this.busyService.busy();
     return next.handle(request).pipe(
-      delay(250),
+      //delay(250),
       finalize(() => {
         this.busyService.idle();
       })
     );
+
+    return next.handle(request)//new
   }
 }

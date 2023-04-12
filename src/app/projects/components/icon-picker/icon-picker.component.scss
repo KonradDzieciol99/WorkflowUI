@@ -1,0 +1,14 @@
+button.btn-bare{
+    &:hover{
+    transform: scale(1.2, 1.2);
+    transition-duration: 500ms;
+    transition-timing-function: ease-out;
+    opacity: 0.9;
+    }
+    &:focus img{ 
+        box-shadow: 0 0 0 3px var(--bs-primary);    
+    }
+    &:active{
+        transform: scale(1.4, 1.4);
+    }
+}

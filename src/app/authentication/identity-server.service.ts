@@ -5,6 +5,9 @@ import { AuthConfig, OAuthService, UserInfo } from 'angular-oauth2-oidc';
 import { BehaviorSubject, filter, Subject, take } from 'rxjs';
 import { MessagesService } from '../messages/messages.service';
 import { PresenceService } from '../shared/services/presence.service';
+import { BusyService } from '../core/services/busy.service';
+
+
 
 export const authConfigForMyApi: AuthConfig = {
   issuer: 'https://localhost:7122',
@@ -12,7 +15,7 @@ export const authConfigForMyApi: AuthConfig = {
   clientId: 'interactive',
   responseType: 'code',
   strictDiscoveryDocumentValidation: false,
-  scope: 'openid offline_access email_access_token profile email IdentityServerApi',//emailweatherapi
+  scope: 'openid offline_access email_access_token profile email IdentityServerApi picture_access_token',//emailweatherapi
   showDebugInformation: false,
   sessionChecksEnabled: true,
   clearHashAfterLogin: false,
@@ -56,7 +59,8 @@ export class IdentityServerService {
      private readonly httpClient: HttpClient,
      private router: Router,
      private presenceService:PresenceService,
-     private messagesService:MessagesService ) {
+     private messagesService:MessagesService,
+     private busyService:BusyService ) {
     this.load()
   }
   load(){
@@ -119,6 +123,8 @@ export class IdentityServerService {
 
   public runInitialLoginSequence(): Promise<void> {
 
+    this.busyService.busy();
+
     this.oAuthService.configure(authConfigForMyApi);
 //"https://localhost:7122/.well-known/openid-configuration"
     return this.oAuthService.loadDiscoveryDocument().then( () => {
@@ -145,7 +151,10 @@ export class IdentityServerService {
           this.presenceService.getAllNotifications().pipe(take(1)).subscribe();
 
           //this.messagesService.stopHubConnection();
-          this.messagesService.createHubConnection(this.oAuthService.getAccessToken())
+          this.messagesService.createHubConnection(this.oAuthService.getAccessToken());
+
+          this.busyService.idle();
+
         }
       });
     });

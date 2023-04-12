@@ -3,7 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
+  photosServiceUrl:'https://localhost:7015/api',
   notificationServiceUrl:'https://localhost:7094/api',
+  projectsUrl:'https://localhost:7294/api',
   identityServerUrl:'https://localhost:7122/api',
   notificationUrl:'https://localhost:7094/api/',
   apiUrl: 'https://localhost:44346/api/',

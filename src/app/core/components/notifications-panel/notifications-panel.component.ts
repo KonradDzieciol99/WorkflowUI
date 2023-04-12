@@ -19,7 +19,7 @@ export class NotificationsPanelComponent {
   }
   @HostListener('document:click', ['$event.target'])
   onClick(targetElement: HTMLElement) {
-    console.log(targetElement);
+    //console.log(targetElement);
     if (this.notificationsPanel) {
       const clickedInside = this.notificationsPanel.nativeElement.contains(targetElement);
       const clickedButton = this.buttonReference.contains(targetElement)

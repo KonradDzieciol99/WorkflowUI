@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, Renderer2, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -39,12 +39,11 @@ export class NavBarComponent implements OnInit, OnDestroy  {
       private authenticationService:AuthenticationService,
       private formBuilder: FormBuilder,
       private readonly presenceService : PresenceService,
-      private readonly messagesService:MessagesService)
+      private readonly messagesService:MessagesService,
+      private renderer: Renderer2,
+      private el: ElementRef)
     {
-      let theme = localStorage.getItem("theme");
-      if (theme==="dark"||theme==="light") {
-        this.themeForm.controls["radio"].setValue(theme);
-      }
+
       // this.notifications$=this.presenceService.notifications$;//destroy
       this.notificationsLength$=this.presenceService.notifications$.pipe(
         map(x=>{ return x.filter(n=>n.displayed==false).length})
@@ -60,6 +59,7 @@ export class NavBarComponent implements OnInit, OnDestroy  {
     console.log("sdfsadfsadfssssssssssssssss")
    }
    ngOnInit(): void {
+    this.addEventListenerToPrefersColorScheme();
     this.watchThemeButton();
     let idToken=this.oAuthService.getIdentityClaims();
     let picture=idToken['picture'] as string;
@@ -68,34 +68,77 @@ export class NavBarComponent implements OnInit, OnDestroy  {
       this.userPicture=picture;
     }
 
+    let theme = localStorage.getItem("theme");
+    if (theme==="dark"||theme==="light") {
+      this.themeForm.controls["radio"].setValue(theme);
+    }else{
+      this.themeForm.controls["radio"].setValue('auto');
+    }
     
   }
   // openModal(template: TemplateRef<any>) {
   //   this.modalRef = this.modalService.show(template, this.config);
   // }
- 
+  addEventListenerToPrefersColorScheme():void{ //Prefers color-scheme on Windows
+    window.matchMedia(`(prefers-color-scheme: dark)`).addEventListener('change', event => {
+      let theme = localStorage.getItem("theme")
+      if (!(theme === "dark" || theme === "light")) {
+        const newColorScheme = event.matches ? "dark" : "light";
+        document.documentElement.setAttribute('data-bs-theme', newColorScheme);
+        document.documentElement.className = newColorScheme;
+      }
+  });
+  }
   watchThemeButton() {
     this.themeFormValueChangesSub=this.themeForm.controls["radio"].valueChanges.subscribe(value=>{
    
       if (value==='light') {
         document.documentElement.setAttribute('data-bs-theme', 'light');
-        localStorage.setItem("theme","light")
+        document.documentElement.className = value;
+        localStorage.setItem("theme","light");
+        this.loadStyles(false);
       }
       if (value==='dark') {
         document.documentElement.setAttribute('data-bs-theme', 'dark');
-        localStorage.setItem("theme","dark")
+        document.documentElement.className = value;
+        localStorage.setItem("theme","dark");
+        this.loadStyles(true);
       }
       if (value==='auto') {
-        localStorage.setItem("theme","auto")
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
           document.documentElement.setAttribute('data-bs-theme', 'dark');
+          document.documentElement.className='dark' ;
+          this.loadStyles(true);
         }
         else{
           document.documentElement.setAttribute('data-bs-theme', 'light');
+          document.documentElement.className='light' ;
+          this.loadStyles(false);
         }
+        localStorage.setItem("theme","auto")
       }
     })
+
   }
+  private loadStyles(isDarkTheme:boolean): void {
+    // W zależności od warunku, wybierz jeden z arkuszy stylów
+    //const isDarkTheme = true; // Na przykład, ustaw warunek na podstawie ustawień użytkownika
+
+    const themeUrl = isDarkTheme ? "dark.css" : "light.css";
+
+    const linkElId = 'dynamic-theme-style';
+    let linkEl = this.el.nativeElement.ownerDocument.head.querySelector(`#${linkElId}`);
+
+    if (!linkEl) {
+      linkEl = this.renderer.createElement('link');
+      this.renderer.setAttribute(linkEl, 'id', linkElId);
+      this.renderer.setAttribute(linkEl, 'rel', 'stylesheet');
+      this.renderer.appendChild(this.el.nativeElement.ownerDocument.head, linkEl);
+    }
+
+    this.renderer.setAttribute(linkEl, 'href', themeUrl);
+}
+
 
   // @HostListener('document:click', ['$event.target']) //to musi być w komponencie od notificationsPanel
   // onClick(targetElement: HTMLElement) {

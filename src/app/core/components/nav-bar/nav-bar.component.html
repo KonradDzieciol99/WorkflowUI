@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
+<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
    <div class="container-fluid "> <!-- !! position relativesdf  position-relative -->
     <a class="navbar-brand" href="#">Navbar</a>
     <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed">
@@ -7,12 +7,14 @@
     <div [collapse]="isCollapsed" class="collapse navbar-collapse" [isAnimated]="true">
       <ul class="navbar-nav me-auto mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
+          <a class="nav-link projects position-relative" routerLink="./projects" routerLinkActive="active">
+            <i class="fa-solid fa-folder-tree"></i> Projects
+          </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">Link</a>
         </li>
-        <li class="nav-item dropdown">
+        <!-- <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button">
             Dropdown
           </a>
@@ -24,13 +26,13 @@
             </li>
             <li><a class="dropdown-item" href="#">Something else here</a></li>
           </ul>
-        </li>
+        </li> -->
       </ul>
     </div>
     <div [collapse]="isCollapsed" class="collapse navbar-collapse " [isAnimated]="true">
       <ul class="navbar-nav ms-auto mb-lg-0">
         <li class="nav-item mb-2">
-          <a class="btn btn-outline-success me-3 position-relative" type="submit" routerLink="./messages" routerLinkActive="active" [tooltip]="isNumberOfOnlineUsersTooltipVisible ? '' : 'Messages'">
+          <a class="btn btn-outline-success me-3 position-relative" routerLink="./messages" routerLinkActive="active" [tooltip]="isNumberOfOnlineUsersTooltipVisible ? '' : 'Messages'">
             <i class="fa-regular fa-comments"></i>
             <span *ngIf="(numberOfOnlineUsers$|async) !== 0" class="position-absolute top-100 start-0 translate-middle badge rounded-pill bg-success" tooltip="Online users" (mouseenter)="isNumberOfOnlineUsersTooltipVisible = true" (mouseleave)="isNumberOfOnlineUsersTooltipVisible = false">
               {{numberOfOnlineUsers$|async}}

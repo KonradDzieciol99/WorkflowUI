@@ -21,7 +21,7 @@ export class InputCustomComponent  implements OnInit {
    }
 
   ngOnInit(): void {
-    this.formGroup.get(this.nameFormControl)?.valueChanges.subscribe(x=>{  
-    })
+    // this.formGroup.get(this.nameFormControl)?.valueChanges.subscribe(x=>{  
+    // })
   }
 }

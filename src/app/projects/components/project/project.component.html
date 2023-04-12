@@ -1,0 +1,49 @@
+<div class="side-panel-container position-relative"
+>
+<!-- bg-body-tertiary -->
+    <div [ngClass]="(sidenavState$|async) ? 'sidenavOpen' : 'sidenavClose' "
+        class="movable-element d-flex flex-column flex-shrink-0 p-3
+         position-absolute h-100 z-1 border-end overflow-auto"
+        style="width: 200px;"
+        >
+        <div class="d-flex flex-row">
+            <img class="me-2 rounded" [src]="(project$|async)?.iconUrl" [alt]="(project$|async)?.name" width="30" height="30">
+            <div class="my-auto">
+                <h6 class="mt-1 user-select-none text-body-emphasis">{{(project$|async)?.name}}</h6>
+            </div>
+        </div>
+        <hr>
+
+        <ul class="nav navbar-nav flex-column mb-auto">
+            <li class="nav-item">
+                <a routerLink="dashboard" class="nav-link link-body-emphasis " routerLinkActive="active">
+                    <i class="fa-solid fa-house-chimney"></i> Summary
+                </a>
+            </li>
+            <li class="nav-item">
+                <a [routerLink]="['list']" class="nav-link link-body-emphasis" routerLinkActive="active">
+                    <i class="fa-solid fa-list"></i> List
+                </a>
+            </li>
+            <li class="nav-item">
+                <a [routerLink]="['board']" class="nav-link link-body-emphasis" routerLinkActive="active">
+                    <i class="bi bi-kanban"></i> Board
+                </a>
+            </li>
+            <!-- <li class="nav-item">
+                <a [routerLink]="['test']" class="nav-link link-body-emphasis" routerLinkActive="active">
+                    test
+                </a>
+            </li> -->
+        </ul>
+    </div>
+    <i [ngClass]="(sidenavState$|async) ? 'open-arrow' : 'close-arrow'" 
+        (click)="changeStateSideNav();"
+        type="button " class="movable-element fa-solid fa-circle-arrow-left fa-2x rounded-circle position-absolute z-3"
+        style="top: 75px;"
+        >
+    </i>
+    <div [ngClass]="((sidenavState$|async) && marginPx==200)? 'content-open' : 'content-close'" class="h-100 movable-element">
+        <router-outlet></router-outlet>
+    </div>
+</div>
