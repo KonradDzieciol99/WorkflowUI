@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { ProjectsRoutingModule } from './projects-routing.module';
 import { ProjectsComponent } from './projects.component';
-import { ProjectComponent } from './components/project/project.component';
+import { ProjectSideBarComponent } from './components/project-side-bar/project-side-bar.component';
 import { ProjectSummaryComponent } from './components/project-summary/project-summary.component';
 import { ProjectBoardComponent } from './components/project-board/project-board.component';
 import { ProjectListComponent } from './components/project-list/project-list.component';
@@ -14,11 +14,12 @@ import { CreateProjectModalComponent } from './components/modals/create-project-
 import { SharedModule } from '../shared/shared.module';
 import { IconPickerComponent } from './components/icon-picker/icon-picker.component';
 import { FindLeaderPipe } from './pipes/find-leader.pipe';
+import { CollapseModule } from 'ngx-bootstrap/collapse';
 
 @NgModule({
   declarations: [
     ProjectsComponent,
-    ProjectComponent,
+    ProjectSideBarComponent,
     ProjectSummaryComponent,
     ProjectBoardComponent,
     ProjectListComponent,
@@ -31,6 +32,7 @@ import { FindLeaderPipe } from './pipes/find-leader.pipe';
     GridModule,
     ProjectsRoutingModule,
     SharedModule,
+    CollapseModule.forRoot(),
   ],
   providers: [PageService,
               SortService,

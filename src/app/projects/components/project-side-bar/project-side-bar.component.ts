@@ -1,14 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, Observable, take } from 'rxjs';
+import { BehaviorSubject, Observable, of, take } from 'rxjs';
 import { ProjectService } from 'src/app/projects/services/project.service';
 import { IProject } from 'src/app/shared/models/IProject';
 @Component({
-  selector: 'app-project',
-  templateUrl: './project.component.html',
-  styleUrls: ['./project.component.scss']
+  selector: 'app-project-side-bar',
+  templateUrl: './project-side-bar.component.html',
+  styleUrls: ['./project-side-bar.component.scss']
 })
-export class ProjectComponent implements OnInit  {
+export class ProjectSideBarComponent implements OnInit  {
+
+
+  test: Observable<boolean> = of(true);
 
   project$:Observable<IProject|undefined>;
   constructor(private activatedRoute: ActivatedRoute,private projectService:ProjectService,private router: Router) {

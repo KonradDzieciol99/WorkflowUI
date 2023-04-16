@@ -4,7 +4,7 @@ import { AuthGuard } from '../core/guards/auth.guard';
 import { ProjectBoardComponent } from './components/project-board/project-board.component';
 import { ProjectListComponent } from './components/project-list/project-list.component';
 import { ProjectSummaryComponent } from './components/project-summary/project-summary.component';
-import { ProjectComponent } from './components/project/project.component';
+import { ProjectSideBarComponent } from './components/project-side-bar/project-side-bar.component';
 import { ProjectsComponent } from './projects.component';
 
 const routes: Routes = [
@@ -15,7 +15,7 @@ const routes: Routes = [
     //component: ProjectsComponent,
     children: [
       { path: '', component: ProjectsComponent,},//diffrent ProjectS
-      { path: ':projectname', component: ProjectComponent,//diffrent ProjecT
+      { path: ':projectname', component: ProjectSideBarComponent,//diffrent ProjecT
        children:[
         { path: 'summary', component: ProjectSummaryComponent,},
         { path: 'board', component: ProjectBoardComponent,},
