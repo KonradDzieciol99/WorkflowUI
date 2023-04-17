@@ -15,6 +15,7 @@ import { SharedModule } from '../shared/shared.module';
 import { IconPickerComponent } from './components/icon-picker/icon-picker.component';
 import { FindLeaderPipe } from './pipes/find-leader.pipe';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
+import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { CollapseModule } from 'ngx-bootstrap/collapse';
     GridModule,
     ProjectsRoutingModule,
     SharedModule,
-    CollapseModule.forRoot(),
+    //CollapseModule.forRoot(),
+    NgbCollapseModule 
   ],
   providers: [PageService,
               SortService,

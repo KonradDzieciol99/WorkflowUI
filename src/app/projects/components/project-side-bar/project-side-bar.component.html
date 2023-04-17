@@ -1,51 +1,40 @@
-<div class="side-panel-container position-relative"
->
-<!-- bg-body-tertiary [ngClass]="(sidenavState$|async) ? 'sidenavOpen' : 'sidenavClose' "  -->
+<div class="container-fluid side-panel-container position-relative g-0">
+    <div class="row flex-nowrap h-100 g-0">
+        <ng-container *ngTemplateOutlet="sideBar"></ng-container>
+        <div class="col overflow-auto">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+    <div class="arrow-container default-transition rounded-circle position-absolute" type="button"
+        (click)="changeStateSideNav();" [class.close-arrow]="!(sidenavState$|async)"
+        style="top: 75px; left: 185px; z-index: 1100;">
+        <i class=" fa-solid fa-circle-arrow-left fa-2x "></i>
+    </div>
+</div>
 
-
-    <div 
-        [collapse]="(sidenavState$|async) ?? false"
-        [isAnimated]="true"
-        class="collapse-horizontal
-         "
-        style="width: 200px;"
-        >
-        tewst
-        <div class="d-flex flex-column flex-shrink-0 p-3">
+<ng-template #sideBar>
+    <div class="col-auto sidebar-width border-end h-100" [ngbCollapse]="!(sidenavState$|async)" [horizontal]="true">
+        <div class="d-flex flex-column flex-shrink-0 p-3 h-100 overflow-auto">
             <div class="d-flex flex-row">
-                <img class="me-2 rounded" [src]="(project$|async)?.iconUrl" [alt]="(project$|async)?.name" width="30" height="30">
+                <img class="me-2 rounded" [src]="(project$|async)?.iconUrl" [alt]="(project$|async)?.name" width="30"
+                    height="30">
                 <div class="my-auto">
                     <h6 class="mt-1 user-select-none text-body-emphasis">{{(project$|async)?.name}}</h6>
                 </div>
             </div>
             <hr>
-
-            <ul class="nav navbar-nav flex-column mb-auto">
-                <li class="nav-item">
-                    <a routerLink="dashboard" class="nav-link link-body-emphasis " routerLinkActive="active">
-                        <i class="fa-solid fa-house-chimney"></i> Summary
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a [routerLink]="['list']" class="nav-link link-body-emphasis" routerLinkActive="active">
-                        <i class="fa-solid fa-list"></i> List
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a [routerLink]="['board']" class="nav-link link-body-emphasis" routerLinkActive="active">
-                        <i class="bi bi-kanban"></i> Board
-                    </a>
-                </li>
-            </ul>
+            <nav class="nav nav-pills d-flex flex-column">
+                <a class="nav-link  link-body-emphasis text-truncate" routerLinkActive="active"
+                    [routerLink]="['summary']">
+                    <i class="fa-solid fa-house-chimney"></i> Summary
+                </a>
+                <a class="nav-link link-body-emphasis text-truncate" routerLinkActive="active" [routerLink]="['list']">
+                    <i class="fa-solid fa-list"></i> List
+                </a>
+                <a class="nav-link link-body-emphasis text-truncate" routerLinkActive="active" [routerLink]="['board']">
+                    <i class="bi bi-kanban"></i> Board
+                </a>
+            </nav>
         </div>
     </div>
-    <i [ngClass]="(sidenavState$|async) ? 'open-arrow' : 'close-arrow'" 
-        (click)="changeStateSideNav();"
-        type="button " class="movable-element fa-solid fa-circle-arrow-left fa-2x rounded-circle position-absolute z-3"
-        style="top: 75px;"
-        >
-    </i>
-    <div [ngClass]="((sidenavState$|async) && marginPx==200)? 'content-open' : 'content-close'" class="h-100 movable-element">
-        <router-outlet class="h-100"></router-outlet>
-    </div>
-</div>
+</ng-template>

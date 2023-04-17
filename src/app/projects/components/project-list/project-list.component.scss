@@ -3,8 +3,6 @@
     position: sticky !important;
     bottom: -1px !important; 
     z-index: 1 !important;
-    // opacity: 1;
-    // border-bottom: 4px solid #444c54;
 }
 .e-grid{
     border: 0px !important;
@@ -22,4 +20,10 @@
     position: sticky !important;
     top: 40px !important; 
     z-index: 1 !important;
+}
+
+.container-fluid{
+    ::-webkit-scrollbar-track {
+         border-top-right-radius: var(--bs-border-radius);
+      }
 }
