@@ -193,3 +193,14 @@ body {
     padding: 0px;
     font: inherit;
 }
+
+.sidebar-width{
+    width: 200px;
+    &.offcanvas{
+        width: 200px !important;
+    }
+}
+
+.default-transition{
+    transition: 0.35s ease !important;
+}

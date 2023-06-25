@@ -1,18 +1,17 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { DataSourceChangedEventArgs, DataStateChangeEventArgs, EditSettingsModel, GridComponent, PageSettingsModel, ToolbarItems } from '@syncfusion/ej2-angular-grids';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
 import { debounceTime, distinctUntilChanged, mergeMap, of, take } from 'rxjs';
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window/confirm-window.component';
-import { ProjectsService } from '../../projects.service';
 
 @Component({
-  selector: 'app-project-list',
-  templateUrl: './project-list.component.html',
-  styleUrls: ['./project-list.component.scss']
+  selector: 'app-list',
+  templateUrl: './list.component.html',
+  styleUrls: ['./list.component.scss']
 })
-export class ProjectListComponent implements OnInit {
+export class ListComponent {
   public pageSettings: PageSettingsModel;
   public toolbar: ToolbarItems[];
   @ViewChild('grid') grid: GridComponent | undefined;

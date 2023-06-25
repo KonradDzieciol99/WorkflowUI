@@ -1,114 +1,73 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
-   <div class="container-fluid "> <!-- !! position relativesdf  position-relative -->
-    <a class="navbar-brand" href="#">Navbar</a>
-    <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div [collapse]="isCollapsed" class="collapse navbar-collapse" [isAnimated]="true">
-      <ul class="navbar-nav me-auto mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link projects position-relative" routerLink="./projects" routerLinkActive="active">
-            <i class="fa-solid fa-folder-tree"></i> Projects
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
-        </li>
-        <!-- <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button">
-            Dropdown
-          </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
-        </li> -->
-      </ul>
-    </div>
-    <div [collapse]="isCollapsed" class="collapse navbar-collapse " [isAnimated]="true">
-      <ul class="navbar-nav ms-auto mb-lg-0">
-        <li class="nav-item mb-2">
-          <a class="btn btn-outline-success me-3 position-relative" routerLink="./messages" routerLinkActive="active" [tooltip]="isNumberOfOnlineUsersTooltipVisible ? '' : 'Messages'">
-            <i class="fa-regular fa-comments"></i>
-            <span *ngIf="(numberOfOnlineUsers$|async) !== 0" class="position-absolute top-100 start-0 translate-middle badge rounded-pill bg-success" tooltip="Online users" (mouseenter)="isNumberOfOnlineUsersTooltipVisible = true" (mouseleave)="isNumberOfOnlineUsersTooltipVisible = false">
-              {{numberOfOnlineUsers$|async}}
-              <span class="visually-hidden">online users</span>
-            </span>
-          </a>
-        </li>
-        <li class="nav-item mb-2 ">
-          <button class="btn btn-outline-info me-3 position-relative" #notificationsPanelNutton (click)="isNotificationsPanelExpanded = !isNotificationsPanelExpanded" type="button" tooltip="Notifications" container="body" #pop="bs-tooltip" >
-            <i class="fa-solid fa-bell"></i>
-            <span *ngIf="(notificationsLength$|async) !== 0" class="position-absolute top-100 start-100 translate-middle badge rounded-pill bg-danger"> <!-- tooltip="{{(notifications$|async)?.length}} unread notifications" container="body" (mouseenter)="pop.hide()" -->
-              {{notificationsLength$|async}}
-              <span class="visually-hidden">unread messages</span>
-            </span>
-          </button>
-        </li>
-        <li class="nav-item mb-2 ">
-          <form *ngIf="themeForm" [formGroup]="themeForm" class="d-flex ms-auto me-3">
-            <div class="btn-group" btnRadioGroup formControlName="radio">
-              <button btnRadio="light" class="btn btn-outline-primary" container="body" tooltip="Light mode">
-                <i class="fa-solid fa-sun"></i>
-              </button>
-              <button btnRadio="dark" class="btn btn-outline-primary" container="body" tooltip="Dark mode" >
-                <i class="fa-solid fa-cloud-moon"></i>
-              </button>
-              <button btnRadio="auto" class="btn btn-outline-primary" container="body" tooltip="Auto mode"  > 
-                <i class="fa-solid fa-right-left"></i>
-              </button>
-            </div>
-          </form>
-        </li>
-        <li class="nav-item mb-2" >
-          <a class="navbar-brand" routerLink="./userProfile....." routerLinkActive="active">
-            <img alt="UserPhoto" width="40" height="40" [src]="userPicture" class="rounded-circle border border-1">
-          </a>
-        </li>
-        <li class="nav-item ">
-          <button class="btn btn-outline-warning" type="submit" (click)="logout()">Logout</button>
-        </li>
-      </ul>
-    </div>
-  </div>
+  <div class="container-fluid "> <!-- !! position relativesdf  position-relative -->
+   <a class="navbar-brand" href="#">
+     <i class="fa-sharp fa-solid fa-gear fa-spin fa-xl" style="--fa-animation-duration: 13s;"></i>
+   </a>
+   <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed">
+     <span class="navbar-toggler-icon"></span>
+   </button>
+   <div [collapse]="isCollapsed" class="collapse navbar-collapse" [isAnimated]="true">
+     <ul class="navbar-nav me-auto mb-lg-0">
+       <li class="nav-item">
+         <a class="nav-link projects position-relative" routerLink="./projects" routerLinkActive="active">
+           <i class="fa-solid fa-folder-tree"></i> Projects
+         </a>
+       </li>
+       <li class="nav-item">
+         <a class="nav-link" href="#">Link</a>
+       </li>
+     </ul>
+   </div>
+   <div [collapse]="isCollapsed" class="collapse navbar-collapse " [isAnimated]="true">
+     <ul class="navbar-nav ms-auto mb-lg-0">
+       <li class="nav-item mb-2">
+         <a class="btn btn-outline-success me-3 position-relative" routerLink="./messages" routerLinkActive="active" [tooltip]="isNumberOfOnlineUsersTooltipVisible ? '' : 'Messages'">
+           <i class="fa-regular fa-comments"></i>
+           <span *ngIf="(numberOfOnlineUsers$|async) !== 0" class="position-absolute top-100 start-0 translate-middle badge rounded-pill bg-success" tooltip="Online users" (mouseenter)="isNumberOfOnlineUsersTooltipVisible = true" (mouseleave)="isNumberOfOnlineUsersTooltipVisible = false">
+             {{numberOfOnlineUsers$|async}}
+             <span class="visually-hidden">online users</span>
+           </span>
+         </a>
+       </li>
+       <li class="nav-item mb-2 ">
+         <button class="btn btn-outline-info me-3 position-relative" #notificationsPanelNutton (click)="isNotificationsPanelExpanded = !isNotificationsPanelExpanded" type="button" tooltip="Notifications" container="body" #pop="bs-tooltip" >
+           <i class="fa-solid fa-bell"></i>
+           <span *ngIf="(notificationsLength$|async) !== 0" class="position-absolute top-100 start-100 translate-middle badge rounded-pill bg-danger"> <!-- tooltip="{{(notifications$|async)?.length}} unread notifications" container="body" (mouseenter)="pop.hide()" -->
+             {{notificationsLength$|async}}
+             <span class="visually-hidden">unread messages</span>
+           </span>
+         </button>
+       </li>
+       <li class="nav-item mb-2 ">
+         <form *ngIf="themeForm" [formGroup]="themeForm" class="d-flex ms-auto me-3">
+           <div class="btn-group" btnRadioGroup formControlName="radio">
+             <button btnRadio="light" class="btn btn-outline-primary" container="body" tooltip="Light mode">
+               <i class="fa-solid fa-sun"></i>
+             </button>
+             <button btnRadio="dark" class="btn btn-outline-primary" container="body" tooltip="Dark mode" >
+               <i class="fa-solid fa-cloud-moon"></i>
+             </button>
+             <button btnRadio="auto" class="btn btn-outline-primary" container="body" tooltip="Auto mode"  > 
+               <i class="fa-solid fa-right-left"></i>
+             </button>
+           </div>
+         </form>
+       </li>
+       <li class="nav-item mb-2" >
+         <a class="navbar-brand" routerLink="./userProfile....." routerLinkActive="active">
+           <img alt="UserPhoto" width="40" height="40" [src]="userPicture" class="rounded-circle border border-1">
+         </a>
+       </li>
+       <li class="nav-item ">
+         <button class="btn btn-outline-warning" type="submit" (click)="logout()">Logout</button>
+       </li>
+     </ul>
+   </div>
+ </div>
 </nav>
 
 <app-notifications-panel 
- *ngIf="isNotificationsPanelExpanded" 
- [buttonReference]="notificationsPanelNutton" 
- (isNotificationsPanelExpanded)="isNotificationsPanelExpanded=$event">
+*ngIf="isNotificationsPanelExpanded" 
+[buttonReference]="notificationsPanelNutton" 
+(isNotificationsPanelExpanded)="isNotificationsPanelExpanded=$event">
 </app-notifications-panel>
-<!-- 
- -->
-<!-- <div *ngIf="isNotificationsPanelExpanded" #notificationsPanel>
-  <div class="border border-1 rounded z-3 position-absolute notifications-panel overflow-auto position-absolute"
-  style="right:15px; max-height: calc(100% - 90px); width: 325px;"
-  >
-    <div class="bg-body-secondary">
-      <div *ngFor="let notification of notifications$|async;">
-        <app-notification-card [notification]="notification"></app-notification-card>
-      </div>
-  </div>
-</div>
-</div> -->
-
-<!-- ;openModal(template) -->
-<!-- <ng-template #template>
-  <div class="modal-header">
-    <h4 class="modal-title pull-left">Modal</h4>
-    <button type="button" class="close btn-close pull-right" aria-label="Close" (click)="modalRef?.hide()">
-      <span aria-hidden="true" class="visually-hidden">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    Just a modal with a bunch of words inside, nothing serious.
-  </div>
-</ng-template> -->
-
-
-
-<!-- float-end  h-50 w-25 -->

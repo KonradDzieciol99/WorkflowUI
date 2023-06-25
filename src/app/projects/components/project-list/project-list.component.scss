@@ -1,0 +1,29 @@
+.e-grid .e-gridpager {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    bottom: -1px !important; 
+    z-index: 1 !important;
+}
+.e-grid{
+    border: 0px !important;
+}
+.e-grid .e-toolbar {
+    border: 0px !important;
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 0px !important; 
+    z-index: 1 !important;
+ }
+
+.e-grid .e-gridheader {
+    position: -webkit-sticky !important;
+    position: sticky !important;
+    top: 40px !important; 
+    z-index: 1 !important;
+}
+
+.container-fluid{
+    ::-webkit-scrollbar-track {
+         border-top-right-radius: var(--bs-border-radius);
+      }
+}
