@@ -204,3 +204,53 @@ body {
 .default-transition{
     transition: 0.35s ease !important;
 }
+
+@keyframes gradient {
+	0% {
+        background-position: 70% 10%;
+	}
+	25% {
+		background-position: 50% 25%;
+	}
+	45% {
+		background-position: 25% 75%;
+	} 
+	100% {
+		background-position: 0% 100%;
+	} 
+}
+.btn.btn-primary.with-gradnient{
+
+    &:hover{
+        background-image: linear-gradient(209deg, rgba(89, 131, 252, 1) 0%, rgba(41, 53, 86, 1) 50%,#e73c7e 100%);
+        animation: gradient 5s ease infinite alternate;
+        background-size: 400% 400%;     
+    }
+    &:active{
+        background-image: none;
+    }
+    background-image: linear-gradient(209deg, rgba(89, 131, 252, 1) 0%, rgba(41, 53, 86, 1) 100%);
+    border: 0;
+
+}   
+
+
+@keyframes navbar-gradient-animation {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+.navbar{
+    // background-image: linear-gradient(0deg, rgba(89, 131, 252, 1) 0%, rgba(41, 53, 86, 1) 100%);
+    background-image: linear-gradient(209deg, rgba(89, 131, 252, 1) 0%, rgba(41, 53, 86, 1) 100%);
+    animation: navbar-gradient-animation  15s ease infinite;
+    background-size: 400% 400%;    
+    //color: white !important;
+}

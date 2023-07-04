@@ -3,16 +3,15 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  photosServiceUrl:'https://localhost:7015/api',
-  notificationServiceUrl:'https://localhost:7094/api',
-  projectsUrl:'https://localhost:7294/api',
-  identityServerUrl:'https://localhost:7122/api',
-  notificationUrl:'https://localhost:7094/api/',
+  photosServiceUrl:'https://localhost:5011/api',
+  projectsUrl:'https://localhost:5003/api',
+  identityServerUrl:'https://localhost:5001/api',
+  notificationUrl:'https://localhost:5009/api/',
   apiUrl: 'https://localhost:44346/api/',
-  chatUrl: 'https://localhost:7282/',
-  signalRhubUrl: 'https://localhost:7024/hub/',
-  socialApiUrl: 'https://localhost:7260/',
-  socialApihubUrl: 'https://localhost:7260/hub/',
+  chatUrl: 'https://localhost:5005/api',
+  signalRhubUrl: 'https://localhost:5013/hub/',
+  // socialApiUrl: 'https://localhost:7260/',
+  // socialApihubUrl: 'https://localhost:7260/hub/',
   COOKIE_REFRESH_TOKEN_NAME:"Workflow-Refresh-Token",
   AUTO_LOGOUT_TIME_IN_MINUTES:10,
   production: false

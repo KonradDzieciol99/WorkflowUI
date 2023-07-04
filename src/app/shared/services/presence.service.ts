@@ -14,7 +14,7 @@ export class PresenceService {
 
   hubUrl = environment.signalRhubUrl;
   notificationUrl = environment.notificationUrl;
-  notificationServiceUrl = environment.notificationServiceUrl;
+  notificationServiceUrl = environment.notificationUrl;
   private hubConnection?: HubConnection;
   private onlineUsersSource = new BehaviorSubject<string[]>([]);
   onlineUsers$ = this.onlineUsersSource.asObservable();

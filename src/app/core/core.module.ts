@@ -17,6 +17,9 @@ import { IdentityServerService } from '../authentication/identity-server.service
 import { NotificationCardComponent } from './components/notification-card/notification-card.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { NotificationsPanelComponent } from './components/notifications-panel/notifications-panel.component';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { ThemeSwitchButtonComponent } from './components/theme-switch-button/theme-switch-button.component';
+import { UserMenuComponent } from './components/user-menu/user-menu.component';
 
 
 @NgModule({
@@ -24,7 +27,9 @@ import { NotificationsPanelComponent } from './components/notifications-panel/no
     NavBarComponent,
     HeaderComponent,
     NotificationCardComponent,
-    NotificationsPanelComponent
+    NotificationsPanelComponent,
+    ThemeSwitchButtonComponent,
+    UserMenuComponent
   ],
   imports: [
     ModalModule.forRoot(),
@@ -34,7 +39,7 @@ import { NotificationsPanelComponent } from './components/notifications-panel/no
     ReactiveFormsModule,
     ButtonsModule.forRoot(),
     TooltipModule.forRoot(),
-    
+    BsDropdownModule.forRoot()
   ],
   exports: [HeaderComponent],
   providers:[

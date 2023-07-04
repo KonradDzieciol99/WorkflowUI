@@ -47,10 +47,10 @@ export class MessagesService  {
     return this.http.get<Array<ISearchedUser>>(`${this.identityServerUrl}/IdentityUser/search/${email}`);
   }
   sendInvitation(user:IPerson){
-    return this.http.post(`${this.chatUrl}api/FriendInvitation`,user);
+    return this.http.post(`${this.chatUrl}/FriendRequests`,user);
   }
   getAllFriendInvitation(){
-    return this.http.get<IFriendInvitation[]>(`${this.chatUrl}api/FriendInvitation/GetAllInvitations`).pipe(
+    return this.http.get<IFriendInvitation[]>(`${this.chatUrl}/FriendRequests/GetAllInvitations`).pipe(
       take(1),
       tap(invitations=>this.invitationRequestSource.next(invitations))
     );
@@ -110,7 +110,7 @@ export class MessagesService  {
   acceptFriendInvitation(invitationId:{inviterUserId:string,invitedUserId:string}){
 
     //{inviterUserId:string,invitedUserId:string}
-    return this.http.post(`${this.chatUrl}api/FriendInvitation/AcceptFriendInvitation`,invitationId).pipe(
+    return this.http.post(`${this.chatUrl}api/FriendRequests/AcceptFriendInvitation`,invitationId).pipe(
       mergeMap(()=> {
         return this.invitationRequests$.pipe(
           take(1),
