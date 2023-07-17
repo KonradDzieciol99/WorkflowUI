@@ -20,6 +20,7 @@ import { NotificationsPanelComponent } from './components/notifications-panel/no
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ThemeSwitchButtonComponent } from './components/theme-switch-button/theme-switch-button.component';
 import { UserMenuComponent } from './components/user-menu/user-menu.component';
+import { NotificationPanelComponent } from './components/notification-panel/notification-panel.component';
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import { UserMenuComponent } from './components/user-menu/user-menu.component';
     NotificationCardComponent,
     NotificationsPanelComponent,
     ThemeSwitchButtonComponent,
-    UserMenuComponent
+    UserMenuComponent,
+    NotificationPanelComponent,
   ],
   imports: [
     ModalModule.forRoot(),
@@ -46,9 +48,9 @@ import { UserMenuComponent } from './components/user-menu/user-menu.component';
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptorInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorHandlingInterceptor, multi: true },
-    { provide: APP_INITIALIZER, useFactory: authAppInitializerFactory, deps: [IdentityServerService],
-      multi: true
-    }
+    // { provide: APP_INITIALIZER, useFactory: authAppInitializerFactory, deps: [IdentityServerService],
+    //   multi: true
+    // }
   ]
 })
 export class CoreModule { }

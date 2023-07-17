@@ -8,14 +8,24 @@ import { OAuthService } from 'angular-oauth2-oidc';
 })
 export class UserMenuComponent implements OnInit {
 
-  profilePictureUrl?: string;
-  constructor(private readonly oAuthService: OAuthService) {}
+  public profilePictureUrl?: string;
+  public email?: string;
+  public isNotificationPanelOpen: boolean;
+
+  constructor(private readonly oAuthService: OAuthService) { 
+    this.isNotificationPanelOpen = false;
+  }
 
   ngOnInit(): void {
     let idToken=this.oAuthService.getIdentityClaims();
 
-    let picture = idToken['picture'] as string  | undefined;
+    let picture = idToken['picture'] as string | undefined;
 
+    let email = idToken['email'] as string | undefined;
+    
+    if(email)
+      this.email=email;
+  
     if (picture)
       this.profilePictureUrl=picture;
       
@@ -25,5 +35,7 @@ export class UserMenuComponent implements OnInit {
      this.oAuthService.logOut()
     // this.oAuthService.revokeTokenAndLogout()
   }
-
+  onOpenChange(isOpen: boolean): void {
+    this.isNotificationPanelOpen = isOpen;
+  }
 }

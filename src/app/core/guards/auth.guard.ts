@@ -3,14 +3,14 @@ import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, CanLoad, Route, 
 import { OAuthService } from 'angular-oauth2-oidc';
 import { ToastrService } from 'ngx-toastr';
 import { catchError, map, mergeMap, Observable, of } from 'rxjs';
-import { AuthenticationService } from 'src/app/authentication/authentication.service';
+// import { AuthenticationService } from 'src/app/authentication/authentication.service';
 import { IdentityServerService } from 'src/app/authentication/identity-server.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
-  constructor(private oauthService: OAuthService,private identityServerService:IdentityServerService,private authenticationService:AuthenticationService,private router:Router, private toastrService: ToastrService) {
+  constructor(private oauthService: OAuthService,private identityServerService:IdentityServerService,/*private authenticationService:AuthenticationService,*/private router:Router, private toastrService: ToastrService) {
 
   }
   canActivate(

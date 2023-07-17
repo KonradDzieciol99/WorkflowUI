@@ -2,7 +2,6 @@ import { DOCUMENT } from '@angular/common';
 import { Component, ElementRef, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
-
 enum Theme {
   Light = "light",
   Dark = "dark",
@@ -19,6 +18,7 @@ export class ThemeSwitchButtonComponent implements OnInit, OnDestroy  {
   private themeFormValueChangesSub?:Subscription;
   public currentTheme?:string;
   private themeMap: Map<Theme, string>;
+  public isNotificationPanelOpen: boolean;
 
   constructor(@Inject(DOCUMENT) private document: Document ,private renderer2: Renderer2) 
   {
@@ -27,6 +27,7 @@ export class ThemeSwitchButtonComponent implements OnInit, OnDestroy  {
       [Theme.Dark,"bi bi-moon-stars-fill"],
       [Theme.Auto,"bi bi-arrow-left-right"]
     ]);
+    this.isNotificationPanelOpen = false;
   }
   ngOnInit(): void {
     let theme = localStorage.getItem("theme") as Theme | undefined;
@@ -91,6 +92,11 @@ export class ThemeSwitchButtonComponent implements OnInit, OnDestroy  {
     localStorage.setItem("theme",themeFormFieldValue)
     this.currentTheme = this.themeMap.get(themeFormFieldValue);
   }
+
+  onOpenChange(isOpen: boolean): void {
+    this.isNotificationPanelOpen = isOpen;
+  }
+
   ngOnDestroy(): void {
     if (this.themeFormValueChangesSub) {
       this.themeFormValueChangesSub.unsubscribe();

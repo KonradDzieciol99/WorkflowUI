@@ -15,8 +15,8 @@ export const authConfig: AuthConfig = {
   clientId: 'interactive',
   responseType: 'code',
   strictDiscoveryDocumentValidation: false,
-  scope: 'openid profile offline_access IdentityServerApi chat notification photos project signalR tasks',
-  showDebugInformation: true,
+  scope: 'openid profile offline_access IdentityServerApi chat notification photos project signalR tasks aggregator',
+  showDebugInformation: false,
   sessionChecksEnabled: true,//Chyba to mi pomagało z tym że jeśli któraś z innych kart w przeglądarce wyloguje uzytkownika to on za pomocą tego eventu terminated pozwoli również na wylogowanie
   clearHashAfterLogin: false,
   postLogoutRedirectUri: "https://localhost:4200",
@@ -38,12 +38,7 @@ export class IdentityServerService {
   public isDoneLoading$ = this.isDoneLoadingSubject$.asObservable();
   userProfileSubject = new Subject<UserInfo>();
 
-  constructor(private readonly oAuthService: OAuthService,
-     private readonly httpClient: HttpClient,
-     private router: Router,
-     private presenceService:PresenceService,
-     private messagesService:MessagesService,
-     private busyService:BusyService ) {
+  constructor(private readonly oAuthService: OAuthService) {
     this.load()
   }
   load(){
@@ -126,45 +121,65 @@ export class IdentityServerService {
     //this.router.navigateByUrl('/');
   }
 
-  public runInitialLoginSequence(): Promise<void> {
 
-    this.busyService.busy();
-
+  public async runInitialLoginSequence(): Promise<void> {
     this.oAuthService.configure(authConfig);
-
     this.oAuthService.setupAutomaticSilentRefresh();
+    await this.oAuthService.loadDiscoveryDocument();
+    await this.oAuthService.tryLoginCodeFlow()
 
-    console.log("CZY TEST TEST TEST TESTES TEST")
-    return this.oAuthService.loadDiscoveryDocument().then( () => {
-
-    return this.oAuthService.tryLoginCodeFlow() // (which picks up the fact that the user was just redirected from the B2C, and grabs the tokens)
-      .then( ()=>{
-        if (!this.oAuthService.hasValidAccessToken()) {
-          console.log("sdfsadf");
-          this.oAuthService.initLoginFlow()
-          this.isDoneLoadingSubject$.next(false);
-          // return Promise.resolve();
-        } else {
-          //oAuthService.scope="";
-          //console.log(this.oAuthService.getIdentityClaims());
-          this.isDoneLoadingSubject$.next(true);
-          
-          // return this.oAuthService.loadUserProfile().then( (userProfile) => {
-          //   this.userProfileSubject.next(userProfile as UserInfo)
-          // })
-
-          //presence
-          this.presenceService.createHubConnection(this.oAuthService.getAccessToken());
-
-          this.presenceService.getAllNotifications().pipe(take(1)).subscribe();
-
-          //this.messagesService.stopHubConnection();
-          this.messagesService.createHubConnection(this.oAuthService.getAccessToken());
-
-          this.busyService.idle();
-
-        }
-      });
-    });
+    if (this.oAuthService.hasValidAccessToken()) 
+      this.isDoneLoadingSubject$.next(true);  
+    else {
+      this.oAuthService.initLoginFlow();
+      this.isDoneLoadingSubject$.next(false);
+      throw new Error('The token is invalid or does not exist');
+    }
+    
   }
 }
+  
+  // public runInitialLoginSequence(): Promise<void> {
+
+  //   this.busyService.busy();
+
+  //   this.oAuthService.configure(authConfig);
+
+  //   this.oAuthService.setupAutomaticSilentRefresh();
+
+  //   console.log("CZY TEST TEST TEST TESTES TEST")
+  //   return this.oAuthService.loadDiscoveryDocument().then( () => {
+
+  //   return this.oAuthService.tryLoginCodeFlow() // (which picks up the fact that the user was just redirected from the B2C, and grabs the tokens)
+  //     .then( ()=>{
+  //       if (!this.oAuthService.hasValidAccessToken()) {
+  //         console.log("sdfsadf");
+  //         this.oAuthService.initLoginFlow()
+  //         this.isDoneLoadingSubject$.next(false);
+          
+  //         // return Promise.resolve();
+  //       } else {
+  //         //oAuthService.scope="";
+  //         //console.log(this.oAuthService.getIdentityClaims());
+  //         this.isDoneLoadingSubject$.next(true);
+          
+          
+  //         // return this.oAuthService.loadUserProfile().then( (userProfile) => {
+  //         //   this.userProfileSubject.next(userProfile as UserInfo)
+  //         // })
+
+  //         //presence
+  //         //////////////////////////// this.presenceService.createHubConnection(this.oAuthService.getAccessToken());
+
+  //         //////////////////////////// this.presenceService.getAllNotifications().pipe(take(1)).subscribe();
+
+  //         //this.messagesService.stopHubConnection();
+  //         ////////////this.messagesService.createHubConnection(this.oAuthService.getAccessToken());
+
+  //         this.busyService.idle();
+  //         //////////////////////////// To CHYBA POWINOO byc W  app.component.ts takie inicjowanie
+  //       }
+  //     });
+  //   });
+  // }
+

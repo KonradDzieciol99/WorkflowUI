@@ -38,7 +38,7 @@
                             <div class="d-flex flex-row justify-content-start">
                                 <div class="me-2" style="">
                                     <div class="p-1"  style="width: 40px; height: 40px;">
-                                        <img src="https://a.allegroimg.com/original/1196f4/c13377a34b4d93aaacceb63317c9/NAKLEJKA-NA-OKNO-LUSTRO-SZYBE-POKEMONY-PIKACHU" class="img-fluid rounded-circle border border-1" alt="...">
+                                        <img [src]="searchUser?.photoUrl ?? 'assets/images/Sample_User_Icon.png'" class="img-fluid rounded-circle border border-1" alt="...">
                                     </div>
                                 </div>
                                 <div class="flex-grow-1 d-flex align-items-center overflow-hidden ">
@@ -93,8 +93,8 @@
                             <input type="text" class="form-control rounded-0" placeholder="Search...">
                         </div>
                          <!-- sadfsadf tutututututututututut    -->
-                         {{friends$ |async|json}}
-                         <div *ngFor="let friend of friends$ |async; let i = index" (click)="onFriendSelected(friend)"  id="friend-card" type="button"  class="border border-1 ">
+                         {{friendsWithActivityStatus$|async|json}}
+                         <div *ngFor="let friend of friendsWithActivityStatus$ |async; let i = index" (click)="onFriendSelected(friend)"  id="friend-card" type="button"  class="border border-1 ">
                              <div class="d-flex flex-row justify-content-start " style="">
                                  <div class="me-2" >
                                      <div class="p-1"  style="width: 40px; height: 40px;">
@@ -122,17 +122,17 @@
                         <div accordion-heading class="justify-content-between d-flex align-items-center">
                             <span><del>Notifications</del> Zaproszenia!
                                 <i class="fa-regular fa-bell fa-xs"
-                                [class.green]="(messagesService.invitationRequests$|async)?.length!== 0"
+                                [class.green]="(messagesService.receivedFriendRequests$|async)?.length!== 0"
                                 ></i>
                             </span>
                         </div>
                         <!-- sadfsadf     -->
-                        {{messagesService.invitationRequests$ |async|json}}
-                        <div *ngFor="let invitation of messagesService.invitationRequests$ |async" class="border border-1 ">
+                        {{messagesService.receivedFriendRequests$ |async|json}}
+                        <div *ngFor="let invitation of messagesService.receivedFriendRequests$ |async" class="border border-1 ">
                             <div class="d-flex flex-row justify-content-start">
                                 <div class="me-2" >
                                     <div class="p-1"  style="width: 40px; height: 40px;">
-                                        <img src="https://a.allegroimg.com/original/1196f4/c13377a34b4d93aaacceb63317c9/NAKLEJKA-NA-OKNO-LUSTRO-SZYBE-POKEMONY-PIKACHU" class="img-fluid rounded-circle border border-1" alt="...">
+                                        <img [src]="invitation?.inviterPhotoUrl ?? 'assets/images/Sample_User_Icon.png'" class="img-fluid rounded-circle border border-1" alt="...">
                                     </div>
                                 </div>
                                 <div class="flex-grow-1 d-flex align-items-center overflow-hidden ">

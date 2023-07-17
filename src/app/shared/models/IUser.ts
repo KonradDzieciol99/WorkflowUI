@@ -1,4 +1,6 @@
-export interface IUser {
+export interface IUser{
+    photoUrl?: string;
     email: string;
-    token: string;
+    id:string,
+    isOnline?:boolean
 }

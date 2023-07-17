@@ -1,172 +1,55 @@
-<!-- <div class="card">
-    <div class="card-body"
-            #scrollMe
-            style="overflow: scroll; height: 535px"
-            [scrollTop]="scrollMe.scrollHeight"
-    >
-        <div *ngIf="(messagesService.messageThread$| async)?.length === 0">
-            No messages yet... say hi by using the message box below
-        </div>
-
-        <ul 
-            *ngIf="(messagesService.messageThread$ | async)!.length > 0" class="chat">
-            <li *ngFor="let message of (messagesService.messageThread$ | async)">
-                <div>
-                    <span class="chat-img float-end">
-                        <img class="rounded-circle" 
-                            src="{{message.senderPhotoUrl || './assets/user.png'}}" 
-                            alt="image of user">
-                    </span>
-                    <div class="chat-body">
-                        <div class="header">
-                            <small class="text-muted">
-                                <span class="fa fa-clock-o">{{message.messageSent }}</span>
-                                <span class="text-danger" *ngIf="!message.dateRead 
-                                    && message.senderEmail !== currentRecipientEmail">(unread)</span>
-                                <span class="text-success" *ngIf="message.dateRead 
-                                    && message.senderEmail !== currentRecipientEmail">(read {{message.dateRead}})</span>
-                            </small>
-                        </div>
-                        <p>{{message.content}}</p>
-                    </div>
+<ng-container *ngIf="chatRecipient">
+    <div class="card h-100 border-0">
+        <div class="card-body pe-0 overflow-auto" #chat>
+            <ng-container *ngIf="chatService.messageThread$ | async as messageThread">
+                <div *ngIf="messageThread?.length === 0">
+                    No messages yet... say hi by using the message box below
                 </div>
-            </li>
-        </ul>
-    </div>
-
-    <div class="card-footer">
-            <div class="input-group">
-                <input 
-                    name="messageContent"
-                    required
-                    [formControl]="messageContent"
-                    type="text" 
-                    class="form-control input-sm" 
-                    placeholder="Send a private message">
-                <div class="input-group-append">
-                    <button [disabled]="!messageContent.valid || loading"
-                        (click)="sendMessage()" 
-                        class="btn btn-primary" type="submit">
-                        Send <i *ngIf="loading" class="fa fa-spinner fa-spin"></i>
-                    </button>
-                </div>
-            </div>
-    </div>
-</div> -->
-
-
-<div class="card h-100 border-0">
-    <div class="card-body pe-0 overflow-auto" #chat>
-        <div *ngIf="(chatService.messageThread$| async)?.length === 0">
-            No messages yet... say hi by using the message box below
-        </div>
-        <div *ngIf="(chatService.messageThread$ | async)!.length > 0 " class="d-flex flex-column chat" id="test1" >
-
-            <app-message *ngFor="let message of (chatService.messageThread$ | async); let i = index;" 
-            [message]="message"
-            [currentRecipientEmail]="chatRecipient.email"
-            #messages
-            [isMyMessage]="message.senderEmail !== chatRecipient.email"
-            [isStartMessage]="(chatService.messageThread$ | async)?.[i-1]?.senderEmail===message.senderEmail ? false : true"
-            [isEndMessage]="(chatService.messageThread$ | async)?.[i+1]?.senderEmail===message.senderEmail ? false: true"
-            [isLastRead]="indexOfLastDisplayed===i"
-           
-            >
-            <!-- class="d-flex flex-column" -->
-            </app-message>
-            
-            <app-conversation-bubble-type-animation *ngIf=" chatService.recipientIsTyping$ | async" [chatRecipient]="chatRecipient">
-            </app-conversation-bubble-type-animation>
-            <!-- <div *ngFor="let message of (chatService.messageThread$ | async); let i = index;" 
-            [ngClass]="message.senderEmail !== currentRecipientEmail ? 'align-self-end me' : 'align-self-start him'"
-            [class.start]="(chatService.messageThread$ | async)?.[i-1]?.senderEmail===message.senderEmail ? false : true"
-            [class.end]="(chatService.messageThread$ | async)?.[i+1]?.senderEmail===message.senderEmail ?false: true "
-            class="w-75 mb-1 "
-            [class.last-read]="indexOfLastDisplayed===i"
-            #messages
-            style="word-break: break-word;"
-            >
-                <div class="d-flex flex-row justify-content-start align-items-end" *ngIf="message.senderEmail === currentRecipientEmail; else textOnTheRight">
-                    <img class=" border border-1 rounded-circle me-2" src="{{message.senderPhotoUrl || './assets/user.png'}}" alt="image of user" style="max-height: 28px;"
-                    [tooltip]="message.senderEmail"
-                    placement="bottom"
+                <div *ngIf="messageThread.length > 0 " class="d-flex flex-column chat" id="test1" >
+                    <app-message *ngFor="let message of messageThread; let i = index;" 
+                    [message]="message"
+                    [currentRecipientEmail]="chatRecipient.email"
+                    #messages
+                    [isMyMessage]="message.senderEmail !== chatRecipient.email"
+                    [isStartMessage]="messageThread?.[i-1]?.senderEmail===message.senderEmail ? false : true"
+                    [isEndMessage]="messageThread?.[i+1]?.senderEmail===message.senderEmail ? false: true"
+                    [isLastRead]="indexOfLastDisplayed===i"
                     >
-                    <div class="border p-2 speech-bubble bg-secondary"
-                    [tooltip]="(message.messageSent | date:'EEEE, MM d, y, HH:mm:ss zzzz')?? 'lack of data' "
-                    placement="right"
-                    > 
-                        <span style="font-size: 20px;">
-                            {{message.content}}
-                        </span>
-                    </div>
+                    </app-message>
+                    <app-conversation-bubble-type-animation *ngIf="chatService.recipientIsTyping$ | async" [chatRecipient]="chatRecipient">
+                    </app-conversation-bubble-type-animation>
                 </div>
-                <ng-template #textOnTheRight>
-                    <div class="d-flex flex-row justify-content-end align-items-end">
-                        
-                        <div class="border p-2 speech-bubble bg-primary"
-                        [tooltip]="(message.messageSent | date:'short')?? 'lack of data' "
-                        placement="left"
-                        > 
-                            <span  style="font-size: 20px;">
-                                {{message.content}}
-                            </span>
-                        </div>
-                        <ng-template [ngIf]="!message.dateRead && message.senderEmail !== currentRecipientEmail" [ngIfElse]="loggedOut">
-                        <div>
-                            <div style="position: relative; width: 1.5rem;" >
-                                <i  class="fa-solid fa-eye-slash me-2 ms-1 fa-2xs"
-                                tooltip="unread"
-                                placement="left"
-                                style="position: absolute; bottom: 0.2rem;"
-                                ></i>
-                            </div>
-                        </div>
-                        </ng-template>
-                        <ng-template #loggedOut>
-                        <div>
-                            <div style="position: relative; width: 1.5rem; " >
-                                <i  class="fa-solid fa-eye me-2 ms-1 fa-2xs "
-                                style="position: absolute;"
-                                tooltip="read {{message.dateRead | date:'short'}}"
-                                placement="left"
-                                style="position: absolute; bottom: 0.2rem;"
-                                ></i>
-                            </div>
-                        </div>
-                        </ng-template>
-                    </div>
-                </ng-template>
-            </div> -->
+            </ng-container>
         </div>
-    </div>
-    <div class="card-footer">
-        <div class="d-flex">
-            <div class="d-flex align-items-center justify-content-center me-2"  *ngIf="this.chatService.recipientIsWatching$|async">
-                <div class="bg-success border border-1 rounded-circle is-wathing" style="width:15px; height: 15px;" container="body" tooltip="User is watching!" >
-                    <span class="visually-hidden">User is watching</span>
+        <div class="card-footer">
+            <div class="d-flex">
+                <div class="d-flex align-items-center justify-content-center me-2"  *ngIf="this.chatService.recipientIsWatching$|async">
+                    <div class="bg-success border border-1 rounded-circle is-wathing" style="width:15px; height: 15px;" container="body" tooltip="User is watching!" >
+                        <span class="visually-hidden">User is watching</span>
+                    </div>
                 </div>
-            </div>
-            <div class="flex-grow-1">
-                <div class="input-group ">
-                    <input 
-                        name="messageContent"
-                        required
-                        [formControl]="messageContent"
-                        type="text" 
-                        class="form-control input-sm" 
-                        placeholder="Send a private message">
-                    <div class="input-group-append">
-                        <button [disabled]="!messageContent.valid || loading"
-                            (click)="sendMessage()" 
-                            class="btn btn-primary"
-                            type="submit"
-                            style="border-bottom-left-radius: 0; border-top-left-radius: 0; "
-                            >
-                            Send <i *ngIf="loading" class="fa fa-spinner fa-spin"></i>
-                        </button>
+                <div class="flex-grow-1">
+                    <div class="input-group ">
+                        <input 
+                            name="messageContent"
+                            required
+                            [formControl]="messageContent"
+                            type="text" 
+                            class="form-control input-sm" 
+                            placeholder="Send a private message">
+                        <div class="input-group-append">
+                            <button [disabled]="!messageContent.valid || loading"
+                                (click)="sendMessage(chatRecipient)" 
+                                class="btn btn-primary"
+                                type="submit"
+                                style="border-bottom-left-radius: 0; border-top-left-radius: 0; "
+                                >
+                                Send <i *ngIf="loading" class="fa fa-spinner fa-spin"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</ng-container>
