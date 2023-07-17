@@ -2,7 +2,7 @@ import { Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChild, 
 import { FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { debounceTime, distinctUntilChanged, of, switchMap, take } from 'rxjs';
-import { IPerson } from 'src/app/shared/models/IPerson';
+import { IUser } from 'src/app/shared/models/IUser';
 import { MessagesService } from '../../messages.service';
 import { ChatService } from '../../services/chat.service';
 
@@ -12,20 +12,16 @@ import { ChatService } from '../../services/chat.service';
   styleUrls: ['./chat.component.scss']
 })
 export class ChatComponent implements OnInit, OnDestroy {
-  @Input("chatRecipient") chatRecipient!: IPerson;
-  oAuthService: any;
+  @Input("chatRecipient") chatRecipient?: IUser;
   messageContent: FormControl<string | null>
   loading: boolean;
-  indexOfLastDisplayed:number|undefined;
+  indexOfLastDisplayed?:number;
+  @ViewChildren('messages') messages?: QueryList<ElementRef>;
+  @ViewChild('chat') chat?: ElementRef;
 
-  @ViewChildren('messages') messages: QueryList<ElementRef> | undefined;
-  @ViewChild('chat') chat: ElementRef | undefined;
-
-  //public messagesService:MessagesService,
-  constructor(public chatService:ChatService,private toastrService: ToastrService){
+  constructor(public chatService:ChatService){
       this.messageContent = new FormControl('Hello');
       this.loading=false;
-      
     }
   ngOnInit(): void {
     this.messageContent.valueChanges.pipe(
@@ -40,7 +36,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     //console.log(x.filter(v=>v.senderEmail !== this.currentRecipientEmail && v.dateRead).ind)
       const indexes = [];
       for (let index = 0; index < x.length; index++) {
-        if (x[index].senderEmail !== this.chatRecipient.email && x[index].dateRead) {
+        if (this.chatRecipient && x[index].senderEmail !== this.chatRecipient.email && x[index].dateRead) {
           //indexes.push(index);//old
           this.indexOfLastDisplayed=index;//new
         }
@@ -53,8 +49,6 @@ export class ChatComponent implements OnInit, OnDestroy {
     // this.messagesService.messageThread$.subscribe(x=>{
     //   x[8].
     // })
-    let date = new Date();
-    date.toString()
   }
   ngAfterViewInit() {
     this.scrollToBottom();
@@ -71,10 +65,10 @@ export class ChatComponent implements OnInit, OnDestroy {
       }
     }
   }
-  sendMessage() {
-    if (this.chatRecipient.email && this.messageContent.value) {
+  sendMessage(chatRecipient:IUser) {
+    if (chatRecipient.email && this.messageContent.value) {
       this.loading = true;
-      this.chatService.sendMessage(this.chatRecipient.email, this.messageContent.value).subscribe({
+      this.chatService.sendMessage(chatRecipient, this.messageContent.value).subscribe({
         next: () => {this.messageContent?.reset();},
         complete: () =>{
           this.loading = false;

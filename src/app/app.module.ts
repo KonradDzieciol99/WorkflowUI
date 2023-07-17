@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -10,6 +10,8 @@ import { ToastrModule } from 'ngx-toastr';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { OAuthModule } from 'angular-oauth2-oidc';
+import { authAppInitializerFactory } from './core/initializers/auth-app-initializer.factory';
+import { IdentityServerService } from './authentication/identity-server.service';
 
 @NgModule({
   declarations: [
@@ -37,7 +39,10 @@ import { OAuthModule } from 'angular-oauth2-oidc';
     ),
 
   ],
-  providers: [],
+
+  providers: [    
+    { provide: APP_INITIALIZER, useFactory: authAppInitializerFactory, deps: [IdentityServerService],multi: true}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

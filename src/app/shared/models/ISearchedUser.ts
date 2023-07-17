@@ -10,8 +10,8 @@ export interface ISearchedUser{
 
 export enum UserFriendStatusType
 {
-    Stranger = 1,
-    InvitedByYou = 2,
-    InvitedYou = 3,
-    Friend = 4
+    Stranger,
+    InvitedByYou,
+    InvitedYou,
+    Friend
 }

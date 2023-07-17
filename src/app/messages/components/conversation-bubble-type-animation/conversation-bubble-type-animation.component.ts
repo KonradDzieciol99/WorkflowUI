@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Message } from 'src/app/shared/models/IMessage';
-import { IPerson } from 'src/app/shared/models/IPerson';
+import { IUser } from 'src/app/shared/models/IUser';
 
 @Component({
   selector: 'app-conversation-bubble-type-animation[chatRecipient]',
@@ -8,5 +8,5 @@ import { IPerson } from 'src/app/shared/models/IPerson';
   styleUrls: ['./conversation-bubble-type-animation.component.scss']
 })
 export class ConversationBubbleTypeAnimationComponent {
-  @Input() chatRecipient: IPerson|undefined;
+  @Input() chatRecipient: IUser|undefined;
 }

@@ -13,9 +13,9 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
 
   }
-  test(){
-    this.homeService.getWeather().subscribe(x=>{
-      console.log(x);
-    })
-  }
+  // test(){
+  //   this.homeService.getWeather().subscribe(x=>{
+  //     console.log(x);
+  //   })
+  // }
 }

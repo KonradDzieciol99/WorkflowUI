@@ -1,30 +1,30 @@
-#friend-card:hover{
-    background-color: var(--bs-primary-bg-subtle);
-}
+// #friend-card:hover{
+//     background-color: var(--bs-primary-bg-subtle);
+// }
 
 
-.is-not-displayed{
-    border-color: var(--bs-info) !important;
-}
+// .is-not-displayed{
+//     border-color: var(--bs-info) !important;
+// }
 
 
-.display-button{
-     opacity: 1;
-     margin: auto !important;
-     position: relative !important;
-    //margin: auto !important;
-    // width: 20px;
-    // height: 20px;
-}
+// .display-button{
+//      opacity: 1;
+//      margin: auto !important;
+//      position: relative !important;
+//     //margin: auto !important;
+//     // width: 20px;
+//     // height: 20px;
+// }
 
-#testyy{
-    position: absolute !important;
-    top: 0 !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-}
-.card:hover{
+// #testyy{
+//     position: absolute !important;
+//     top: 0 !important;
+//     bottom: 0 !important;
+//     left: 0 !important;
+//     right: 0 !important;
+// }
+.dropdown-item:hover{
     .display-options{
         transition: all 0.2s ease-in-out;
         opacity: 1 !important;

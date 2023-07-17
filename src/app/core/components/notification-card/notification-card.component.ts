@@ -13,11 +13,8 @@ import { PresenceService } from 'src/app/shared/services/presence.service';
   styleUrls: ['./notification-card.component.scss']
 })
 export class NotificationCardComponent implements OnInit{
-
   @Input("notification") notificationValue: any;
-  notification:INotification|undefined;
-
-  //Events: typeof EventType = EventType;
+  notification?:INotification;
   notificationsTypes: typeof NotificationType = NotificationType;
   constructor(public messagesService:MessagesService,
     private toastrService:ToastrService,
@@ -30,31 +27,43 @@ export class NotificationCardComponent implements OnInit{
         throw new Error("Invalid input value 'notificationValue' in NotificationCardComponent");
       }
        this.notification = this.notificationValue;
-       
+       console.debug(this.notificationValue);
     }
     
   }
   ngOnInit(): void {
 
   }
-  acceptFriendInvitation(invitationId:{inviterUserId:string,invitedUserId:string}){
-    this.messagesService.acceptFriendInvitation(invitationId).subscribe(()=>{
-      this.toastrService.success("Invitation accepted.")
-      //this.invitations$=this.invitations$.pipe(map(invitations=>invitations.filter(x=>x===invitation)));
-      //this.invitations$=
+  acceptFriendInvitation(notification:INotification){
+    this.messagesService.acceptFriendInvitation({inviterUserId: notification.notificationPartnerId!, invitedUserId: notification.userId!})
+                        .subscribe(()=>{
+      this.toastrService.success("Invitation accepted.");
+      this.presenceService.setADifferentTypeOfNotification(notification.id,NotificationType.FriendRequestAccepted);
     });
   }
-  rejectFriendInvitation(invitationId:{inviterUserId:string,invitedUserId:string}){
-    this.messagesService.declineFriendInvitation(invitationId).subscribe(()=>{
+  rejectFriendInvitation(notification:INotification){
+    this.messagesService.declineFriendInvitation({inviterUserId: notification.notificationPartnerId!, invitedUserId: notification.userId!}).subscribe(()=>{
       this.toastrService.success("Invitation declined.")
+      this.presenceService.setADifferentTypeOfNotification(notification.id,NotificationType.FriendRequestAccepted);
     });
   }
-  markNotificationAsRead(id:string){
-    this.presenceService.markNotificationAsRead(id).subscribe(()=>{
+  markNotificationAsRead(notification:INotification){
+    if (notification.displayed) 
+      return;
+    
+    this.presenceService.markNotificationAsRead(notification.id).subscribe(()=>{
       this.toastrService.success("Notification marked as read.")
     });
   }
-  deleteNotification(id:string){
+  // doMarkNotificationAsRead(id:string){
+  //   console.log("xxxxxx")
+  //   // $event.stopPropagation();
+  //   // this.presenceService.markNotificationAsRead(id).subscribe(()=>{
+  //   //   this.toastrService.success("Notification marked as read.")
+  //   // });
+  // }
+  deleteNotification(notification:INotification){
+    //$event.stopPropagation();
 
     // const initialState: ModalOptions = {
     //   initialState: {
@@ -68,19 +77,19 @@ export class NotificationCardComponent implements OnInit{
     //   }
     // };
 
-    let bsModalRef = this.modalService.show(ConfirmWindowComponent, {class: 'modal-sm'});
 
     // if (bsModalRef.content && bsModalRef.content.closeBtnName) {
     //   bsModalRef.content.closeBtnName ='Close';
     // }
 
+    let bsModalRef = this.modalService.show(ConfirmWindowComponent, {class: 'modal-sm'});
     bsModalRef.content?.result?.pipe(
       take(1),
       takeUntil(this.modalService.onHide),
       takeUntil(this.modalService.onHidden),
       mergeMap(x=>{
         if (x) {
-          return this.presenceService.deleteNotification(id).pipe(
+          return this.presenceService.deleteNotification(notification).pipe(
             take(1),
             tap(()=>this.toastrService.success("Notification has been removed.")));
         }
@@ -92,5 +101,7 @@ export class NotificationCardComponent implements OnInit{
     //   this.toastrService.success("Notification has been removed.")
     // });
   }
-
+  stopPropagation($event: MouseEvent) {
+      $event.stopPropagation();
+  }
 }

@@ -1,5 +1,5 @@
-export interface ISimplePerson{
-    userId: string;
-    userEmail: string;
-    userPhotoUrl?: string;
-}
+// export interface ISimplePerson{
+//     userId: string;
+//     userEmail: string;
+//     userPhotoUrl?: string;
+// }

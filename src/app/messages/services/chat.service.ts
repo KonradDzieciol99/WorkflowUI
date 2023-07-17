@@ -4,7 +4,7 @@ import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microso
 import { BehaviorSubject, debounce, debounceTime, delay, from, interval, map, mergeMap, Observable, of, skip, take, takeUntil, tap, timer } from 'rxjs';
 import { IChatGroupMember } from 'src/app/shared/models/IChatGroupMember';
 import { Message } from 'src/app/shared/models/IMessage';
-import { IPerson } from 'src/app/shared/models/IPerson';
+import { IUser } from 'src/app/shared/models/IUser';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -16,7 +16,7 @@ export class ChatService {
   // onlineUsers$ = this.onlineUsersSource.asObservable();
   private chatUrl:string;
   private hubUrl:string; 
-  private hubConnection: HubConnection|undefined;
+  private hubConnection?: HubConnection;
   private messageThreadSource:BehaviorSubject<Message[]>;
   messageThread$:Observable<Message[]>;
   private recipientIsWatchingSource:BehaviorSubject<boolean>;
@@ -46,9 +46,10 @@ export class ChatService {
       .withAutomaticReconnect()
       .build();
 
-    // this.hubConnection.on('ReceiveMessageThread', messages => {
-    //   this.messageThreadSource.next(messages);
-    // })
+    this.hubConnection.on('ReceiveMessageThread', (messages:Message[]) => {
+      this.messageThreadSource.next(messages);
+    })
+    
     this.hubConnection.on('UserIsTyping', (userEmail: string) => { 
       if (userEmail === recipientEmail) {
         // this.recipientIsTyping$.pipe(
@@ -189,15 +190,17 @@ export class ChatService {
     }
     return of()
   }
-  sendMessage(recipientEmail: string, content: string){
-    return this.http.post(`${this.chatUrl}api/Chat`,{recipientEmail: recipientEmail, content:content});
+  sendMessage(recipient: IUser, content: string){
+    return this.http.post(`${this.chatUrl}/Messages`,{recipientUserId:recipient.id,recipientEmail: recipient.email, content:content});
   }
-
-  getMessageThreadAndAssign(recipientEmail: string){
-    return this.http.get<Message[]>(`${this.chatUrl}api/Chat?recipientEmail=${recipientEmail}`).pipe(
-      tap(messages => this.messageThreadSource.next(messages))
-    );
-  }
+  // sendMessage(recipientEmail: string, content: string){
+  //   return this.http.post(`${this.chatUrl}/Messages`,{recipientUserId:,recipientEmail: recipientEmail, content:content});
+  // }
+  // getMessageThreadAndAssign(recipientEmail: string){
+  //   return this.http.get<Message[]>(`${this.chatUrl}api/Chat?recipientEmail=${recipientEmail}`).pipe(
+  //     tap(messages => this.messageThreadSource.next(messages))
+  //   );
+  // }
   stopHubConnectionAndDeleteMessageThread() {
     if (this.hubConnection) {
       this.messageThreadSource.next([]);
