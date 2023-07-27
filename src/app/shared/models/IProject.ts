@@ -5,5 +5,5 @@ export interface IProject{
     id:string,
     iconUrl:string,
     projectMembers:Array<IProjectMember>,
-    leader:IProjectMember
+    //leader:IProjectMember
 }

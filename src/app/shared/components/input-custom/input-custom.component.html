@@ -4,7 +4,8 @@
 
 <!-- //was-validated !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
 
-<div [formGroup]="formGroup" class="form-floating" >
+<div [formGroup]="formGroup" [class.form-floating]="formFloating">
+    <label *ngIf="!formFloating" [for]="nameFormControl" class="form-label">{{label}}</label>
     <input [type]="type" 
         [id]="nameFormControl"
         [readonly]="readonly"
@@ -13,8 +14,8 @@
         [formControlName]="nameFormControl" 
         [class.is-valid]="formGroup.get(nameFormControl)?.valid && (formGroup.get(nameFormControl)?.dirty || formGroup.get(nameFormControl)?.touched) && !readonly"
         [class.is-invalid]="formGroup.get(nameFormControl)?.invalid && (formGroup.get(nameFormControl)?.dirty || formGroup.get(nameFormControl)?.touched) && !readonly" />
-        <label [for]="nameFormControl">{{label}}</label>
-    <ng-container *ngIf="formGroup.get(nameFormControl)?.invalid &&(formGroup.get(nameFormControl)?.dirty || formGroup.get(nameFormControl)?.touched) "> 
+        <label *ngIf="formFloating" [for]="nameFormControl">{{label}}</label>
+    <ng-container  *ngIf="formGroup.get(nameFormControl)?.invalid &&(formGroup.get(nameFormControl)?.dirty || formGroup.get(nameFormControl)?.touched) "> 
         <div *ngFor="let validator of validatorsKeyValue" class="invalid-feedback m-2">
             <span *ngIf="formGroup.controls[nameFormControl]?.errors?.[validator.key]">
                 {{validator.value}}
@@ -23,6 +24,11 @@
     </ng-container>
 </div>
 
+<!-- <div class="mb-3">
+    <label for="exampleInputEmail1" class="form-label">Email address</label>
+    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+    <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+</div> -->
 
 <!-- <div class="input-group has-validation mb-3">
     <span class="input-group-text">@</span>

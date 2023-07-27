@@ -1,0 +1,27 @@
+<ng-container *ngIf="control">
+        <div dropdown btnRadioGroup [formControl]="control" class="d-flex flex-column dropdown" 
+            (isOpenChange)="onOpenChange($event)"> 
+            <button dropdownToggle type="button" class="btn dropdown-toggle d-flex justify-content-center align-items-center" [class.active]="isStatusPanelOpen">
+                <!-- <i *ngIf="currentValue?.iconClass" [class]="currentValue?.iconClass"></i>
+                <span *ngIf="currentValue" >{{currentValue.text}}</span> -->
+                {{control.value|json}}
+            </button>
+            <ul *dropdownMenu class="dropdown-menu dropdown-menu-end mt-1" role="menu">
+                
+                <li *ngFor="let item of projectMember " role="menuitem"  style="width: 250px; max-height: 100px; ">
+                    <button [btnRadio]="item" class="dropdown-item d-flex gap-1  " >
+                        <div class="d-flex">                            
+                            <img [src]="item.photoUrl" width="30" height="30" class="me-2 rounded-circle">
+                            <span class="my-auto">{{item.userEmail}}</span>
+                        </div>
+                    </button>
+                </li>
+            </ul>
+        </div>
+</ng-container>
+
+        <!-- <div class="bg-primary" style="width: 50px;   
+                                       overflow: hidden;
+                                       text-overflow: ellipsis;">
+            <span>gdfgdffsdfsdfsdfsdfsdfsdfsdf</span>
+        </div> -->

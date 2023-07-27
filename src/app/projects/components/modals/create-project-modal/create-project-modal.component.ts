@@ -17,15 +17,10 @@ import { IconPickerComponent } from '../../icon-picker/icon-picker.component';
 })
 export class CreateProjectModalComponent implements OnInit {
 
-  result: Subject<boolean> = new Subject<boolean>();
-  //icons:Array<IIcon>=[];
-  icons:BehaviorSubject<Array<IIcon>> = new BehaviorSubject<Array<IIcon>>([]);
-
   projektForm: FormGroup = new FormGroup({
     name: new FormControl<string>('',[Validators.required,Validators.minLength(6)]), //","
     icon: new FormControl<IIcon|null>(null,[Validators.required]),
   });
-
 
   constructor(public bsModalRef: BsModalRef,private projectsService:ProjectsService,
     private toastrService:ToastrService,private photosService:PhotosService
@@ -34,7 +29,6 @@ export class CreateProjectModalComponent implements OnInit {
   ngOnInit(): void {
     this.photosService.getProjectsIcons().pipe(take(1)).subscribe({
       next:(icons)=>{
-        this.icons.next(icons);
         const random = Math.floor(Math.random() * icons.length);
         this.projektForm.get("icon")?.setValue(icons[random]);
       }
@@ -43,16 +37,9 @@ export class CreateProjectModalComponent implements OnInit {
   openIconPicker(){
     let bsModalRef = this.modalService.show(IconPickerComponent, {class: 'modal-sm modal-dialog-centered'});
     
-   // let sub =this.icons.subscribe(icons=>{
-   //   if (bsModalRef.content) 
-   //     bsModalRef.content.icons = icons;  
-   // });
-
     if (bsModalRef.content) 
-      bsModalRef.content.icons = this.icons.asObservable();  
+      bsModalRef.content.icons = this.photosService.icons$; 
     
-      
-
     bsModalRef.content?.result?.pipe(
       //take(1),
       takeUntil(this.modalService.onHide),
@@ -81,8 +68,5 @@ export class CreateProjectModalComponent implements OnInit {
           this.projektForm.setErrors({serverError: err.error}); 
         },
       });
-      
   }
-
-
 }

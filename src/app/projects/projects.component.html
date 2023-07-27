@@ -30,8 +30,8 @@
             <e-columns>
                 <e-column headerText='Name' width='150'>
                     <ng-template #template let-data>
-                        <a [routerLink]="data.name">
-                            <div type="button" class="d-flex flex-row">
+                        <!-- <a [routerLink]="data.name"> -->
+                            <a [routerLink]="data.id" type="button" class="d-flex flex-row">
                                 <div class="image me-2">
                                     <img class="rounded" src="{{data.iconUrl}}" width="30px" height="30px"
                                         alt="Project icon" />
@@ -39,22 +39,24 @@
                                 <div class="my-auto">
                                     {{data.name}}
                                 </div>
-                            </div>
-                        </a>
+                            </a>
+                        <!-- </a> -->
                     </ng-template>
                 </e-column>
                 <e-column headerText='Lead' width='150'>
                     <ng-template #template let-data>
-                        <div class="d-flex flex-row">
-                            <div class="image me-2">
-                                <img class="rounded-circle border border-2"
-                                    src="{{(data.projectMembers|findLeader)?.photoUrl}}" width="30px" height="30px"
-                                    alt="Leader photo" />
+                        <ng-container *ngIf="data.projectMembers|findLeader as leader">
+                            <div class="d-flex flex-row">
+                                <div class="image me-2">
+                                    <img class="rounded-circle border border-2"
+                                        [src]="leader?.photoUrl ??'assets/images/Sample_User_Icon.png' " width="30px" height="30px"
+                                        alt="Leader photo" />
+                                </div>
+                                <div class="my-auto">
+                                    {{leader.userEmail}}
+                                </div>
                             </div>
-                            <div class="my-auto">
-                                {{(data.projectMembers|findLeader)?.userEmail}}
-                            </div>
-                        </div>
+                        </ng-container>
                     </ng-template>
                 </e-column>
             </e-columns>

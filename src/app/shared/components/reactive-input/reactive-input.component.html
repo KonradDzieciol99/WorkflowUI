@@ -1,0 +1,31 @@
+<ng-container *ngIf="control">
+    <div [class.form-floating]="formFloating">
+        <!-- <label *ngIf="!formFloating" [for]="nameFormControl" class="form-label">{{label}}</label> -->
+        <label *ngIf="label && !formFloating" class="form-label">{{label}}</label>
+        <input [type]="type" 
+            [readonly]="readonly"
+            class="form-control"
+            [placeholder]="placeholder"
+            [formControl]="control"
+            [class.is-valid]="control.valid && (control.dirty || control.touched) && !readonly"
+            [class.is-invalid]="control.invalid && (control.dirty || control.touched) && !readonly" />
+            <label *ngIf="label && formFloating">{{label}}</label>
+            <!-- <label *ngIf="formFloating" [for]="nameFormControl">{{label}}</label> -->
+        <!-- <ng-container  *ngIf="control.invalid &&(control.dirty || control.touched) "> 
+            <div *ngFor="let validator of validatorsKeyValue" class="invalid-feedback m-2">
+                <span *ngIf="control.errors?.[validator.key]">
+                    {{validator.value}}
+                </span>
+            </div>
+        </ng-container> -->
+        <ng-container *ngIf="control.invalid &&(control.dirty || control.touched) "> 
+            <ng-container *ngFor="let validator of validatorsKeyValue">
+                <div *ngIf="control.errors?.[validator.key]" class="invalid-feedback m-2">
+                    <span >
+                        {{validator.value}}
+                    </span>
+                </div>
+            </ng-container>
+        </ng-container>
+    </div>
+</ng-container>

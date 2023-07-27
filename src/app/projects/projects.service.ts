@@ -24,7 +24,9 @@ export class ProjectsService  {
     this.projectsUrl = environment.projectsUrl;
   }
   public execute(state: any): void {
-    this.getData(state).pipe(take(1)).subscribe(x => this.projectsSource.next(x as any));
+    this.getData(state).pipe(take(1)).subscribe(x => {
+      this.projectsSource.next(x as any)
+    });
     // of({result:[{id:["dfg","dsfg","dfg","dfg"]}],count:4}).subscribe(x => {
     //   super.next(x as any)
     // });

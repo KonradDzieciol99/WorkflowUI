@@ -12,46 +12,45 @@
     </div>
     
     <div class="border rounded-top" style="max-height: 75%; overflow: auto; min-height: 170px">
-        <ejs-grid #grid [dataSource]="service.projects$ | async" [allowResizing]="true" [allowPaging]="true"
+        <ejs-grid #grid [dataSource]="tasksService.tasks$ | async" [allowResizing]="true" [allowPaging]="true"
             [allowSorting]="true" [allowFiltering]="false" [allowGrouping]="false" [pageSettings]="pageSettings"
             [editSettings]="editSettings" (dataStateChange)="dataStateChange($event)"
             (dataSourceChanged)="dataSourceChanged($event)" [toolbar]="toolbar">
             <e-columns>
-                <e-column headerText="Name" width="150">
-                    <ng-template #template let-data>
-                        <a [routerLink]="data.name">
-                            <div type="button" class="d-flex flex-row">
-                                <div class="image me-2">
-                                    <img class="rounded" src="{{ data.iconUrl }}" width="30px" height="30px"
-                                        alt="Project icon" />
-                                </div>
-                                <div class="my-auto">
-                                    {{ data.name }}
-                                </div>
-                            </div>
-                        </a>
-                    </ng-template>
+                
+                <e-column field='name' headerText="Name">
                 </e-column>
-                <e-column headerText="Lead" width="150">
-                    <ng-template #template let-data>
-                        <div class="d-flex flex-row">
-                            <div class="image me-2">
-                                <img class="rounded-circle border border-2"
-                                    src="{{ (data.projectMembers | findLeader)?.photoUrl }}" width="30px" height="30px"
-                                    alt="Leader photo" />
-                            </div>
-                            <div class="my-auto">
-                                {{ (data.projectMembers | findLeader)?.userEmail }}
-                            </div>
-                        </div>
-                    </ng-template>
+
+                <e-column field='description' headerText="description"> 
+                </e-column>
+
+                <e-column field='projectId' headerText="ProjectId"> 
+                </e-column>
+
+                <e-column field='priority' headerText="Priority"> 
+                </e-column>
+                
+                <e-column field='state' headerText="State"> 
+                </e-column>           
+                
+                <e-column field='dueDate' headerText="DueDate"> 
+                </e-column>
+
+                <e-column field='startDate' headerText="StartDate"> 
+                </e-column>
+
+                <e-column field='taskLeaderId' headerText="TaskLeaderId"> 
+                    <!-- <ng-template #template let-data>
+                        <img [src]="'https://flags.fmcdn.net/data/flags/mini/' + data.Country.toLowerCase() + '.png'">
+                        <span> {{data.Country}}</span>
+                    </ng-template> -->
                 </e-column>
             </e-columns>
         </ejs-grid>
     </div>
 
     <div class="row g-0">
-        <button type="button" class="btn btn-outline-secondary border rounded-0 rounded-bottom text-start">
+        <button (click)="createTask()" type="button" class="btn btn-outline-secondary border rounded-0 rounded-bottom text-start">
             <i class="fa-solid fa-plus me-1"></i>
             Create
         </button>

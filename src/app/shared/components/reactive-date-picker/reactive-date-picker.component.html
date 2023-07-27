@@ -1,0 +1,32 @@
+<ng-container *ngIf="control">
+    <label  *ngIf="label" class="form-label">{{label}}</label>
+    <div class="input-group">
+        <input
+            type="date"
+            class="form-control"
+            placeholder="yyyy-mm-dd"
+            name="dp"
+            [formControl]="control"
+            [readonly]="readonly"
+            ngbDatepicker
+            #d="ngbDatepicker"
+            [class.is-invalid]="control.invalid && (control.dirty || control.touched) && !readonly"
+            [class.is-valid]="control.valid && (control.dirty || control.touched) && !readonly"
+            
+        />
+        <!-- [class.is-invalid]="taskForm.controls['dueDate'].invalid && (taskForm.controls['dueDate'].dirty || taskForm.controls['dueDate'].touched)"  -->
+        <!-- [minDate]="minNgbDateStruct" -->
+        <!-- [minDate]="{year: 2023, month: 7, day: 22}" -->
+
+        <button class="btn btn-outline-secondary bi bi-calendar3" (click)="d.toggle()" type="button"></button>
+
+    </div>
+    <ng-container *ngIf="control.invalid &&(control.dirty || control.touched) "> 
+        <ng-container *ngFor="let validator of validatorsKeyValue">
+            <div *ngIf="control.errors?.[validator.key]" class="invalid-feedback m-2 d-block">
+                <span >{{validator.value}}</span>
+            </div>
+        </ng-container>
+    </ng-container>
+</ng-container>
+<!-- invalid-feedbackinvalid-feedbackinvalid-feedbackinvalid-feedbackinvalid-feedbackinvalid-feedback !! przez to sie nie wyseitla -->

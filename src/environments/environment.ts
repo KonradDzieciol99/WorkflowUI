@@ -11,6 +11,7 @@ export const environment = {
   chatUrl: 'https://localhost:5005/api',
   aggregator: 'https://localhost:5017/api',
   signalRhubUrl: 'https://localhost:5013/hub/',
+  tasksUrl: 'https://localhost:5015/api',
   // socialApiUrl: 'https://localhost:7260/',
   // socialApihubUrl: 'https://localhost:7260/hub/',
   COOKIE_REFRESH_TOKEN_NAME:"Workflow-Refresh-Token",
