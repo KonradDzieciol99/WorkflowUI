@@ -2,8 +2,8 @@ import { Component, HostListener, OnDestroy, OnInit, TemplateRef, ViewChild } fr
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, Observable, Subscription, take } from 'rxjs';
 import { IProject } from 'src/app/shared/models/IProject';
-import { ProjectService } from '../../services/project.service';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { ProjectService } from 'src/app/projects/services/project.service';
 
 @Component({
   selector: 'app-sidebar',

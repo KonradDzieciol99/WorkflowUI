@@ -289,3 +289,20 @@ body {
     }
 
 }
+
+.ngb-dp-header,.ngb-dp-weekdays{
+    background-color: var(--bs-body-bg) !important; 
+}
+
+[ngbDatepickerDayView]:hover:not(.bg-primary), [ngbDatepickerDayView].active:not(.bg-primary) {
+    // background-color: var(--bs-btn-bg);
+    // outline: 1px solid var(--bs-border-color);
+    color: var(--bs-dark);
+}
+
+.xng-breadcrumb-root{
+    color: var(--bs-body-color) !important; 
+    .xng-breadcrumb-trail{
+        color: var(--bs-primary-text-emphasis) !important; 
+    }
+}

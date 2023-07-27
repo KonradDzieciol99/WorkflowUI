@@ -12,14 +12,19 @@ import { environment } from 'src/environments/environment';
 export class ProjectService {
 
   projectsUrl = environment.projectsUrl;
-
-  constructor(private http: HttpClient,private router: Router) {}
-
-  private projectSource:BehaviorSubject<IProject|undefined> = new BehaviorSubject<IProject|undefined>(undefined);
-  project$:Observable<IProject|undefined>=this.projectSource.asObservable()
-  get(name:string){
-    return this.http.get<IProject>(`${this.projectsUrl}/projects/${name}`).pipe(
+  private projectSource:BehaviorSubject<IProject|undefined>;
+  project$:Observable<IProject|undefined>;
+  constructor(private http: HttpClient,private router: Router) {
+    this.projectsUrl = environment.projectsUrl;
+    this.projectSource = new BehaviorSubject<IProject|undefined>(undefined);
+    this.project$ = this.projectSource.asObservable()
+  }
+  get(projectId:string){
+    return this.http.get<IProject>(`${this.projectsUrl}/projects/${projectId}`).pipe(
       tap(project=>this.projectSource.next(project)),
     );
+  }
+  update(updateProject:{name?:string ,iconUrl?:string ,newLeaderId?:string,projectId:string }){
+    return this.http.put(`${this.projectsUrl}/projects/${updateProject.projectId}`,updateProject);
   }
 }

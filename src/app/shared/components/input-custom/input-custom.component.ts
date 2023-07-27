@@ -12,6 +12,7 @@ export class InputCustomComponent  implements OnInit {
   @Input() nameFormControl!:string;
   @Input() validatorsKeyValue: {key: string, value: string}[]=[];
   @Input() readonly:boolean=true; 
+  @Input() formFloating:boolean=true; 
   @Input() label:string = 'WYPEŁNIJ'; 
   @Input() type:string = 'text'; 
   public edit=false;

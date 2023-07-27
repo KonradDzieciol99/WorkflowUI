@@ -21,6 +21,7 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ThemeSwitchButtonComponent } from './components/theme-switch-button/theme-switch-button.component';
 import { UserMenuComponent } from './components/user-menu/user-menu.component';
 import { NotificationPanelComponent } from './components/notification-panel/notification-panel.component';
+import { BreadcrumbModule } from 'xng-breadcrumb';
 
 
 @NgModule({
@@ -41,7 +42,8 @@ import { NotificationPanelComponent } from './components/notification-panel/noti
     ReactiveFormsModule,
     ButtonsModule.forRoot(),
     TooltipModule.forRoot(),
-    BsDropdownModule.forRoot()
+    BsDropdownModule.forRoot(),
+    BreadcrumbModule
   ],
   exports: [HeaderComponent],
   providers:[

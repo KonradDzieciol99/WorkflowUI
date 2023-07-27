@@ -1,0 +1,21 @@
+<div class="container-md ">
+    <div class="d-flex justify-content-between flex-wrap">
+        <h5>Settings</h5>
+        <xng-breadcrumb></xng-breadcrumb>
+    </div>
+    <ng-container *ngIf="settingsForm">
+        <form [formGroup]="settingsForm" class="d-flex justify-content-center flex-column mx-auto" style="width: 200px;">
+            <ng-container *ngIf="settingsForm.get('iconUrl')?.value as imageUrl; else noIcon">
+                <img [src]="imageUrl" width="130px" height="130px" class="mx-auto d-block">
+            </ng-container>
+            <ng-template #noIcon>
+                <i class="bi bi-cloud-arrow-up mx-auto" style="font-size: 5.5rem;"></i>
+            </ng-template>
+            <button type="button"
+             (click)="openIconPicker()" 
+             class="btn btn-outline-primary d-block mx-auto mt-4">Change Icon</button>
+            <app-reactive-input class="mt-3" formControlName="name" [formFloating]="false" [label]="'Name'"></app-reactive-input>
+            <app-reactive-input class="mt-3" formControlName="name" [formFloating]="false" [label]="'Name'"></app-reactive-input>
+        </form>
+    </ng-container>
+</div>

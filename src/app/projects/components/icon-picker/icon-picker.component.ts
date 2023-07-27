@@ -10,17 +10,15 @@ import { PhotosService } from 'src/app/shared/services/photos.service';
   styleUrls: ['./icon-picker.component.scss']
 })
 export class IconPickerComponent implements OnInit {
-
-  
-  result: Subject<IIcon> = new Subject<IIcon>();
-  icons:Observable<Array<IIcon>> | undefined
-  selectedIcon:IIcon|undefined;
+  result: Subject<IIcon> 
+  icons?:Observable<Array<IIcon>>;
+  selectedIcon?:IIcon;
   constructor(private photosService:PhotosService,public bsModalRef: BsModalRef) {
+    this.result = new Subject<IIcon>();
   }
   ngOnInit(): void {
-    // this.photosService.getProjectsIcons().pipe(take(1)).subscribe({
-    //   next:(icons)=>{this.icons=icons}
-    // });
+    // this.icons = this.photosService.icons$;
+
   }
   select(){
     if (this.selectedIcon) {

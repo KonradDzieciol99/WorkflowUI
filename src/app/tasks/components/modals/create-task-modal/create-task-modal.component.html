@@ -1,0 +1,149 @@
+<ng-container *ngIf="taskForm">
+    <div class="modal-header">
+        <h5 class="modal-title" >Create Task</h5>
+        <button type="button" class="btn-close" (click)="selfBsModalRef.hide()"></button>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="taskForm">
+            <div class="row">
+                <div class="col-6">
+                    <div class="mb-2">
+                        <app-reactive-input 
+                            formControlName="name" 
+                            [formFloating]="false"
+                            [placeholder]="'Add a title...'"
+                            [validatorsKeyValue]="[{key: 'required', value: 'Field is required.'}]"
+                            [label]="'Title'" 
+                        > 
+                        </app-reactive-input>                
+                    </div>
+                    <div class="mb-2">
+                        <label for="exampleFormControlTextarea1" class="form-label">Description</label>
+                        <textarea class="form-control" formControlName="description"  rows="3" placeholder="Add a description..."></textarea>
+                    </div>
+                    <div class="mb-2">
+                        <label for="exampleFormControlTextarea1" class="form-label">Activity</label>
+                        <textarea class="form-control" placeholder="Add a comment..." rows="1"></textarea>
+                    </div>
+                    <div class="mb-2"> 
+                        <label class="form-label">Assignee</label>
+                        <app-reactive-dropdown class="col" [map]="projectMembersLeaders$|async" formControlName="assignee">
+                            <ng-template #selectButtonTemplate let-data>
+                                    <img [src]="data?.photoUrl ?? 'assets/images/user.png'" width="30" height="30" class="me-2 rounded-circle">
+                                    <span style="max-width: 70%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">{{data?.userEmail ?? 'Unassigned'}}</span>
+                            </ng-template>
+                            <ng-template #triggerButtonTemplate let-data>
+                                    <img [src]="data?.photoUrl ?? 'assets/images/user.png'" width="30" height="30" class="me-2 rounded-circle">
+                                    <span style="max-width: 70%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">{{data?.userEmail ?? 'Unassigned'}}</span>
+                            </ng-template>
+                        </app-reactive-dropdown> 
+                    </div>
+                </div>
+                <div class="col-6 d-flex flex-column">
+
+                    <div class="row mb-2">
+                        <div class="col">
+                            <label class="form-label">Status</label>
+                            <!-- <app-reactive-dropdown class="" [map]="stateMap" formControlName="state"> </app-reactive-dropdown> -->
+
+                            <!-- <app-c-reactive-dropdown [map]="stateMap" formControlName="state"></app-c-reactive-dropdown> -->
+                            <app-reactive-dropdown class="col" [map]="statuses" [additionalKeyValue]="stateMap" formControlName="state">
+                                <ng-template #selectButtonTemplate let-data let-oprions="options">
+                                        <i *ngIf="oprions.iconClass" [class]="oprions.iconClass"></i>
+                                        <span>{{oprions.text}}</span>   
+                                </ng-template>
+                                <ng-template #triggerButtonTemplate let-data let-oprions="options">
+                                        <i *ngIf="oprions.iconClass" [class]="oprions.iconClass"></i>
+                                        <span>{{oprions.text}}</span>
+                                </ng-template>
+                            </app-reactive-dropdown> 
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Priority</label>
+                            <!-- <app-reactive-dropdown class="col" [map]="priorityMap" formControlName="priority"></app-reactive-dropdown>  -->
+                            
+                            <!-- <app-c-reactive-dropdown class="col" [map]="priorityMap" formControlName="priority"></app-c-reactive-dropdown> -->
+
+                            <app-reactive-dropdown class="col" [map]="priorites" [additionalKeyValue]="priorityMap" formControlName="priority">
+                                <ng-template #selectButtonTemplate let-data let-oprions="options">
+                                        <i *ngIf="oprions.iconClass" [class]="oprions.iconClass"></i>
+                                        <span>{{oprions.text}}</span>   
+                                </ng-template>
+                                <ng-template #triggerButtonTemplate let-data let-oprions="options">
+                                        <i *ngIf="oprions.iconClass" [class]="oprions.iconClass"></i>
+                                        <span>{{oprions.text}}</span>
+                                </ng-template>
+                            </app-reactive-dropdown> 
+
+                        </div>
+                    </div>
+                    <!-- tutaj datepicke -->
+                    <div class="mb-2">
+                        <date-picker [label]="'Start Date'"  formControlName="startDate"></date-picker>
+                    </div>
+                    <div class="mb-2">
+                        <date-picker [label]="'Due Date'"  formControlName="dueDate"></date-picker>
+                    </div>
+                    <div class="mb-2">
+                        <!-- <app-user-dropdown [projectMember]="projectMembers$|async" formControlName="assignee"></app-user-dropdown> -->
+
+                        <!-- <button [btnRadio]="item.key" class="dropdown-item d-flex gap-1">
+                            <i *ngIf="item.value.iconClass" [class]="item.value.iconClass"></i>
+                            <span>{{item.value.text}}</span> -->
+                        
+                        <label class="form-label">Assignee</label>
+                        <app-reactive-dropdown class="col" [map]="projectMembers$|async" formControlName="assignee">
+                            <ng-template #selectButtonTemplate let-data>
+                                    <!-- <img [src]="data.photoUrl" width="30" height="30" class="me-2 rounded-circle">
+                                    <span class="my-auto">{{data.userEmail}}</span> -->
+                                    <img [src]="data?.photoUrl ?? 'assets/images/user.png'" width="30" height="30" class="me-2 rounded-circle">
+                                    <span style="max-width: 70%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">{{data?.userEmail ?? 'Unassigned'}}</span>
+                            </ng-template>
+                            <ng-template #triggerButtonTemplate let-data>
+                                    <img [src]="data?.photoUrl ?? 'assets/images/user.png'" width="30" height="30" class="me-2 rounded-circle">
+                                    <span style="max-width: 70%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">{{data?.userEmail ?? 'Unassigned'}}</span>
+                            </ng-template>
+                        </app-reactive-dropdown> 
+                        <!-- d-flex justify-content-center align-items-center -->
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <div *ngIf="taskForm.errors?.['checkDateOrder']" class="invalid-feedback d-block w-auto me-auto">Date order is not correct</div>
+        <!-- {{taskForm.errors|json}} -->
+        <button type="button" class="btn btn-secondary" (click)="selfBsModalRef.hide()">Cancel</button>
+        <button type="button" [disabled]="taskForm.invalid"  class="btn btn-primary" (click)="create(taskForm)">Create</button>
+    </div>
+</ng-container>
+<!-- <div class="col d-flex flex-column">
+    <button class="btn btn-primary">d</button>
+    <div>ddd</div>
+</div> -->
+
+<!-- <app-state-dropdown formControlName="state"></app-state-dropdown> -->
+
+
+
+                   <!-- <div class="dropdown d-inline-block" dropdown (isOpenChange)="onOpenChange($event)">
+                        <button type="button"class="btn btn-link p-0 rounded-circle nav-link dropdown-toggle d-flex align-items-center"
+                        dropdownToggle container="body"  tooltip="User Menu" container="body" [class.active]="isStatusPanelOpen">
+                            <small class="d-md-none ms-2">User Menu</small>
+                        </button>
+                    
+                        <ul *dropdownMenu class="dropdown-menu dropdown-menu-end mt-1" role="menu">
+                            <p class="text-muted p-1 text-center m-0 mb-1 small">
+                                <small class="d-block">User Menu</small>
+                            </p>
+                            <li role="menuitem">
+                                <a class="dropdown-item" routerLink="./settings">
+                                    <i class="bi bi-gear me-1"></i>
+                                    Settings
+                                </a>
+                            </li>
+                            <li class="divider dropdown-divider"></li>
+                        </ul>
+                    </div> -->
+                    <!-- asd -->

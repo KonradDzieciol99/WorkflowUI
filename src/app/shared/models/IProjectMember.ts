@@ -5,7 +5,7 @@ export interface IProjectMember{
     userEmail:string,
     type:ProjectMemberType
     projectId:string,
-    photoUrl:string
+    photoUrl?:string
 }
 export enum ProjectMemberType {
     Leader,
