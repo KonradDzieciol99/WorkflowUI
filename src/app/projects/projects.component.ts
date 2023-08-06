@@ -44,7 +44,6 @@ export class ProjectsComponent implements OnInit {
         take(1),
         mergeMap(value=>{
           if(!value) return of();
-
           return this.service.deleteProject(state);
         })
       )

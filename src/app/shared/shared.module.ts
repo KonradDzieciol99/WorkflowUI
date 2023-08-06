@@ -12,7 +12,9 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { CReactiveDropdownComponent } from './components/c-reactive-dropdown/c-reactive-dropdown.component';
 import { MapGetValuePipe } from './pipes/map-get-value.pipe';
-
+import { AddMemberIconComponent } from './components/add-member-icon/add-member-icon.component';
+import { AddProjectMemberModalComponent } from './components/modals/add-project-member-modal/add-project-member-modal.component';
+import { TabsModule } from 'ngx-bootstrap/tabs';
 
 
 @NgModule({
@@ -23,7 +25,9 @@ import { MapGetValuePipe } from './pipes/map-get-value.pipe';
     ReactiveDatePickerComponent,
     ReactiveDropdownComponent,
     CReactiveDropdownComponent,
-    MapGetValuePipe
+    MapGetValuePipe,
+    AddMemberIconComponent,
+    AddProjectMemberModalComponent
   ],
   imports: [
     CommonModule,
@@ -32,7 +36,7 @@ import { MapGetValuePipe } from './pipes/map-get-value.pipe';
     NgbDatepickerModule,
     BsDropdownModule.forRoot(),
     ButtonsModule.forRoot(),
-
+    TabsModule.forRoot(),
   ]
   ,exports:[
     InputCustomComponent,
@@ -41,7 +45,10 @@ import { MapGetValuePipe } from './pipes/map-get-value.pipe';
     ReactiveDatePickerComponent,
     ReactiveDropdownComponent,
     CReactiveDropdownComponent,
-    MapGetValuePipe
+    MapGetValuePipe,
+    AddMemberIconComponent,
+    TabsModule,
+    TooltipModule
   ]
 })
 export class SharedModule { }

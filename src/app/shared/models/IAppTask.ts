@@ -1,17 +1,21 @@
+import { IProjectMember } from "./IProjectMember";
 
 export interface IAppTask {
     id:string;
     name:string
     description?:string
     projectId:string 
-    taskAssigneeMemberId?:string
-    taskAssigneeMemberEmail?:string
-    taskAssigneeMemberPhotoUrl?:string
+    // taskAssigneeMemberId?:string
+    // taskAssigneeMemberEmail?:string
+    // taskAssigneeMemberPhotoUrl?:string
     priority:Priority
     state:State
     dueDate:Date
     startDate:Date, 
-    taskLeaderId:string
+    taskLeaderId?:string,
+    taskLeader?:IProjectMember,
+    taskAssigneeMemberId?:string,
+    taskAssignee?:IProjectMember,
 }
 
 export enum Priority {

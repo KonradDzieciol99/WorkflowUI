@@ -13,6 +13,8 @@ import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsComponent } from './components/settings/settings.component';
 import { BreadcrumbModule } from 'xng-breadcrumb';
+import { SettingsDetailsComponent } from './components/settings-details/settings-details.component';
+import { SettingsMembersComponent } from './components/settings-members/settings-members.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +24,8 @@ import { BreadcrumbModule } from 'xng-breadcrumb';
     IconPickerComponent,
     FindLeaderPipe,
     SettingsComponent,
+    SettingsDetailsComponent,
+    SettingsMembersComponent,
     
   ],
   imports: [
