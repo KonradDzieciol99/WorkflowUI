@@ -113,9 +113,15 @@ export class ProjectsService  {
       id=state.data[0].id;
     else
       this.toastrService.error("Error occured")
-    
+    //throw error ?!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     return this.http.delete<void>(`${this.projectsUrl}/projects/${id}`);
     
+  }
+  acceptProjectInvitation(projectId:string){
+    return this.http.put<void>(`${this.projectsUrl}/Projects/${projectId}/AcceptInvitation`,{})
+  }
+  declineProjectInvitation(projectId:string){
+    return this.http.delete<void>(`${this.projectsUrl}/Projects/${projectId}/DeclineInvitation`)
   }
 }

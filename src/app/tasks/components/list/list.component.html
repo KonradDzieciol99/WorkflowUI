@@ -1,13 +1,35 @@
-<div class="container-fluid pt-5 pe-5 ps-5 pb-5 overflow-auto h-100">
+<!-- <div class="container-fluid pt-5 pe-5 ps-5 pb-5 overflow-auto h-100"> -->
+<div class="container-lg py-3">
+    <div class="d-flex justify-content-between flex-wrap">
+        <div class="d-flex">
+            <h5>Summary</h5>
+            <!-- <div class="position-relative border rounded-circle" >  -->
+                <!-- <i class="bi bi-person-plus-fill "></i>  height: 10px; width: 10px;-->
+            <!-- </div> -->
+        </div>
+        <xng-breadcrumb></xng-breadcrumb>
+    </div>
     <div class="row g-0">
         <div class="col-12 col-sm-5 col-md-4 col-lg-3 col-xl-2">
-            <div class="input-group input-group-sm mb-2 mt-4">
+            <div class="input-group input-group-sm mb-2">
                 <span class="input-group-text"><i class="fa-solid fa-magnifying-glass fa-sm"></i></span>
-                <input type="text" [formControl]="searchProjects" class="form-control" placeholder="Search..." />
-                <button class="btn btn-outline-secondary btn-sm" type="button" (click)="searchProjects.reset()">
-                    <i class="fa-solid fa-x fa-sm"></i>
+                <input type="text" [formControl]="searchTasks" class="form-control" placeholder="Search..." />
+                <button class="btn btn-outline-secondary btn-sm" type="button" (click)="searchTasks.reset()">
+                    <i class="fa-solid fa-x fa-sm "></i>
                 </button>
             </div>
+        </div>
+        <!-- <div class="d-flex position-relative col-auto border bg-secondary bg-opacity-25 mb-1 mb-sm-0 ms-sm-auto me-sm-1 mx-auto mx-sm-0 rounded-circle"
+             style=" height: 30px; width: 30px;"
+             tooltip="Add member"
+             [adaptivePosition]="true"
+             placement="left"
+             container="body"
+             >
+            <i class="bi bi-person-plus-fill position-absolute " style="left: 27%; bottom: 12%;"></i>
+        </div> class="col-auto"-->
+        <div class="mb-sm-0 ms-sm-auto me-sm-1 mx-auto mx-sm-0 col-auto ">
+            <app-add-member-icon ></app-add-member-icon>
         </div>
     </div>
     
@@ -15,36 +37,51 @@
         <ejs-grid #grid [dataSource]="tasksService.tasks$ | async" [allowResizing]="true" [allowPaging]="true"
             [allowSorting]="true" [allowFiltering]="false" [allowGrouping]="false" [pageSettings]="pageSettings"
             [editSettings]="editSettings" (dataStateChange)="dataStateChange($event)"
-            (dataSourceChanged)="dataSourceChanged($event)" [toolbar]="toolbar">
+            (dataSourceChanged)="dataSourceChanged($event)" [toolbar]="toolbar" (toolbarClick)='toolbarClick($event)'>
             <e-columns>
-                
-                <e-column field='name' headerText="Name">
-                </e-column>
+                <!-- width='auto' -->
 
-                <e-column field='description' headerText="description"> 
+                <e-column field='name' headerText="Title">
                 </e-column>
-
-                <e-column field='projectId' headerText="ProjectId"> 
-                </e-column>
-
                 <e-column field='priority' headerText="Priority"> 
                 </e-column>
                 
                 <e-column field='state' headerText="State"> 
-                </e-column>           
+                </e-column> 
+                <e-column field='startDate' headerText="Start Date"> 
+                </e-column>
                 
+                <e-column field='dueDate' headerText="Due Date"> 
+                </e-column> 
+                <e-column field='taskAssignee' headerText="Assignee"  width="200px"> 
+                    <ng-template #template let-data >
+                        <div class="d-flex align-items-center">
+                        <img [src]="data.taskAssignee?.photoUrl ?? 'assets/images/user.png'" width="30" height="30" class="me-2 rounded-circle">
+                        <span style="max-width: 70%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">{{data.taskAssignee?.userEmail ?? 'Unassigned'}}</span>
+                        </div>
+                    </ng-template>
+                </e-column>
+                <e-column field='taskLeader' headerText="Leader"  width="200px"> 
+                    <ng-template #template let-data >
+                        <div class="d-flex align-items-center">
+                        <img [src]="data.taskLeader?.photoUrl ?? 'assets/images/user.png'" width="30" height="30" class="me-2 rounded-circle">
+                        <span style="max-width: 70%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">{{data.taskLeader?.userEmail ?? 'Unassigned'}}</span>
+                        </div>
+                    </ng-template>
+                </e-column>
+                <!--  
                 <e-column field='dueDate' headerText="DueDate"> 
                 </e-column>
 
                 <e-column field='startDate' headerText="StartDate"> 
-                </e-column>
+                </e-column> -->
 
-                <e-column field='taskLeaderId' headerText="TaskLeaderId"> 
-                    <!-- <ng-template #template let-data>
+                <!-- <e-column field='taskLeaderId' headerText="TaskLeaderId"> 
+                     <ng-template #template let-data>
                         <img [src]="'https://flags.fmcdn.net/data/flags/mini/' + data.Country.toLowerCase() + '.png'">
                         <span> {{data.Country}}</span>
-                    </ng-template> -->
-                </e-column>
+                    </ng-template> 
+                </e-column> -->
             </e-columns>
         </ejs-grid>
     </div>

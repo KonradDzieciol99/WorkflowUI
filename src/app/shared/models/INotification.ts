@@ -34,7 +34,9 @@ export enum NotificationType
     RemovedFromFriendByYou,
     InvitationDeclined,
     InvitationDeclinedByYou,
-    TEST
+    InvitationToProjectRecived,
+    InvitationToProjectDeclined,
+    InvitationToProjectAccepted
 };
 
 

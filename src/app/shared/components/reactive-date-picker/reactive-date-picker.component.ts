@@ -1,5 +1,7 @@
 import { Component, Input, OnInit, Self } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
+import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { inputs } from '@syncfusion/ej2-angular-grids/src/grid/grid.component';
 
 @Component({
   selector: 'date-picker',
@@ -11,6 +13,7 @@ export class ReactiveDatePickerComponent implements ControlValueAccessor,OnInit 
                                                                  {key: "minimumDateNgb", value: 'The date provided is too early.'}];                                             
   @Input() label?:string;
   @Input() readonly:boolean = false; 
+  @Input() minDate?:NgbDateStruct;
   control?: FormControl<any>;
   constructor(@Self() public controlDir: NgControl) {
     this.controlDir.valueAccessor = this;

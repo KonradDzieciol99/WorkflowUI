@@ -1,54 +1,16 @@
 <ng-container *ngIf="control">
-    <!-- <div class="d-flex ms-auto"> -->
         <div dropdown btnRadioGroup [formControl]="control" class="d-flex flex-column dropdown" 
             (isOpenChange)="onOpenChange($event)"> 
             <button dropdownToggle type="button" class="btn dropdown-toggle d-flex align-items-center focus-ring" [class.active]="isStatusPanelOpen">
                 <ng-container class="" *ngTemplateOutlet="triggerButtonTemplate;context:{ $implicit: control.value, options: additionalKeyValue|mapGetValue:control.value }"></ng-container>
             </button>
             <ul *dropdownMenu class="dropdown-menu dropdown-menu-end mt-1" role="menu">
-                <!-- , options: additionalKeyValue|mapGetValue:control.value  -->
-                <!-- <li *ngFor="let item of (map | keyvalue) " role="menuitem">
-                    <button [btnRadio]="item.key" class="dropdown-item d-flex gap-1">
-                        <i *ngIf="item.value.iconClass" [class]="item.value.iconClass"></i>
-                        <span>{{item.value.text}}</span>
-                    </button>
-                </li> -->
-
                 <li *ngFor="let item of map " role="menuitem">
                     <button [btnRadio]="item" class="dropdown-item d-flex align-items-center p-1">
                         <ng-container *ngTemplateOutlet="selectButtonTemplate;context:{ $implicit: item, options: additionalKeyValue|mapGetValue:item  }"></ng-container>
                     </button>
                 </li>
-                <!-- <ng-template #selectButtonDefaultTemplate let-item>
-                    <button [btnRadio]="item.key" class="dropdown-item d-flex gap-1">
-                        <i *ngIf="item.value.iconClass" [class]="item.value.iconClass"></i>
-                        <span>{{item.value.text}}</span>
-                    </button>
-                </ng-template> -->
-            
-                <!-- <li role="menuitem">
-                    <button [btnRadio]="statuses.ToDo" class="dropdown-item d-flex justify-content-center gap-1">
-                        <i class="bi bi-brightness-high-fill"></i>
-                        <span>ToDo</span>
-                    </button>
-                </li>
-                <li role="menuitem">
-                    <button [btnRadio]="statuses.InProgress" class="dropdown-item d-flex justify-content-center gap-1" type="button">
-                        <i class="bi bi-moon-stars-fill"> Dark mode</i>
-                        <span>InProgress</span>
-                    </button>
-                </li>
-                <li class="divider dropdown-divider"></li>
-                <li role="menuitem">
-                    <button [btnRadio]="statuses.Done" class="dropdown-item d-flex justify-content-center gap-1" type="button">
-                        <i class="bi bi-arrow-left-right"> Auto mode</i>
-                        <span>Done</span>
-                    </button>
-                </li> -->
             </ul>
         </div>
-    <!-- </div> -->
 </ng-container>
 
-
-<!-- d-inline-block -->

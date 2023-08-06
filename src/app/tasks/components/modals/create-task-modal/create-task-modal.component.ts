@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbDate, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
@@ -7,7 +8,9 @@ import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, Subject, map, take } from 'rxjs';
 import { ProjectService } from 'src/app/projects/services/project.service';
 import { CustomValidators } from 'src/app/shared/Validators/CustomValidators';
-import { Priority, State } from 'src/app/shared/models/IAppTask';
+import { IAppTask, Priority, State } from 'src/app/shared/models/IAppTask';
+import { ICreateAppTask } from 'src/app/shared/models/ICreateAppTask';
+import { IProjectCreateRequest } from 'src/app/shared/models/IProjectCreateRequest';
 import { IProjectMember, ProjectMemberType } from 'src/app/shared/models/IProjectMember';
 import { ITextIconPair } from 'src/app/shared/models/ITextIconPair';
 import { IUser } from 'src/app/shared/models/IUser';
@@ -24,10 +27,10 @@ export class CreateTaskModalComponent implements OnInit  {
   stateMap: Map<State, ITextIconPair>;
   priorityMap: Map<Priority, ITextIconPair>;
   minNgbDateStruct?: NgbDateStruct;
-  projectMembers$?: Observable<(IProjectMember|null)[]>
-  projectMembersLeaders$?: Observable<IProjectMember[]>;
+  projectMembers$?: Observable<(IProjectMember|undefined)[]>
   statuses: State[];
   priorites: Priority[];
+  updatedTask?:IAppTask;
   constructor(public selfBsModalRef: BsModalRef,
               private tasksService:TasksService,
               private toastrService:ToastrService,
@@ -38,7 +41,6 @@ export class CreateTaskModalComponent implements OnInit  {
     {
       this.result = new Subject<boolean>();
 
-      // const userClaims = this.oAuthService.getIdentityClaims();//currentuserservice
 
       // let user:IProjectMember = {
       //   email: userClaims['email'],
@@ -62,52 +64,75 @@ export class CreateTaskModalComponent implements OnInit  {
     }
   ngOnInit(): void {
     let currentDate = new Date();
-
-    this.minNgbDateStruct = {
-      year: currentDate.getFullYear(),
-      month:  currentDate.getMonth() + 1 ,
-      day: currentDate.getDate() + 1
-    };
-
-    const dueDate = {
-      year: currentDate.getFullYear(),
-      month:  currentDate.getMonth() + 1 ,
-      day: currentDate.getDate() + 7
-    };
+    // currentDate.setMonth(currentDate.getMonth() + 1); 
+    // this.minNgbDateStruct = {
+    //   year: currentDate.getFullYear(),
+    //   month:  currentDate.getMonth() ,
+    //   day: currentDate.getDate()
+    // };
+    currentDate.setMonth(currentDate.getMonth() + 1); 
+    this.minNgbDateStruct = this.mapDateToNgbDateStruct(currentDate)
     this.projectService.project$.pipe().subscribe(x=>{  
       if (!x) 
         return;
+ 
+        // currentDate.setDate(currentDate.getDate() + 7); 
+        // const dueDate: NgbDateStruct = {
+        //   year: currentDate.getFullYear(),
+        //   month:  currentDate.getMonth(),
+        //   day: currentDate.getDate()
+        // }; 
 
-      // this.taskForm.get('projectId')?.setValue(x?.id);
-      const leader = x.projectMembers.find(x=>x.type===ProjectMemberType.Leader);
+      currentDate.setDate(currentDate.getDate() + 7)
+      const dueDate = this.mapDateToNgbDateStruct(currentDate)
 
+      const userClaims = this.oAuthService.getIdentityClaims();//currentuserservice
+      const leader = x.projectMembers.find(x=>x.userId===userClaims['sub']);
+      
       this.taskForm = new FormGroup({
+        id: new FormControl<string|undefined>(undefined,{ nonNullable: true, validators: []}),
         name: new FormControl<string>('',{ nonNullable: true, validators: [Validators.required]}),
         description: new FormControl<string>('',{ nonNullable: true, validators: []}),
-        projectId: new FormControl<string>('',{ nonNullable: true, validators: []}),       
+        projectId: new FormControl<string>(x.id,{ nonNullable: true, validators: []}),       
         state: new FormControl<State>(State.ToDo,{ nonNullable: true, validators: [Validators.required]}),
         priority: new FormControl<Priority>(Priority.Medium,{ nonNullable: true, validators: [Validators.required]}),
-        dueDate: new FormControl<NgbDateStruct>(dueDate,{ nonNullable: true, validators: [Validators.required,CustomValidators.minimumDateNgb(this.minNgbDateStruct!)]}),
-        startDate: new FormControl<NgbDateStruct>(this.minNgbDateStruct!,{ nonNullable: true, validators: [Validators.required,CustomValidators.minimumDateNgb(this.minNgbDateStruct!)]}),
-        assignee: new FormControl<IProjectMember|null>(null,{validators: []}),
-        leader: new FormControl<IProjectMember>(leader!,{nonNullable: true,validators: [Validators.required]}),
+        dueDate: new FormControl<NgbDateStruct>(dueDate,{ nonNullable: true, validators: [Validators.required]}),
+        startDate: new FormControl<NgbDateStruct>(this.minNgbDateStruct!,{ nonNullable: true, validators: [Validators.required]}),
+        assignee: new FormControl<IProjectMember|undefined>(undefined,{nonNullable: true,validators: []}),
+        leader: new FormControl<IProjectMember|undefined>(leader,{nonNullable: true, validators: [Validators.required]}),
       }, { validators:  CustomValidators.checkDateOrder() });
 
+      if (this.updatedTask) {
+        this.taskForm.get('name')?.setValue(this.updatedTask?.name);
+        this.taskForm.get('description')?.setValue(this.updatedTask?.description);
+        this.taskForm.get('projectId')?.setValue(this.updatedTask?.projectId);
+        this.taskForm.get('state')?.setValue(this.updatedTask?.state);
+        this.taskForm.get('priority')?.setValue(this.updatedTask?.priority);
+        this.taskForm.get('dueDate')?.setValue(this.mapDateToNgbDateStruct( new Date(this.updatedTask?.dueDate)));
+        this.taskForm.get('startDate')?.setValue(this.mapDateToNgbDateStruct( new Date(this.updatedTask?.startDate)));
+        this.taskForm.get('assignee')?.setValue(this.updatedTask?.taskAssignee);
+        this.taskForm.get('leader')?.setValue(this.updatedTask?.taskLeader);
+        this.taskForm.get('id')?.setValue(this.updatedTask?.id);
 
+        this.taskForm.get('id')?.setValidators(Validators.required)
+    }else{
+      this.taskForm.get('dueDate')?.setValidators(CustomValidators.minimumDateNgb(this.minNgbDateStruct!))
+      this.taskForm.get('startDate')?.setValidators(CustomValidators.minimumDateNgb(this.minNgbDateStruct!))
+    }
+    const ff= new Date()
+    console.log();
     });//destroy!
-
-    // this.projectMembers$ = this.projectService.project$.pipe(map(x=>{
-    //   let members = x?.projectMembers ?? [];
-    //   return members;
-    // }));
 
     this.projectMembers$ = this.projectService.project$.pipe(
       map(x => {
         let members = x?.projectMembers ?? [];
-        return [null , ...members] ;
+        return [undefined , ...members] ;
       })
     );
-    this.projectMembersLeaders$ = this.projectService.project$.pipe(map(x=>x?.projectMembers ?? []));
+    // this.projectMembersLeaders$ = this.projectService.project$.pipe(map(x=>{
+    //   let members = x?.projectMembers ?? [];
+    //   return [undefined , ...members] ;
+    // }));
   }
   create(taskForm:FormGroup){
 
@@ -115,21 +140,100 @@ export class CreateTaskModalComponent implements OnInit  {
       taskForm.markAllAsTouched();
       return;
     }
-    
-    // this.tasksService.create(this.taskForm.value as IProjectCreateRequest)
-    // .pipe(take(1))
-    // .subscribe({
-    //   next:(project)=>{
-    //     this.toastrService.success(`Project has been created`);
-    //     this.bsModalRef.hide();
-    //   },
-    //   error:(err:HttpErrorResponse)=>{
-    //       this.taskForm.setErrors({serverError: err.error}); 
-    //     },
-    //   });
+
+    let ggg= this.taskForm?.value;
+
+   let dueDateNgbDateStruct = this.taskForm?.value.dueDate as NgbDateStruct;
+
+   let startDateNgbDateStruct = this.taskForm?.value.startDate as NgbDateStruct;
+
+   let dueDateDate= new Date(dueDateNgbDateStruct.year,dueDateNgbDateStruct.month - 1 ,dueDateNgbDateStruct.day);
+   let startDateDateDate= new Date(startDateNgbDateStruct.year,startDateNgbDateStruct.month - 1,startDateNgbDateStruct.day);
+
+    const createAppTask:ICreateAppTask={
+      name:this.taskForm?.value.name,
+      description:this.taskForm?.value.description,
+      projectId:this.taskForm?.value.projectId ,
+      priority:this.taskForm?.value.priority ,
+      state:this.taskForm?.value.state ,
+      dueDate:dueDateDate ,
+      startDate:startDateDateDate,
+      taskAssigneeMemberId:this.taskForm?.value?.assignee?.id,
+      taskAssignee:this.taskForm?.value?.assignee,
+      taskLeaderId:this.taskForm?.value?.leader?.id,
+      taskLeader:this.taskForm?.value?.leader
+      // taskAssigneeMemberEmail:this.taskForm?.value?.assignee?.userEmail,
+      // taskAssigneeMemberPhotoUrl:this.taskForm?.value?.assignee?.photoUrl
+    }
+
+    // taskLeaderId?:string,
+    // taskLeader?:IProjectMember,
+    // taskAssigneeMemberId?:string,
+    // taskAssignee?:IProjectMember,
+
+
+    this.tasksService.create(createAppTask)
+    .pipe(take(1))
+    .subscribe({
+      next:(project)=>{
+        this.toastrService.success(`Task has been created`);
+        this.selfBsModalRef.hide();
+      },
+      error:(err:HttpErrorResponse)=>{
+          this.taskForm?.setErrors({serverError: err.error}); 
+        },
+      });
   }
   // onOpenChange(isOpen: boolean): void {
   //   this.isStatusPanelOpen = isOpen;
   // }
+ update(taskForm:FormGroup){
+  if (this.taskForm?.invalid) {
+    taskForm.markAllAsTouched();
+    return;
+  }
+
+  let dueDateNgbDateStruct = this.taskForm?.value.dueDate as NgbDateStruct;
+  let startDateNgbDateStruct = this.taskForm?.value.startDate as NgbDateStruct;
+
+  let dueDateDate= new Date(dueDateNgbDateStruct.year,dueDateNgbDateStruct.month - 1,dueDateNgbDateStruct.day);
+  let startDateDateDate= new Date(startDateNgbDateStruct.year,startDateNgbDateStruct.month - 1,startDateNgbDateStruct.day);
+
+  const updatedTask:IAppTask={
+    name: this.taskForm?.value.name,
+    description: this.taskForm?.value.description,
+    projectId: this.taskForm?.value.projectId,
+    priority: this.taskForm?.value.priority,
+    state: this.taskForm?.value.state,
+    dueDate: dueDateDate,
+    startDate: startDateDateDate,
+    taskAssigneeMemberId: this.taskForm?.value?.assignee?.id,
+    taskAssignee: this.taskForm?.value?.assignee,
+    taskLeaderId: this.taskForm?.value?.leader?.id,
+    taskLeader: this.taskForm?.value?.leader,
+    id: this.taskForm?.value.id
+  }
+
+  this.tasksService.update(updatedTask)
+  .pipe(take(1))
+  .subscribe({
+    next:()=>{
+      this.toastrService.success(`Task has been updated`);
+      this.selfBsModalRef.hide();
+    },
+    error:(err:HttpErrorResponse)=>{
+        this.taskForm?.setErrors({serverError: err.error}); 
+      },
+    });
+ }
+ mapDateToNgbDateStruct(date:Date):NgbDateStruct{
+  const bgbDateStruct:NgbDateStruct={
+    year: date.getFullYear(),
+    month:  date.getMonth(),
+    day: date.getDate()
+  }
+
+  return bgbDateStruct;
+ }
 
 }

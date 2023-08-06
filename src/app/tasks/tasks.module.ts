@@ -29,7 +29,9 @@ import { SharedModule } from '../shared/shared.module';
     NgbCollapseModule,
     BsDropdownModule.forRoot(),
     ButtonsModule.forRoot(),
-    BreadcrumbModule
+    BreadcrumbModule,
+    TooltipModule.forRoot(),
+
   ],
   providers: [PageService,
     SortService,
@@ -45,4 +47,5 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { UserDropdownComponent } from './components/user-dropdown/user-dropdown.component';
 import { BreadcrumbModule } from 'xng-breadcrumb';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 

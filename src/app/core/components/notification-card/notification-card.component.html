@@ -45,8 +45,14 @@
       <ng-container *ngSwitchCase="notificationsTypes.InvitationDeclinedByYou">
         <ng-container *ngTemplateOutlet="genericTemplate"></ng-container>
       </ng-container>
-      <ng-container *ngSwitchCase="notificationsTypes.TEST">
-        <ng-container *ngTemplateOutlet="TEST"></ng-container>
+      <ng-container *ngSwitchCase="notificationsTypes.InvitationToProjectRecived">
+        <ng-container *ngTemplateOutlet="InvitationToProjectRecived"></ng-container>
+      </ng-container>
+      <ng-container *ngSwitchCase="notificationsTypes.InvitationToProjectDeclined">
+        <ng-container *ngTemplateOutlet="InvitationToProjectRecived"></ng-container>
+      </ng-container>
+      <ng-container *ngSwitchCase="notificationsTypes.InvitationToProjectAccepted">
+        <ng-container *ngTemplateOutlet="InvitationToProjectRecived"></ng-container>
       </ng-container>
       <!-- <div *ngSwitchDefault>{{ notification.description }}</div> -->
     </ng-container>
@@ -105,13 +111,22 @@
     {{ notification?.description }}
   </p>
 </ng-template>
-<ng-template #TEST>
+<ng-template #InvitationToProjectRecived>
   <p class="mb-0">
-    TEST
+    You have been invited to project <b>{{notification?.notificationPartnerEmail }}</b>
+  </p>
+  <div class="d-flex flex-row mt-1">
+    <button type="button" (click)="stopPropagation($event);acceptProjectInvitation(notification!)" class="btn btn-success btn-sm">Accept</button>
+    <button type="button" (click)="stopPropagation($event);rejectProjectInvitation(notification!)" class="btn btn-danger btn-sm ms-2">Reject </button>
+</div>
+</ng-template>
+<ng-template #InvitationToProjectAccepted>
+  <p class="mb-0">
+    You are now a member of the project {{ notification?.notificationPartnerEmail }}
   </p>
 </ng-template>
-<!-- <ng-template #InvitationDeclinedTemplate>
+<ng-template #InvitationToProjectDeclined>
   <p class="mb-0">
-    {{ notification?.description }}
+    You declined the invitation to the project {{ notification?.notificationPartnerEmail }}
   </p>
-</ng-template> -->
+</ng-template>

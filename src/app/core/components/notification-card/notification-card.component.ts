@@ -3,6 +3,7 @@ import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
 import { mergeMap, of, take, takeUntil, tap } from 'rxjs';
 import { MessagesService } from 'src/app/messages/messages.service';
+import { ProjectsService } from 'src/app/projects/projects.service';
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window/confirm-window.component';
 import { EventType, INotification, isINotification, NotificationType } from 'src/app/shared/models/INotification';
 import { PresenceService } from 'src/app/shared/services/presence.service';
@@ -19,7 +20,8 @@ export class NotificationCardComponent implements OnInit{
   constructor(public messagesService:MessagesService,
     private toastrService:ToastrService,
     private presenceService:PresenceService,
-    private modalService: BsModalService) {
+    private modalService: BsModalService,
+    private projectsService: ProjectsService) {
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['notificationValue']) {
@@ -33,6 +35,18 @@ export class NotificationCardComponent implements OnInit{
   }
   ngOnInit(): void {
 
+  }
+  acceptProjectInvitation(notification:INotification){
+    this.projectsService.acceptProjectInvitation(notification.notificationPartnerId!).subscribe(()=>{
+      this.toastrService.success("Invitation accepted.");
+      this.presenceService.setADifferentTypeOfNotification(notification.id,NotificationType.InvitationToProjectAccepted);
+    });
+  }
+  rejectProjectInvitation(notification:INotification){
+    this.projectsService.declineProjectInvitation(notification.notificationPartnerId!).subscribe(()=>{
+      this.toastrService.success("Invitation declined.");
+      this.presenceService.setADifferentTypeOfNotification(notification.id,NotificationType.InvitationToProjectDeclined);
+    });
   }
   acceptFriendInvitation(notification:INotification){
     this.messagesService.acceptFriendInvitation({inviterUserId: notification.notificationPartnerId!, invitedUserId: notification.userId!})
@@ -104,4 +118,5 @@ export class NotificationCardComponent implements OnInit{
   stopPropagation($event: MouseEvent) {
       $event.stopPropagation();
   }
+  
 }

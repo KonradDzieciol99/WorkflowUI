@@ -6,6 +6,7 @@ import { ProjectService } from 'src/app/projects/services/project.service';
 import { IProject } from 'src/app/shared/models/IProject';
 import { TasksService } from 'src/app/tasks/tasks.service';
 import { BreadcrumbService } from 'xng-breadcrumb';
+import { ProjectMembersService } from '../../services/project-members.service';
 @Component({
   selector: 'app-project-side-bar',
   templateUrl: './project-side-bar.component.html',
@@ -22,6 +23,7 @@ export class ProjectSideBarComponent implements OnInit,OnDestroy  {
 
   constructor(private activatedRoute: ActivatedRoute,
               private projectService:ProjectService,
+              private projectMembersService:ProjectMembersService,
               private tasksService:TasksService,
               private router: Router,
               private offcanvasService: NgbOffcanvas,
@@ -48,6 +50,7 @@ export class ProjectSideBarComponent implements OnInit,OnDestroy  {
         this.breadcrumbService.set('@projectSideBar', project.name);
         const state = { skip: 0 , take: 10 };
         this.tasksService.execute(state);
+        this.projectMembersService.execute(state);
       },
       error:()=> this.router.navigate(['../projects']),
     })
