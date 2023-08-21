@@ -9,6 +9,12 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ChatComponent } from './components/chat/chat.component';
 import { MessageComponent } from './components/message/message.component';
 import { ConversationBubbleTypeAnimationComponent } from './components/conversation-bubble-type-animation/conversation-bubble-type-animation.component';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CollapseModule } from 'ngx-bootstrap/collapse';
+import { AccordionFindPeopleComponent } from './components/accordion-find-people/accordion-find-people.component';
+import { AccordionMyChatsComponent } from './components/accordion-my-chats/accordion-my-chats.component';
+import { AccordionInvitationsComponent } from './components/accordion-invitations/accordion-invitations.component';
 
 
 @NgModule({
@@ -16,7 +22,10 @@ import { ConversationBubbleTypeAnimationComponent } from './components/conversat
     MessagesComponent,
     ChatComponent,
     MessageComponent,
-    ConversationBubbleTypeAnimationComponent
+    ConversationBubbleTypeAnimationComponent,
+    AccordionFindPeopleComponent,
+    AccordionMyChatsComponent,
+    AccordionInvitationsComponent
   ],
   imports: [
     CommonModule,
@@ -24,7 +33,11 @@ import { ConversationBubbleTypeAnimationComponent } from './components/conversat
     SharedModule,
     AccordionModule.forRoot(), 
     TooltipModule.forRoot(),
-   
+    InfiniteScrollModule,
+    ReactiveFormsModule,
+    FormsModule,
+    CollapseModule.forRoot(),
+
   ]
 })
 export class MessagesModule { }

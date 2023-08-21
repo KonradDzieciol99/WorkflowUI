@@ -6,190 +6,188 @@
 @import '../node_modules/bootstrap/scss/functions';
 @import '../node_modules/bootstrap/scss/variables';
 @import '../node_modules/bootstrap/scss/mixins'; 
-
-// @import '../node_modules/@syncfusion/ej2-base/styles/material.css';  
-// @import '../node_modules/@syncfusion/ej2-buttons/styles/material.css';  
-// @import '../node_modules/@syncfusion/ej2-calendars/styles/material.css';  
-// @import '../node_modules/@syncfusion/ej2-dropdowns/styles/material.css';  
-// @import '../node_modules/@syncfusion/ej2-inputs/styles/material.css';  
-// @import '../node_modules/@syncfusion/ej2-navigations/styles/material.css';
-// @import '../node_modules/@syncfusion/ej2-popups/styles/material.css';
-// @import '../node_modules/@syncfusion/ej2-splitbuttons/styles/material.css';
-// @import '../node_modules/@syncfusion/ej2-notifications/styles/material.css';
-// @import '../node_modules/@syncfusion/ej2-angular-grids/styles/material.css';
-
 @import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
 @import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
-
-// @include media-breakpoint-down
-// @import "bootstrap/scss/_variables";
-// @import "bootstrap/scss/_mixins";
 
 html,
 body {
     height: 100%;
-    
 }
 
-#loginForm{
-    .form-floating:focus-within {
-        z-index: 2;
+.navbar{
+    height: 60px;
+
+    @include media-breakpoint-down(sm){
+        height: auto;
     }
-    input[type="email"] {
-        margin-bottom: -1px;
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 0;
-    }
-    input[type="password"] {
-        margin-bottom: 10px;
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-    }
-}
-#registerForm {
-    .form-floating:focus-within {
-        z-index: 2;
-    }
-    input[type="email"] {
-        margin-bottom: -1px;
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 0;
-    }
-    input[type="password"]:not([id="repeatedPassword"]) {
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 0;
-    }
-    input[id="repeatedPassword"] {
-        margin-bottom: 10px;
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
+
+    &:has(div.navbar-collapse.show ,div.navbar-collapse.collapsing){
+        height: auto;
     }
 }
 
-@media only screen and (max-width: 992px) { 
-    #messages-container, .side-panel-container { 
-        height: calc(100% - 57px);
-    }  
+.messages-container { 
+    height: calc(100% - 60px);
+}  
+.side-panel-container{
+    height: calc(100% - 60px);
 }
-@media only screen and (min-width: 992px) { 
-    .navbar { 
-        // height: 62px;
-    }  
-    #messages-container, .side-panel-container { 
-        height: calc(100% - 63px);
-    }  
-}
-@media only screen and (max-width: 576px) { 
-    #messages-container{ 
-        height: calc(200% - 63px);
-    }  
+// @media only screen and (max-width: 992px) { 
+//     .test123g { 
+//         height: calc(100% - 60px);
+//     }  
+// }
+// @media only screen and (min-width: 992px) { 
+//     .test123g{ 
+//         height: calc(100% - 59px);
+//     }  
+// }
+// @media only screen and (max-width: 576px) { 
+//     .test123g {  
+//         height: calc(200% - 63px);
+//     }  
+// }
+
+// @include media-breakpoint-down(md){
+//     .test123g {  
+//         height: calc(100% - 57px);
+//     } 
+// }
+
+// app-root{
+//     height: 100%;
+//     display: flex;
+//     flex-direction: column;
     
-}
-#messages-container{
-    accordion{
-        height: 100%;
-        display: flex !important;
-        flex-direction: column;
-        .panel-open{
-             min-height: 0;
-            .panel{
-                height: 100%;
-                .show{
-                    flex-grow: 1;
-                     min-height: 0;
-                    .panel-body{
-                        overflow: auto;
-                        height: 100%;
-                    }
-                }
-            }
-        }
-        .panel-body{
-            padding: 0;
-        }
-    }
-    .accordion-toggle[aria-expanded="true"]{
-        div:after {
-            content: "\f107" !important;
-            font: normal normal normal 14px/1 FontAwesome !important;
-        }
-    }
-    .accordion-toggle[aria-expanded="false"]{
-        div:after {
-            content: "\f106" !important;
-            font: normal normal normal 14px/1 FontAwesome !important;
-        }
-    }
-}
+// }
+// app-header{
+//     height: 50px;
+// }
+// app-messages {
+//     // flex-grow: 1;
+//     overflow-y: auto;
+// }
+
+// body {
+//     display: flex;
+//     flex-direction: column;
+// }
+
+// app-messages {
+//     flex: 1;
+//     overflow-y: auto;
+// }
+
+// #loginForm{
+//     .form-floating:focus-within {
+//         z-index: 2;
+//     }
+//     input[type="email"] {
+//         margin-bottom: -1px;
+//         border-bottom-right-radius: 0;
+//         border-bottom-left-radius: 0;
+//     }
+//     input[type="password"] {
+//         margin-bottom: 10px;
+//         border-top-left-radius: 0;
+//         border-top-right-radius: 0;
+//     }
+// }
+// #registerForm {
+//     .form-floating:focus-within {
+//         z-index: 2;
+//     }
+//     input[type="email"] {
+//         margin-bottom: -1px;
+//         border-bottom-right-radius: 0;
+//         border-bottom-left-radius: 0;
+//     }
+//     input[type="password"]:not([id="repeatedPassword"]) {
+//         border-top-left-radius: 0;
+//         border-top-right-radius: 0;
+//         border-bottom-right-radius: 0;
+//         border-bottom-left-radius: 0;
+//     }
+//     input[id="repeatedPassword"] {
+//         margin-bottom: 10px;
+//         border-top-left-radius: 0;
+//         border-top-right-radius: 0;
+//     }
+// }
+
+// @media only screen and (max-width: 992px) { 
+//     #messages-container, .side-panel-container { 
+//         height: calc(100% - 57px);
+//     }  
+// }
+// @media only screen and (min-width: 992px) { 
+//     #messages-container, .side-panel-container { 
+//         height: calc(100% - 63px);
+//     }  
+// }
+// @media only screen and (max-width: 576px) { 
+//     #messages-container{ 
+//         height: calc(200% - 63px);
+//     }  
+// }
+// #messages-container{
+//     accordion{
+//         height: 100%;
+//         display: flex !important;
+//         flex-direction: column;
+//         .panel-open{
+//              min-height: 0;
+//             .panel{
+//                 height: 100%;
+//                 .show{
+//                     flex-grow: 1;
+//                      min-height: 0;
+//                     .panel-body{
+//                         overflow: auto;
+//                         height: 100%;
+//                     }
+//                 }
+//             }
+//         }
+//         .panel-body{
+//             padding: 0;
+//         }
+//     }
+//     .accordion-toggle[aria-expanded="true"]{
+//         div:after {
+//             content: "\f107" !important;
+//             font: normal normal normal 14px/1 FontAwesome !important;
+//         }
+//     }
+//     .accordion-toggle[aria-expanded="false"]{
+//         div:after {
+//             content: "\f106" !important;
+//             font: normal normal normal 14px/1 FontAwesome !important;
+//         }
+//     }
+// }
 
 @include media-breakpoint-down(lg) {
     .notifications-panel{
         width: 100% !important;
         left: 0 !important;
     }
-  }
+}
 
-
-/* width */
 ::-webkit-scrollbar {
     width: 10px;
-  }
-  /* Track */
-  ::-webkit-scrollbar-track {
-     //box-shadow: inset 0 0 5px grey; 
-    //border-radius: 10px;
-    // border: 1px solid;
-    // border-left: 0;
-    // border-top: 0;
-    // border-color: var(--bs-border-color);
+}
+::-webkit-scrollbar-track {
     background-color: rgba(var(--bs-tertiary-bg-rgb));
-    //z-index: -1;
-    // border-radius: var(--bs-border-radius);
-    // border-top-left-radius: 0;
-    // border-bottom-left-radius: 0;
-    //background-color: rgba(var(--bs-secondary-bg-rgb))!important;
-    ///  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-
-  }
+}
    
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
     background: grey; 
     border-radius: 10px;
-    //border-radius: var(--bs-border-radius);
-  }
-  
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
+}
+::-webkit-scrollbar-thumb:hover {
     background:rgb(101, 101, 101); 
-  }
-
-// ::-webkit-scrollbar-track {
-//   //background-color: var(--bs-body-bg);
-//   //background-color: none;
-//   z-index: -100;
-//   //border-radius: var(--bs-border-radius);
-//   border-radius: 0;
-//   border-top-left-radius: 0;
-//   border-bottom-left-radius: 0;
-//   //overflow: hidden;
-// //   clip-path: inset(8% 20% 21% 19%);
-//   z-index: 0;
-// }
-
-// #messages-container{
-//     .accordion-toggle[aria-expanded="true"]:after {
-//         content: "\f107" !important;
-//         font: normal normal normal 14px/1 FontAwesome !important;
-//     }
-    
-//     .accordion-toggle[aria-expanded="false"]:after {
-//         content: '\f106' !important;
-//         font: normal normal normal 14px/1 FontAwesome !important;
-//     }
-// }
+}
 
 .btn-bare{
     background: none;
@@ -236,7 +234,6 @@ body {
     }
     background-image: linear-gradient(209deg, rgba(89, 131, 252, 1) 0%, rgba(41, 53, 86, 1) 100%);
     border: 0;
-
 }   
 
 
@@ -253,31 +250,35 @@ body {
 }
 
 .navbar{
-    // background-image: linear-gradient(0deg, rgba(89, 131, 252, 1) 0%, rgba(41, 53, 86, 1) 100%);
     background-image: linear-gradient(209deg, rgba(89, 131, 252, 1) 0%, rgba(41, 53, 86, 1) 100%);
     animation: navbar-gradient-animation  15s ease infinite;
     background-size: 400% 400%;    
-    //color: white !important;
 }
 
-
 .nav-link{
-    
+
     color: rgba(255,255,255,0.85);
 
     &:hover{
         color: rgba(255,255,255,1);
     }
     &.active{
-        // border-bottom: 4px solid;
-        // border-radius: 8px;
-        // border-color: var(--bs-primary);
-        //color: var(--bs-primary);
         color: rgba(255,255,255,1);
     }
 
+    // @include media-breakpoint-up(md)  {
+    //     &:not(.dropdown-toggle).active::before{
+    //         content:'';
+    //         position: absolute;
+    //         background-color: var(--bs-primary);
+    //         width: 100%;
+    //         height: 4px;
+    //         bottom: -9px;
+    //         left:0;
+    //     }
+    // }
     @include media-breakpoint-up(md)  {
-        &:not(.dropdown-toggle).active::before{
+        &.underline.active::before{
             content:'';
             position: absolute;
             background-color: var(--bs-primary);
@@ -287,7 +288,6 @@ body {
             left:0;
         }
     }
-
 }
 
 .ngb-dp-header,.ngb-dp-weekdays{
@@ -295,8 +295,6 @@ body {
 }
 
 [ngbDatepickerDayView]:hover:not(.bg-primary), [ngbDatepickerDayView].active:not(.bg-primary) {
-    // background-color: var(--bs-btn-bg);
-    // outline: 1px solid var(--bs-border-color);
     color: var(--bs-dark);
 }
 

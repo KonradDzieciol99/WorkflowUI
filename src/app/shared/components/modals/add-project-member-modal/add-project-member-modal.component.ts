@@ -38,7 +38,8 @@ export class AddProjectMemberModalComponent implements OnInit {
         return of([]);
       })
     ).subscribe(searchNewUsers=>{
-      this.searchedMemberSource.next(searchNewUsers);
+      
+      this.searchedMemberSource.next([...searchNewUsers,...searchNewUsers,...searchNewUsers,...searchNewUsers,...searchNewUsers,...searchNewUsers,...searchNewUsers,...searchNewUsers,...searchNewUsers]);
     });
   }
   sendInvitation(user:ISearchedMember):void{

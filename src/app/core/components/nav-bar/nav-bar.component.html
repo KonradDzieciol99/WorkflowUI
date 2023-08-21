@@ -8,17 +8,18 @@
    <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed">
      <span class="navbar-toggler-icon"></span>
    </button>
-   <div [collapse]="isCollapsed" class="collapse navbar-collapse" [isAnimated]="true">
+   <!-- [collapse]="isCollapsed" [isAnimated]="true"-->
+   <div  [ngbCollapse]="isCollapsed" class="collapse navbar-collapse" >
     <hr class="d-block d-md-none text-white-50 w-100 ">
      <ul class="navbar-nav me-auto mb-lg-0 flex-row flex-wrap">
        <li class="nav-item col-6 col-md-auto">
-         <a class="nav-link position-relative" routerLink="./projects" routerLinkActive="active">
+         <a class="nav-link underline position-relative" routerLink="./projects" routerLinkActive="active">
            <i class="fa-solid fa-folder-tree"></i>
            <span class="ms-1">Projects</span>
          </a>
        </li>
        <li class="nav-item col-6 col-md-auto"> 
-        <a class="position-relative nav-link" routerLink="./messages" routerLinkActive="active" [tooltip]="isNumberOfOnlineUsersTooltipVisible ? '' : 'Messages'">
+        <a class="position-relative nav-link underline" routerLink="./messages" routerLinkActive="active" [tooltip]="isNumberOfOnlineUsersTooltipVisible ? '' : 'Messages'">
           <i class="bi bi-messenger"></i>
           <span *ngIf="(numberOfOnlineUsers$|async) !== 0" class="position-absolute top-100 start-0 translate-middle badge rounded-pill bg-success" tooltip="Online users" (mouseenter)="isNumberOfOnlineUsersTooltipVisible = true" (mouseleave)="isNumberOfOnlineUsersTooltipVisible = false">
             {{numberOfOnlineUsers$|async}}
@@ -29,7 +30,8 @@
       </li>
      </ul>
    </div>
-   <div [collapse]="isCollapsed" class="collapse navbar-collapse " [isAnimated]="true">
+   <!-- [collapse]="isCollapsed" [isAnimated]="true" -->
+   <div  [ngbCollapse]="isCollapsed" class="collapse navbar-collapse " >
      <ul class="navbar-nav ms-auto flex-wrap column-gap-md-2 flex-row flex-md-row row-gap-1 row-gap-md-0">
       <li class="nav-item col-12 col-md-none order-8 order-1 order-md-0 " >
         <hr class="d-block d-md-none text-white-50 w-100 ">
@@ -53,10 +55,3 @@
    </div>
  </div>
 </nav>
-
-<!-- <app-notifications-panel 
-*ngIf="isNotificationsPanelExpanded" 
-[buttonReference]="notificationsPanelNutton" 
-(isNotificationsPanelExpanded)="isNotificationsPanelExpanded=$event">
-</app-notifications-panel>
- -->

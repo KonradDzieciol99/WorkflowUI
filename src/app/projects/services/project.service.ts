@@ -58,10 +58,8 @@ export class ProjectService {
       filter((project): project is IProject => project !== undefined),
       switchMap((project) => {
         const params = new HttpParams().set('projectId', project.id);
-        return this.http.get<Array<ISearchedMember>>(
-          `${this.aggregatorUrl}/Identity/searchMember/${email}`,
-          { params: params }
-        );
+
+        return this.http.get<Array<ISearchedMember>>(`${this.aggregatorUrl}/Identity/searchMember/${email}`,{ params: params });
       })
     );
   }
@@ -73,10 +71,7 @@ export class ProjectService {
         return this.http.post<IProjectMember>(`${this.aggregatorUrl}/Projects/${project.id}/projectMembers/${email}`,{}).pipe(
           take(1),
           map(newMember =>{ 
-            let updatedProject: IProject = {
-              ...project, 
-              projectMembers: [...project.projectMembers, newMember ]
-            };
+            let updatedProject: IProject = {...project, projectMembers: [...project.projectMembers, newMember ]};
             return updatedProject;
           }))
       }),

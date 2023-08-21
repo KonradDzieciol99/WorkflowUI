@@ -3,15 +3,11 @@
     <button type="button" class="btn-close" (click)="bsModalRef.hide()"></button>
 </div>
 <div class="modal-body">
-    <div class="row g-1 m-0">
+    <div class="d-flex flex-wrap justify-content-between row-gap-2">
         <ng-container *ngFor="let icon of icons | async">
-            <!-- <div class="col-3"> justify-content-between height="70px" width="70px"-->
-                <div class="icon-container col-4 ">
-                    <button class="btn-bare" (click)="selectedIcon=icon">
-                        <img [src]="icon.url" [alt]="icon.name" class="img-fluid rounded" />
-                    </button>
-                </div>
-            <!-- </div> -->
+            <button class="image-container btn-bare rounded overflow-hidden" style="height: 84px; width: 84px" (click)="selectedIcon=icon">
+                <img [src]="icon.url" (load)="onImageLoad($event)" [alt]="icon.name" class="img-fluid" />
+            </button>
         </ng-container>
     </div>
 </div>

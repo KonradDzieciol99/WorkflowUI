@@ -1,10 +1,11 @@
-import { Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { debounceTime, distinctUntilChanged, of, switchMap, take } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, fromEvent, of, startWith, switchMap, take } from 'rxjs';
 import { IUser } from 'src/app/shared/models/IUser';
 import { MessagesService } from '../../messages.service';
 import { ChatService } from '../../services/chat.service';
+import { Message } from 'src/app/shared/models/IMessage';
 
 @Component({
   selector: 'app-chat[chatRecipient]',
@@ -15,13 +16,18 @@ export class ChatComponent implements OnInit, OnDestroy {
   @Input("chatRecipient") chatRecipient?: IUser;
   messageContent: FormControl<string | null>
   loading: boolean;
+  isloadingOlderMessages:boolean;
+  hasMoreData:boolean;
   indexOfLastDisplayed?:number;
   @ViewChildren('messages') messages?: QueryList<ElementRef>;
-  @ViewChild('chat') chat?: ElementRef;
-
+  @ViewChild('chat') chat?: ElementRef<HTMLDivElement>;
+  @ViewChild('formInput') formInput?: ElementRef;
+  
   constructor(public chatService:ChatService){
       this.messageContent = new FormControl('Hello');
       this.loading=false;
+      this.isloadingOlderMessages=false;
+      this.hasMoreData=true;
     }
   ngOnInit(): void {
     this.messageContent.valueChanges.pipe(
@@ -32,7 +38,9 @@ export class ChatComponent implements OnInit, OnDestroy {
         return of([]);
       })
     ).subscribe()
-    this.chatService.messageThread$.subscribe(x=>{
+    this.chatService.messageThread$.pipe(
+      filter((messages): messages is Message[] => messages !== undefined),
+    ).subscribe(x=>{
     //console.log(x.filter(v=>v.senderEmail !== this.currentRecipientEmail && v.dateRead).ind)
       const indexes = [];
       for (let index = 0; index < x.length; index++) {
@@ -49,43 +57,75 @@ export class ChatComponent implements OnInit, OnDestroy {
     // this.messagesService.messageThread$.subscribe(x=>{
     //   x[8].
     // })
+    // fromEvent(window, 'resize')
+    // .pipe(
+    //   debounceTime(100)
+    // )
+    // .subscribe((x) => {
+    //   console.log(x)
+    
+    // });
   }
+  private hasScrolledOnce = false;
   ngAfterViewInit() {
-    this.scrollToBottom();
     if (this.messages) {
-      this.messages.changes.subscribe(this.scrollToBottom);
+      this.messages.changes.pipe().subscribe(() => this.scrollToBottom("auto"));
     }
   }
-  scrollToBottom = () => {
-    if (this.chat) {
-      try {
-        this.chat.nativeElement.scrollTop = this.chat.nativeElement.scrollHeight;
-      } catch (error) {
-        throw error;
-      }
-    }
+  scrollToBottom = (behavior:ScrollBehavior) => {
+    if (!this.chat) 
+      return;
+    
+    const element = this.chat.nativeElement;
+
+    const totalHeightHowFarUserIsFromTheTopInPx = element.scrollHeight - element.scrollTop - element.clientHeight
+    const isUserAtBottom = totalHeightHowFarUserIsFromTheTopInPx < 200;
+
+    if (!isUserAtBottom && this.hasScrolledOnce)
+      return;
+    
+    element.scroll({
+      top: element.scrollHeight,
+      left: 0,
+      behavior: behavior  
+    });
+
+    this.hasScrolledOnce=true;
   }
   sendMessage(chatRecipient:IUser) {
     if (chatRecipient.email && this.messageContent.value) {
       this.loading = true;
       this.chatService.sendMessage(chatRecipient, this.messageContent.value).subscribe({
         next: () => {this.messageContent?.reset();},
-        complete: () =>{
-          this.loading = false;
-          console.info('Wysłano wiadomość');
-        } 
+        complete: () =>{this.loading = false;} 
     });
     }
   }
   ngOnDestroy(): void {
     this.chatService.stopHubConnectionAndDeleteMessageThread();
   }
-  // sendMessage() {
-  //   if (this.currentRecipientEmail && this.messageContent.value) {
-  //     this.loading = true;
-  //     this.messagesService.sendMessage(this.currentRecipientEmail, this.messageContent.value).then(() => {
-  //       this.messageContent?.reset();
-  //     }).finally(() => this.loading = false);
-  //   }
-  // }
+
+  loadMoreMessages(){
+    this.isloadingOlderMessages=true;
+
+    this.chatService.getMessages(this.chatRecipient!,15).pipe(take(1)).subscribe((messages)=>{
+      
+      if (messages.length<15) 
+        this.hasMoreData=false;
+      
+      this.isloadingOlderMessages=false;
+    });
+  }
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event) {
+    if (!this.hasMoreData) 
+      return;
+
+    if (!this.chat) 
+      return;
+    
+    if (this.chat && this.chat.nativeElement.scrollTop === 0) 
+      this.loadMoreMessages()
+    
+  }
 }

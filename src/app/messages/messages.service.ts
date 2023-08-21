@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { BehaviorSubject, combineLatest, concatMap, map, mergeMap, Observable, of, switchMap, take, tap } from 'rxjs';
@@ -16,7 +16,7 @@ export class MessagesService  {
   private confirmedInvitationsSource : BehaviorSubject<IFriendInvitation[]>;
   confirmedInvitations$:Observable<IFriendInvitation[]>;
   //onlineUsers$:Observable<string[]>; 
-  private receivedFriendRequestsSource: BehaviorSubject<IFriendInvitation[]>;
+  receivedFriendRequestsSource: BehaviorSubject<IFriendInvitation[]>;
   receivedFriendRequests$ :Observable<IFriendInvitation[]>; 
   friendsWithActivityStatus$:Observable<IUser[]>; 
   private chatUrl:string;
@@ -150,11 +150,26 @@ export class MessagesService  {
     );
   }
   
-  GetConfirmedFriendRequests(){ //zakkceptowane zaproszenia
-    return this.http.get<IFriendInvitation[]>(`${this.chatUrl}/FriendRequests/GetConfirmedFriendRequests`).pipe(
+  GetConfirmedFriendRequests(searchTerm: string = "",takeAmount: number = 15,isScroll:boolean=false){ //zakkceptowane zaproszenia
+
+    return this.confirmedInvitations$.pipe(
       take(1),
-      tap(friends=>this.confirmedInvitationsSource.next(friends))
-    );
+      mergeMap(currentConfirmedInvitations=>{
+
+        let params = new HttpParams();
+
+        if (isScroll) 
+          params = params.append('skip', currentConfirmedInvitations.length.toString()) ;
+                
+        params = params.append('take', takeAmount.toString());
+        params = params.append('search', searchTerm);
+
+        return this.http.get<IFriendInvitation[]>(`${this.chatUrl}/FriendRequests/GetConfirmedFriendRequests`,{ params: params} ).pipe(
+          take(1),
+          tap(friends=>this.confirmedInvitationsSource.next(friends))
+        );
+      })
+    )
   }
   createHubConnection(userAccessToken:string):Promise<void> {
     this.hubConnection = new HubConnectionBuilder()

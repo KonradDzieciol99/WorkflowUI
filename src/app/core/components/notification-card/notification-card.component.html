@@ -49,10 +49,10 @@
         <ng-container *ngTemplateOutlet="InvitationToProjectRecived"></ng-container>
       </ng-container>
       <ng-container *ngSwitchCase="notificationsTypes.InvitationToProjectDeclined">
-        <ng-container *ngTemplateOutlet="InvitationToProjectRecived"></ng-container>
+        <ng-container *ngTemplateOutlet="InvitationToProjectDeclined"></ng-container>
       </ng-container>
       <ng-container *ngSwitchCase="notificationsTypes.InvitationToProjectAccepted">
-        <ng-container *ngTemplateOutlet="InvitationToProjectRecived"></ng-container>
+        <ng-container *ngTemplateOutlet="InvitationToProjectAccepted"></ng-container>
       </ng-container>
       <!-- <div *ngSwitchDefault>{{ notification.description }}</div> -->
     </ng-container>

@@ -16,12 +16,12 @@ import { authAppInitializerFactory } from './initializers/auth-app-initializer.f
 import { IdentityServerService } from '../authentication/identity-server.service';
 import { NotificationCardComponent } from './components/notification-card/notification-card.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
-import { NotificationsPanelComponent } from './components/notifications-panel/notifications-panel.component';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ThemeSwitchButtonComponent } from './components/theme-switch-button/theme-switch-button.component';
 import { UserMenuComponent } from './components/user-menu/user-menu.component';
 import { NotificationPanelComponent } from './components/notification-panel/notification-panel.component';
 import { BreadcrumbModule } from 'xng-breadcrumb';
+import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
@@ -29,7 +29,6 @@ import { BreadcrumbModule } from 'xng-breadcrumb';
     NavBarComponent,
     HeaderComponent,
     NotificationCardComponent,
-    NotificationsPanelComponent,
     ThemeSwitchButtonComponent,
     UserMenuComponent,
     NotificationPanelComponent,
@@ -43,7 +42,8 @@ import { BreadcrumbModule } from 'xng-breadcrumb';
     ButtonsModule.forRoot(),
     TooltipModule.forRoot(),
     BsDropdownModule.forRoot(),
-    BreadcrumbModule
+    BreadcrumbModule,
+    NgbCollapseModule
   ],
   exports: [HeaderComponent],
   providers:[
