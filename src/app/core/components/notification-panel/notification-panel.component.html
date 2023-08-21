@@ -1,4 +1,4 @@
-<div class="dropdown d-inline-block" dropdown (isOpenChange)="onOpenChange($event)" [autoClose]="false">
+<div class="dropdown d-inline-block h-100" dropdown (isOpenChange)="onOpenChange($event)" [autoClose]="false">
     <button type="button" class="btn btn-link rounded-circle nav-link dropdown-toggle d-flex align-items-center"
         dropdownToggle tooltip="Notifications" container="body" #pop="bs-tooltip"
         [class.active]="isNotificationPanelExpanded">
@@ -17,24 +17,13 @@
         </span>
         <small class="d-md-none ms-2">Notifications</small>
     </button>
-
-    <ul *dropdownMenu class="dropdown-menu dropdown-menu-end mt-1" role="menu" style="width: 300px;">
+    <ul *dropdownMenu class="dropdown-menu dropdown-menu-end mt-1 overflow-auto" role="menu" style="width: 300px; max-height: 400px;">
         <p class="text-muted p-1 text-center m-0 small">
             <small >Notifications Menu {{curentNotificationsCount$|async}} / {{allNotificationsCount$|async}}</small>
         </p>
-        <!-- {{(notifications$ | async)|json}} -->
-        <!-- <ng-container *ngIf="(notifications$ | async) as notifications; else noNotifications">
-            <ng-container *ngIf="notifications.length; else noNotifications">
-                {{(notifications| async)|json}} -->
-                <li role="menuitem" class="w-100">
-                    {{notifications$ |async |json }}
-                </li>
-                <li *ngFor="let notification of notifications$ | async" role="menuitem" class="w-100">
-                    <app-notification-card [notification]="notification" class="w-100"></app-notification-card>
-                </li>
-            <!-- </ng-container>
-        </ng-container> -->
-        
+        <li *ngFor="let notification of notifications$ | async" role="menuitem" class="w-100">
+            <app-notification-card [notification]="notification" class="w-100"></app-notification-card>
+        </li>
         <ng-template #noNotifications>
             <p class="text-muted p-1 text-center m-0 small">
                 <small>You don't have any notifications.</small>
@@ -42,31 +31,3 @@
         </ng-template>
     </ul>
 </div>
-
-    <!-- <div *ngFor="let notification of notifications$ | async">
-      <app-notification-card
-        [notification]="notification"
-      ></app-notification-card>
-    </div> -->
-    <!-- <div class="text-center" *ngIf="(notifications$ | async)?.length === 0">
-      No notifications.
-    </div> -->
-
-<!-- <button class="position-relative nav-link" #notificationsPanelNutton
-    (click)="isNotificationPanelExpanded = !isNotificationPanelExpanded" type="button" tooltip="Notifications"
-    container="body" #pop="bs-tooltip">
-    <i class="bi bi-bell-fill"></i>
-    <span *ngIf="(notificationsLength$|async) !== 0"
-        class="position-absolute top-100 start-100 translate-middle badge rounded-pill bg-danger">
-        {{notificationsLength$|async}}
-        <span class="visually-hidden">unread messages</span>
-    </span>
-    <small class="d-md-none ms-2">Notifications</small>
-</button>
-
-<app-notifications-panel 
-*ngIf="isNotificationPanelExpanded" 
-[buttonReference]="notificationsPanelNutton" 
-(isNotificationsPanelExpanded)="isNotificationPanelExpanded=$event">
-</app-notifications-panel>
- -->

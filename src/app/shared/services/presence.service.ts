@@ -84,13 +84,29 @@ export class PresenceService {
       })
     );
   }
-  setADifferentTypeOfNotification(id:string ,notificationType:NotificationType):void{
-    this.notifications$.pipe(take(1)).subscribe(notifications=>{
-      const updatedNotifications = notifications.map((notification:INotification) =>
-        notification.id === id ? { ...notification, notificationType: notificationType } : notification 
+  setADifferentTypeOfNotification(id:string ,notificationType:NotificationType,setDisplay:boolean=false){
+    return combineLatest([
+      this.notifications$,
+      this.unreadNotificationsIds$,
+    ])
+    .pipe(
+      take(1),
+      tap(([notifications, unreadNotificationsIds])=>{
+        const updatedNotifications = notifications.map((notification:INotification) => {
+          if (setDisplay) 
+            return notification.id === id ? { ...notification, notificationType: notificationType, displayed:true } : notification 
+          else
+            return notification.id === id ? { ...notification, notificationType: notificationType } : notification
+          }
+        );
+        this.notificationsSource.next(updatedNotifications);
+  
+        if (setDisplay) {
+          let newUnreadNotificationsIds = unreadNotificationsIds.filter(x=>x !== id);    
+          this.unreadNotificationsIdsSource.next(newUnreadNotificationsIds);
+        }
+      })
     );
-      this.notificationsSource.next(updatedNotifications);
-    })
   }
   createHubConnection(userAccessToken:string) {
     this.hubConnection = new HubConnectionBuilder()
@@ -153,45 +169,34 @@ export class PresenceService {
         this.notifications$,
         this.unreadNotificationsIds$,
         this.allNotificationsCount$
-      ]).pipe(take(1))
+      ])
+      .pipe(take(1))
       .subscribe(([notifications, unreadNotificationsIds,allNotificationsCount])=>{
 
         let newUnreadNotificationsIds:Array<string> = [...unreadNotificationsIds, newNotification.id];
         let newNotifications:Array<INotification> = [...notifications, newNotification];
-        let oldNotificationIndex = notifications.findIndex(x => {
 
-          let CurrentfriendRequestStageOne = 
-            (x.notificationType === NotificationType.FriendRequestReceived ||
-            x.notificationType === NotificationType.FriendRequestSent) 
-            &&
-            (newNotification.notificationType === NotificationType.FriendRequestAccepted ||
-            newNotification.notificationType === NotificationType.InvitationDeclined);
-        
-          let removeExsitingInvitation = 
-            x.notificationType === NotificationType.FriendRequestAccepted && 
-            (newNotification.notificationType === NotificationType.InvitationDeclined ||
-             newNotification.notificationType === NotificationType.InvitationDeclinedByYou);
+        if (newNotification.oldNotificationsIds) {
+          for (var oldNotificationsId of newNotification.oldNotificationsIds) {
+            let oldNotificationIndex = notifications.findIndex(x => x.id ===oldNotificationsId);
 
-          let NewCopy = x.notificationType === newNotification.notificationType;
-        
-          return x.notificationPartnerId === newNotification.notificationPartnerId && 
-                (NewCopy || CurrentfriendRequestStageOne || removeExsitingInvitation);
-        });
-        
-        if (oldNotificationIndex !== -1) {
-          let oldNotification = notifications[oldNotificationIndex];
-          if (oldNotification.displayed == false) {
-            newUnreadNotificationsIds = unreadNotificationsIds.filter(x=>x !== oldNotification.id);
-            allNotificationsCount-1;
+            if (oldNotificationIndex !== -1) {
+              let oldNotification = notifications[oldNotificationIndex];
+              if (oldNotification.displayed == false) {
+                newUnreadNotificationsIds = unreadNotificationsIds.filter(x=>x !== oldNotification.id);
+                allNotificationsCount=allNotificationsCount-1;
+              }
+              newNotifications = newNotifications.filter(n => n !== oldNotification);
+            }
+
           }
-          newNotifications = newNotifications.filter(n => n !== oldNotification);
         }
-
         this.unreadNotificationsIdsSource.next(newUnreadNotificationsIds);
         this.notificationsSource.next(newNotifications);
         this.allNotificationsCountSource.next(allNotificationsCount + 1);
       })}
     );
+
     this.hubConnection.on('ReceiveNotifications',(PagedAppNotifications: {appNotifications: INotification[], totalCount: number}) => {
        //teraz trzba najpierw pobrac po http ??? po co ?
       // this.toastr.info(`${notification.content}`)

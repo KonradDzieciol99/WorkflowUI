@@ -37,28 +37,43 @@ export class NotificationCardComponent implements OnInit{
 
   }
   acceptProjectInvitation(notification:INotification){
-    this.projectsService.acceptProjectInvitation(notification.notificationPartnerId!).subscribe(()=>{
+    this.projectsService.acceptProjectInvitation(notification.notificationPartnerId!)
+    .pipe(
+      take(1),
+      mergeMap(()=>this.presenceService.setADifferentTypeOfNotification(notification.id,NotificationType.InvitationToProjectAccepted,true))
+    )
+    .subscribe(()=>{
       this.toastrService.success("Invitation accepted.");
-      this.presenceService.setADifferentTypeOfNotification(notification.id,NotificationType.InvitationToProjectAccepted);
     });
   }
   rejectProjectInvitation(notification:INotification){
-    this.projectsService.declineProjectInvitation(notification.notificationPartnerId!).subscribe(()=>{
+    this.projectsService.declineProjectInvitation(notification.notificationPartnerId!)
+    .pipe(
+      take(1),
+      mergeMap(()=>this.presenceService.setADifferentTypeOfNotification(notification.id,NotificationType.InvitationToProjectDeclined,true))
+    )
+    .subscribe(()=>{
       this.toastrService.success("Invitation declined.");
-      this.presenceService.setADifferentTypeOfNotification(notification.id,NotificationType.InvitationToProjectDeclined);
     });
   }
   acceptFriendInvitation(notification:INotification){
     this.messagesService.acceptFriendInvitation({inviterUserId: notification.notificationPartnerId!, invitedUserId: notification.userId!})
-                        .subscribe(()=>{
+    .pipe(
+      take(1),
+      mergeMap(()=>this.presenceService.setADifferentTypeOfNotification(notification.id,NotificationType.FriendRequestAccepted))
+      )
+    .subscribe(()=>{
       this.toastrService.success("Invitation accepted.");
-      this.presenceService.setADifferentTypeOfNotification(notification.id,NotificationType.FriendRequestAccepted);
     });
   }
   rejectFriendInvitation(notification:INotification){
-    this.messagesService.declineFriendInvitation({inviterUserId: notification.notificationPartnerId!, invitedUserId: notification.userId!}).subscribe(()=>{
+    this.messagesService.declineFriendInvitation({inviterUserId: notification.notificationPartnerId!, invitedUserId: notification.userId!})
+    .pipe(
+      take(1),
+      mergeMap(()=>this.presenceService.setADifferentTypeOfNotification(notification.id,NotificationType.FriendRequestAccepted))
+      )
+    .subscribe(()=>{
       this.toastrService.success("Invitation declined.")
-      this.presenceService.setADifferentTypeOfNotification(notification.id,NotificationType.FriendRequestAccepted);
     });
   }
   markNotificationAsRead(notification:INotification){
@@ -69,32 +84,8 @@ export class NotificationCardComponent implements OnInit{
       this.toastrService.success("Notification marked as read.")
     });
   }
-  // doMarkNotificationAsRead(id:string){
-  //   console.log("xxxxxx")
-  //   // $event.stopPropagation();
-  //   // this.presenceService.markNotificationAsRead(id).subscribe(()=>{
-  //   //   this.toastrService.success("Notification marked as read.")
-  //   // });
-  // }
+
   deleteNotification(notification:INotification){
-    //$event.stopPropagation();
-
-    // const initialState: ModalOptions = {
-    //   initialState: {
-    //     list: [
-    //       'Open a modal with component',
-    //       'Pass your data',
-    //       'Do something else',
-    //       '...'
-    //     ],
-    //     title: 'Modal with component'
-    //   }
-    // };
-
-
-    // if (bsModalRef.content && bsModalRef.content.closeBtnName) {
-    //   bsModalRef.content.closeBtnName ='Close';
-    // }
 
     let bsModalRef = this.modalService.show(ConfirmWindowComponent, {class: 'modal-sm'});
     bsModalRef.content?.result?.pipe(
@@ -110,10 +101,6 @@ export class NotificationCardComponent implements OnInit{
         return of()
       })
       ).subscribe()
-
-    // this.presenceService.deleteNotification(id).subscribe(()=>{
-    //   this.toastrService.success("Notification has been removed.")
-    // });
   }
   stopPropagation($event: MouseEvent) {
       $event.stopPropagation();

@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { BehaviorSubject, debounce, debounceTime, delay, from, interval, map, mergeMap, Observable, of, skip, take, takeUntil, tap, timer } from 'rxjs';
+import { BehaviorSubject, concatMap, debounce, debounceTime, delay, filter, from, interval, map, mergeMap, Observable, of, skip, take, takeUntil, tap, timer } from 'rxjs';
 import { IChatGroupMember } from 'src/app/shared/models/IChatGroupMember';
 import { Message } from 'src/app/shared/models/IMessage';
 import { IUser } from 'src/app/shared/models/IUser';
@@ -11,33 +11,31 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class ChatService {
-
-  // private onlineUsersSource = new BehaviorSubject<IPerson[]>([]);
-  // onlineUsers$ = this.onlineUsersSource.asObservable();
   private chatUrl:string;
   private hubUrl:string; 
   private hubConnection?: HubConnection;
-  private messageThreadSource:BehaviorSubject<Message[]>;
-  messageThread$:Observable<Message[]>;
+  private messageThreadSource:BehaviorSubject<Message[]|undefined>;
+  messageThread$:Observable<Message[]|undefined>;
   private recipientIsWatchingSource:BehaviorSubject<boolean>;
+  chatRecipientSource:BehaviorSubject<IUser|undefined>;
   recipientIsWatching$:Observable<boolean>;
   recipientIsTypingSource:BehaviorSubject<boolean>;
   recipientIsTyping$:Observable<boolean>;
-
+  chatRecipient$: Observable<IUser | undefined>;
   constructor(private http: HttpClient) {
     this.chatUrl = environment.chatUrl;
     this.hubUrl=environment.signalRhubUrl;
-    this.messageThreadSource = new BehaviorSubject<Message[]>([]);
+    this.messageThreadSource = new BehaviorSubject<Message[]|undefined>(undefined);
     this.messageThread$ = this.messageThreadSource.asObservable();
     this.recipientIsWatchingSource = new BehaviorSubject<boolean>(false);
     this.recipientIsWatching$ = this.recipientIsWatchingSource.asObservable();
     this.recipientIsTypingSource = new BehaviorSubject<boolean>(false);
     this.recipientIsTyping$ = this.recipientIsTypingSource.asObservable();
+    this.chatRecipientSource = new BehaviorSubject<IUser|undefined>(undefined);
+    this.chatRecipient$ = this.chatRecipientSource.asObservable()
    }
 
   createHubConnection(recipientEmail:string,userAccessToken:string):Promise<void> {
-    //this.busyService.busy();
-    //user: IPerson,
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(this.hubUrl + 'Chat?RecipientEmail=' + recipientEmail, {
         accessTokenFactory: () => userAccessToken,
@@ -47,34 +45,14 @@ export class ChatService {
       .build();
 
     this.hubConnection.on('ReceiveMessageThread', (messages:Message[]) => {
-      this.messageThreadSource.next(messages);
+      this.messageThreadSource.next(messages.reverse());
     })
     
     this.hubConnection.on('UserIsTyping', (userEmail: string) => { 
       if (userEmail === recipientEmail) {
-        // this.recipientIsTyping$.pipe(
-        //   take(1),
-        //   mergeMap(x=>{
-        //     if (x == false) {
-        //       return of(this.recipientIsTypingSource.next(true)).pipe(
-        //         take(1),
-        //         delay(3000),
-        //         tap(()=>this.recipientIsTypingSource.next(false))
-        //       );
-        //     }
-        //     return of();
-        //   })).subscribe({ 
-        //     next:()=> {}
-        //   }) 
+
         this.recipientIsTypingSource.next(true)
 
-        // of(null).pipe(
-        //   // take(1),
-        //   debounce(() => interval(3000)),
-        //   map((event: any) => 1)
-        // ).subscribe({ 
-        //   next:()=> {this.recipientIsTypingSource.next(false)}
-        // }) 
         this.recipientIsTyping$.pipe(
           takeUntil(this.messageThread$.pipe(skip(1))),
           debounceTime(1500),
@@ -85,93 +63,32 @@ export class ChatService {
         }) 
 
       }
-
-      // this.recipientIsTyping$.pipe(
-      //   takeUntil(this.messageThread$),
-      //   debounceTime(1500),//https://indepth.dev/reference/rxjs/operators/debounce-time
-      // ).subscribe({ 
-      //   next:() => this.recipientIsTypingSource.next(false),
-      //   complete: () =>this.recipientIsTypingSource.next(false),
-      // }) 
     })
 
-    this.hubConnection.on('UpdatedGroup', (group: Array<string>) => { //ActiveUsersInGroup
+    this.hubConnection.on('UpdatedGroup', (group: Array<string>) => {
       let recipient = group.find(x => x === recipientEmail)
       if (recipient) {
         this.messageThread$.pipe(take(1)).subscribe({
           next: messages => {
-            messages.forEach(message => {
+            messages?.forEach(message => {
               if (!message.dateRead) {
                 message.dateRead = new Date(Date.now())
               }
             })
-            this.messageThreadSource.next([...messages]);
+            this.messageThreadSource.next(messages ? [...messages] : undefined);
           }
         })
         this.recipientIsWatchingSource.next(true);
       }
-      else{this.recipientIsWatchingSource.next(false);}
-
-      // if (recipient?.isTyping) {
-
-        //const source = timer(3000);
-        // source.
-        // of(this.recipientIsTypingSource.next(true)).pipe(
-        //   take(1),
-        //   delay(3000),
-        // )
-        // .subscribe({ 
-        //   next:()=> this.recipientIsTypingSource.next(false)
-        // }) 
-
-        // this.recipientIsTyping$.pipe(
-        // take(1),
-        // mergeMap(x=>{
-        //   if (x == false) {
-        //     return of(this.recipientIsTypingSource.next(true)).pipe(
-        //       take(1),
-        //       delay(3000),
-        //       tap(()=>this.recipientIsTypingSource.next(false))
-        //     );
-        //   }
-        //   return of();
-        // })).subscribe({ 
-        //   next:()=> {}
-        // }) 
-        
-        // .subscribe(x=>{
-        //   if (x) {}
-        //   else {
-        //     this.recipientIsTypingSource.next(true)
-        //   }
-        // })
-
-      // }
-      // else{this.recipientIsTypingSource.next(false);}
-      // if (group.some(x => x.userEmail === recipientEmail)) {
-      //   this.messageThread$.pipe(take(1)).subscribe({
-      //     next: messages => {
-      //       messages.forEach(message => {
-      //         if (!message.dateRead) {
-      //           message.dateRead = new Date(Date.now())
-      //         }
-      //       })
-      //       this.messageThreadSource.next([...messages]);
-      //     }
-      //   })
-      //   this.recipientIsWatchingSource.next(true);
-      // }
-      // else{
-      //   this.recipientIsWatchingSource.next(false);
-      // }
+      else{
+        this.recipientIsWatchingSource.next(false);
+      }
     })
 
-    this.hubConnection.on('NewMessage', message => {
+    this.hubConnection.on('NewMessage', (message:Message) => {
       this.messageThread$.pipe(take(1)).subscribe({
-        next: messages => {
-          this.messageThreadSource.next([...messages, message]);
-          //this.me
-
+        next: (messages) => {
+          this.messageThreadSource.next(messages ? [...messages, message] : [message] );
         }
       })
     });
@@ -186,24 +103,36 @@ export class ChatService {
     if (this.hubConnection) {
       const promise = this.hubConnection.invoke<void>("UserIsTyping");
       return from(promise);
-      //.catch(error => console.log(error));
     }
     return of()
   }
   sendMessage(recipient: IUser, content: string){
     return this.http.post(`${this.chatUrl}/Messages`,{recipientUserId:recipient.id,recipientEmail: recipient.email, content:content});
   }
-  // sendMessage(recipientEmail: string, content: string){
-  //   return this.http.post(`${this.chatUrl}/Messages`,{recipientUserId:,recipientEmail: recipientEmail, content:content});
-  // }
-  // getMessageThreadAndAssign(recipientEmail: string){
-  //   return this.http.get<Message[]>(`${this.chatUrl}api/Chat?recipientEmail=${recipientEmail}`).pipe(
-  //     tap(messages => this.messageThreadSource.next(messages))
-  //   );
-  // }
+  getMessages(recipient:IUser,take:number=15): Observable<Message[]>{
+    return this.messageThread$.pipe(
+      filter((messages): messages is Message[] => messages !== undefined),
+      concatMap((currentMessages)=> {
+
+        let params = new HttpParams();
+        
+        params = params.append('RecipientEmail', recipient.email);
+        params = params.append('RecipientId', recipient.id);
+        params = params.append('Skip', currentMessages.length.toString());
+        params = params.append('Take', take.toString());
+
+        return this.http.get<Array<Message>>(`${this.chatUrl}/Messages`,{params: params}).pipe(         
+            tap((oldestMessages)=>{
+              this.messageThreadSource.next([...oldestMessages.reverse(), ...currentMessages]);
+            })
+          );
+      })
+    )
+  }
   stopHubConnectionAndDeleteMessageThread() {
     if (this.hubConnection) {
-      this.messageThreadSource.next([]);
+      this.messageThreadSource.next(undefined);
+      this.chatRecipientSource.next(undefined);
       this.hubConnection.stop();
     }
   }

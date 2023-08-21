@@ -11,6 +11,8 @@ export interface INotification{ //raneme to IAppNotification
     notificationPartnerEmail?:string,
     notificationPartnerId?:string,
     notificationPartnerPhotoUrl?:string,
+    oldNotificationsIds?:Array<string>
+
 }
 // export function isINotification(notificationValue:any): notificationValue is INotification {
 //     return 'notificationRecipient' in notificationValue && 'notificationSender' in notificationValue 

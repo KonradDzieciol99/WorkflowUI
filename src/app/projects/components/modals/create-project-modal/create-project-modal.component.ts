@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
@@ -9,6 +9,7 @@ import { IIcon } from 'src/app/shared/models/IIcon';
 import { IProjectCreateRequest } from 'src/app/shared/models/IProjectCreateRequest';
 import { PhotosService } from 'src/app/shared/services/photos.service';
 import { IconPickerComponent } from '../../icon-picker/icon-picker.component';
+import { ImageLoader } from '@angular/common';
 
 @Component({
   selector: 'app-create-project-modal',
@@ -24,7 +25,7 @@ export class CreateProjectModalComponent implements OnInit {
 
   constructor(public bsModalRef: BsModalRef,private projectsService:ProjectsService,
     private toastrService:ToastrService,private photosService:PhotosService
-    ,private modalService: BsModalService,){
+    ,private modalService: BsModalService,private renderer: Renderer2){
     }
   ngOnInit(): void {
     this.photosService.getProjectsIcons().pipe(take(1)).subscribe({
@@ -68,5 +69,8 @@ export class CreateProjectModalComponent implements OnInit {
           this.projektForm.setErrors({serverError: err.error}); 
         },
       });
+  }
+  onImageLoad(event: Event ){
+    this.renderer.addClass(event.target as HTMLImageElement, 'loaded');
   }
 }

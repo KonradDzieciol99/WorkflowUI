@@ -9,10 +9,10 @@ const routes: Routes = [
   {
     path: '',
     children: [
-      { path: 'summary', component: SummaryComponent,},
-      { path: 'board', component: BoardComponent,},
+      // { path: 'summary', component: SummaryComponent,},
+      // { path: 'board', component: BoardComponent,},
       { path: 'list', component: ListComponent,},
-      { path: '**', redirectTo: 'summary', pathMatch: 'full' },
+      { path: '**', redirectTo: 'list', pathMatch: 'full' },
     ]
   },
 ];

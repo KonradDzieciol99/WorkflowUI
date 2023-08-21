@@ -42,9 +42,9 @@ export class SettingsMembersComponent implements OnInit {
        }
       })
   }
-  // public dataStateChange(state: DataStateChangeEventArgs): void {
-  //   this.projectMembersService.execute(state);
-  // }
+  public dataStateChange(state: DataStateChangeEventArgs): void {
+    this.projectMembersService.execute(state);
+  }
   public dataSourceChanged(state: DataSourceChangedEventArgs): void {
 
     if (state.requestType === 'delete') {

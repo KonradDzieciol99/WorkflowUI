@@ -1,40 +1,12 @@
-<div class="container-md ">
+<div class="container-fluid">
     <div class="d-flex justify-content-between flex-wrap">
         <h5>Settings</h5>
         <xng-breadcrumb></xng-breadcrumb>
     </div>
     <div class="mt-2">
-        <tabset>
+        <tabset class="">
             <tab heading="Details">
-                <ng-container *ngIf="settingsForm">
-                    <form [formGroup]="settingsForm" class="d-flex justify-content-center flex-column mx-auto" style="width: 200px;">
-                        <ng-container *ngIf="settingsForm.get('iconUrl')?.value as imageUrl; else noIcon">
-                            <img [src]="imageUrl" width="130px" height="130px" class="mx-auto d-block">
-                        </ng-container>
-                        <ng-template #noIcon>
-                            <i class="bi bi-cloud-arrow-up mx-auto" style="font-size: 5.5rem;"></i>
-                        </ng-template>
-                        <button type="button"
-                         (click)="openIconPicker()" 
-                         class="btn btn-outline-primary d-block mx-auto mt-4">Change Icon</button>
-                        <app-reactive-input class="mt-2" formControlName="name" [formFloating]="false" [label]="'Name'"></app-reactive-input>
-                        <app-reactive-input class="mt-2" formControlName="name" [formFloating]="false" [label]="'Name'"></app-reactive-input>
-                        <div class="mt-2"> 
-                            <label class="form-label">Leader</label>
-                            <app-reactive-dropdown class="col" [map]="projectMembers$|async" formControlName="leader">
-                                <ng-template #selectButtonTemplate let-data>
-                                        <img [src]="data?.photoUrl ?? 'assets/images/user.png'" width="30" height="30" class="me-2 rounded-circle">
-                                        <span style="max-width: 70%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">{{data?.userEmail ?? 'Unassigned'}}</span>
-                                </ng-template>
-                                <ng-template #triggerButtonTemplate let-data>
-                                        <img [src]="data?.photoUrl ?? 'assets/images/user.png'" width="30" height="30" class="me-2 rounded-circle">
-                                        <span style="max-width: 70%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">{{data?.userEmail ?? 'Unassigned'}}</span>
-                                </ng-template>
-                            </app-reactive-dropdown> 
-                        </div>
-                        <button type="button" class="btn btn-primary mt-4" (click)="save" [disabled]="!formHasChanged || settingsForm.invalid" >Save</button>
-                    </form>
-                </ng-container>
+                <app-settings-details></app-settings-details>
             </tab>
             <tab heading="Members">
                 <app-settings-members></app-settings-members>

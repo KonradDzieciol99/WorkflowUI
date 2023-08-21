@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Observable, Subject, take } from 'rxjs';
 import { IIcon } from 'src/app/shared/models/IIcon';
@@ -13,7 +13,7 @@ export class IconPickerComponent implements OnInit {
   result: Subject<IIcon> 
   icons?:Observable<Array<IIcon>>;
   selectedIcon?:IIcon;
-  constructor(private photosService:PhotosService,public bsModalRef: BsModalRef) {
+  constructor(private photosService:PhotosService,public bsModalRef: BsModalRef,private renderer: Renderer2) {
     this.result = new Subject<IIcon>();
   }
   ngOnInit(): void {
@@ -26,6 +26,9 @@ export class IconPickerComponent implements OnInit {
       this.bsModalRef.hide();
     }
      
+  }
+  onImageLoad(event: Event ){
+    this.renderer.addClass(event.target as HTMLImageElement, 'loaded');
   }
 
 }
