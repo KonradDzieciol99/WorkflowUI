@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { IUser } from 'src/app/shared/models/IUser';
-import { ChatService } from '../../services/chat.service';
-import { OAuthService } from 'angular-oauth2-oidc';
-import { MessagesService } from '../../messages.service';
-import { Observable, debounceTime, distinctUntilChanged, filter, from, mergeMap, of, switchMap, take } from 'rxjs';
-import { ToastrService } from 'ngx-toastr';
 import { FormControl } from '@angular/forms';
-import { IFriendInvitation } from 'src/app/shared/models/IFriendInvitation';
+import { OAuthService } from 'angular-oauth2-oidc';
+import { ToastrService } from 'ngx-toastr';
+import { Observable, debounceTime, distinctUntilChanged, filter, from, mergeMap, switchMap, take } from 'rxjs';
+import { IUser } from 'src/app/shared/models/IUser';
+import { MessagesService } from '../../messages.service';
+import { ChatService } from '../../services/chat.service';
 
 @Component({
   selector: 'app-accordion-my-chats',
@@ -16,6 +15,7 @@ import { IFriendInvitation } from 'src/app/shared/models/IFriendInvitation';
 export class AccordionMyChatsComponent implements OnInit {
   isCollapsedAccordionMyChats: boolean;
   friendsWithActivityStatus$: Observable<IUser[]>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   userClaims: Record<string, any>;
   searchUsersFormControl: FormControl<string>;
   constructor(public chatService:ChatService,
@@ -53,7 +53,7 @@ export class AccordionMyChatsComponent implements OnInit {
 
   }
   declineAcceptedFriendInvitation(friend:IUser){
-    this.messagesService.declineAcceptedFriendInvitation(friend,this.userClaims['sub']).subscribe(invitations=>{
+    this.messagesService.declineAcceptedFriendInvitation(friend,this.userClaims['sub']).subscribe(()=>{
       //this.allFriendsInvitationsSource.next(invitations);
       this.toastrService.success("you removed the user from friends.");
     });

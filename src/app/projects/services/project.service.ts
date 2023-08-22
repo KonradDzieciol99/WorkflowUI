@@ -1,22 +1,15 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { tab } from '@syncfusion/ej2-angular-grids';
 import {
   BehaviorSubject,
-  catchError,
-  combineLatest,
-  concatMap,
+  Observable,
   filter,
   map,
-  Observable,
-  of,
   switchMap,
   take,
-  tap,
-  throwError,
+  tap
 } from 'rxjs';
-import { INotification } from 'src/app/shared/models/INotification';
 import { IProject } from 'src/app/shared/models/IProject';
 import { IProjectMember } from 'src/app/shared/models/IProjectMember';
 import { ISearchedMember } from 'src/app/shared/models/ISearchedMember';
@@ -71,7 +64,7 @@ export class ProjectService {
         return this.http.post<IProjectMember>(`${this.aggregatorUrl}/Projects/${project.id}/projectMembers/${email}`,{}).pipe(
           take(1),
           map(newMember =>{ 
-            let updatedProject: IProject = {...project, projectMembers: [...project.projectMembers, newMember ]};
+            const updatedProject: IProject = {...project, projectMembers: [...project.projectMembers, newMember ]};
             return updatedProject;
           }))
       }),
@@ -88,7 +81,7 @@ export class ProjectService {
         return this.http.delete<void>(`${this.projectsUrl}/Projects/${project.id}/projectMembers/${id}`).pipe(
           take(1),
           map(() =>{ 
-            let updatedProject: IProject = {
+            const updatedProject: IProject = {
               ...project, 
               projectMembers: project.projectMembers.filter(p=>p.id !==id)
             };

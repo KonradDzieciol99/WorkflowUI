@@ -1,4 +1,4 @@
-<ng-container *ngIf="control">
+<ng-container *ngIf="control && selectButtonTemplate && triggerButtonTemplate">
         <div dropdown btnRadioGroup [formControl]="control" class="d-flex flex-column dropdown" 
             (isOpenChange)="onOpenChange($event)"> 
             <button dropdownToggle type="button" class="btn dropdown-toggle d-flex align-items-center focus-ring" [class.active]="isStatusPanelOpen">

@@ -1,9 +1,8 @@
 import { Component, ContentChild, Input, OnInit, Self, TemplateRef } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { State } from '../../models/IAppTask';
 import { ITextIconPair } from '../../models/ITextIconPair';
-import { Subscription } from 'rxjs';
-import { KeyValue } from '@angular/common';
 
 @Component({
   selector: 'app-reactive-dropdown [map]',
@@ -11,8 +10,8 @@ import { KeyValue } from '@angular/common';
   styleUrls: ['./reactive-dropdown.component.scss']
 })
 export class ReactiveDropdownComponent<T>implements OnInit,ControlValueAccessor  {
-  @ContentChild('selectButtonTemplate') selectButtonTemplate!: TemplateRef<T>;
-  @ContentChild('triggerButtonTemplate') triggerButtonTemplate!: TemplateRef<T>;
+  @ContentChild('selectButtonTemplate') selectButtonTemplate?: TemplateRef<T>;
+  @ContentChild('triggerButtonTemplate') triggerButtonTemplate?: TemplateRef<T>;
   isStatusPanelOpen: boolean;
   statuses: typeof State = State;
   control?: FormControl<T>;
@@ -27,15 +26,20 @@ export class ReactiveDropdownComponent<T>implements OnInit,ControlValueAccessor 
   ngOnInit(): void {
     this.control = this.controlDir.control as FormControl;
   }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function, @typescript-eslint/no-explicit-any
   onOpenChange(isOpen: boolean): void {
     this.isStatusPanelOpen = isOpen;
   }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function, @typescript-eslint/no-explicit-any
   writeValue(obj: any): void {
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function, @typescript-eslint/no-explicit-any
   registerOnChange(fn: any): void {
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function, @typescript-eslint/no-explicit-any
   registerOnTouched(fn: any): void {
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function, @typescript-eslint/no-explicit-any
   setDisabledState?(isDisabled: boolean): void {
   }
 }

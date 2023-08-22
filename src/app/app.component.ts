@@ -1,12 +1,7 @@
-import { IfStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { GoogleAuthService } from './authentication/google-auth.service';
-import { IdentityServerService } from './authentication/identity-server.service';
-import { MicrosoftOpeinIDAuthService } from './authentication/microsoft-opein-id-auth.service';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { PresenceService } from './shared/services/presence.service';
-import { take } from 'rxjs';
 
 @Component({
   selector: 'app-root',

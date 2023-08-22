@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, Observable, combineLatest, concatMap, forkJoin, switchMap, take, tap } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, concatMap, take, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { INotification, NotificationType } from '../models/INotification';
 
@@ -69,22 +69,22 @@ export class PresenceService {
       tap(()=>{
         if (notificationToDelete.displayed == false) {
           this.unreadNotificationsIds$.pipe(take(1)).subscribe(unreadNotificationsIds =>  {
-            let nextUnreadNotificationsIds = unreadNotificationsIds.filter(unreadNotification =>unreadNotification !== notificationToDelete.id);
+            const nextUnreadNotificationsIds = unreadNotificationsIds.filter(unreadNotification =>unreadNotification !== notificationToDelete.id);
             this.unreadNotificationsIdsSource.next(nextUnreadNotificationsIds);
           })
         }
         this.notifications$.pipe(take(1)).subscribe(notifications=>{
-          let nextNotifications = notifications.filter(n => n.id !== notificationToDelete.id);
+          const nextNotifications = notifications.filter(n => n.id !== notificationToDelete.id);
           this.notificationsSource.next(nextNotifications);
         })
         this.allNotificationsCount$.pipe(take(1)).subscribe(allNotificationsCount=>{
-          let nextAllNotificationsCount = allNotificationsCount-1;
+          const nextAllNotificationsCount = allNotificationsCount-1;
           this.allNotificationsCountSource.next(nextAllNotificationsCount);
         })
       })
     );
   }
-  setADifferentTypeOfNotification(id:string ,notificationType:NotificationType,setDisplay:boolean=false){
+  setADifferentTypeOfNotification(id:string ,notificationType:NotificationType,setDisplay=false){
     return combineLatest([
       this.notifications$,
       this.unreadNotificationsIds$,
@@ -102,7 +102,7 @@ export class PresenceService {
         this.notificationsSource.next(updatedNotifications);
   
         if (setDisplay) {
-          let newUnreadNotificationsIds = unreadNotificationsIds.filter(x=>x !== id);    
+          const newUnreadNotificationsIds = unreadNotificationsIds.filter(x=>x !== id);    
           this.unreadNotificationsIdsSource.next(newUnreadNotificationsIds);
         }
       })
@@ -121,7 +121,7 @@ export class PresenceService {
 
       this.onlineUsers$.pipe(take(1)).subscribe({
         next: emails => {
-        var index = emails.findIndex(e => e === email)
+        const index = emails.findIndex(e => e === email)
         if (index === -1)
           this.onlineUsersSource.next([...emails, email]);
 
@@ -148,20 +148,8 @@ export class PresenceService {
         .onTap
         .pipe(take(1))
         .subscribe({
-          ///////////////!!!!!!!!!!!!!!!!!!!!!!
-          //next: () => this.router.navigateByUrl('/members/' + username + '?tab=Messages')//!!!!!!!!!!!!!!!!!
         })
     });
-    // this.hubConnection.on('NewChatNotificationReceived', (notification:INotification) => {
-    //   this.onlineUsersSource.next(usernames);
-    // })
-    
-  //   concatMap(() =>
-  //   combineLatest([
-  //     this.notifications$,
-  //     this.unreadNotificationsIds$
-  //   ]).pipe(take(1))
-  // ),
 
     this.hubConnection.on('NewNotificationReceived', (newNotification:INotification) => {
 
@@ -177,11 +165,11 @@ export class PresenceService {
         let newNotifications:Array<INotification> = [...notifications, newNotification];
 
         if (newNotification.oldNotificationsIds) {
-          for (var oldNotificationsId of newNotification.oldNotificationsIds) {
-            let oldNotificationIndex = notifications.findIndex(x => x.id ===oldNotificationsId);
+          for (const oldNotificationsId of newNotification.oldNotificationsIds) {
+            const oldNotificationIndex = notifications.findIndex(x => x.id ===oldNotificationsId);
 
             if (oldNotificationIndex !== -1) {
-              let oldNotification = notifications[oldNotificationIndex];
+              const oldNotification = notifications[oldNotificationIndex];
               if (oldNotification.displayed == false) {
                 newUnreadNotificationsIds = unreadNotificationsIds.filter(x=>x !== oldNotification.id);
                 allNotificationsCount=allNotificationsCount-1;
@@ -198,15 +186,6 @@ export class PresenceService {
     );
 
     this.hubConnection.on('ReceiveNotifications',(PagedAppNotifications: {appNotifications: INotification[], totalCount: number}) => {
-       //teraz trzba najpierw pobrac po http ??? po co ?
-      // this.toastr.info(`${notification.content}`)
-      //   .onTap
-      //   .pipe(take(1))
-      //   .subscribe({
-      //     ///////////////!!!!!!!!!!!!!!!!!!!!!!
-      //     //next: () => this.router.navigateByUrl('/members/' + username + '?tab=Messages')//!!!!!!!!!!!!!!!!!
-      //   })
-      //console.log(notifications);
       this.notificationsSource.next(PagedAppNotifications.appNotifications);
       this.allNotificationsCountSource.next(PagedAppNotifications.totalCount);
     });
@@ -216,9 +195,9 @@ export class PresenceService {
     this.hubConnection.on('ReceiveUnreadNotifications' , (unreadIds:string[]) => {
       this.unreadNotificationsIdsSource.next(unreadIds);
     });
-    var hubConnectionState = this.hubConnection.start()
+    const hubConnectionState = this.hubConnection.start()
     .catch(error => console.log(error))
-    .finally(/*() => this.busyService.idle()*/);
+    .finally();
 
     return hubConnectionState;
   }

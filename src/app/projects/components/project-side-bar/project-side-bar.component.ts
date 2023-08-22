@@ -1,7 +1,7 @@
-import { Component, ElementRef, HostListener, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgbOffcanvas, NgbOffcanvasOptions, NgbOffcanvasRef } from '@ng-bootstrap/ng-bootstrap';
-import { BehaviorSubject, Observable, Subscription, of, take } from 'rxjs';
+import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { BehaviorSubject, Observable, Subscription, concatMap, take } from 'rxjs';
 import { ProjectService } from 'src/app/projects/services/project.service';
 import { IProject } from 'src/app/shared/models/IProject';
 import { TasksService } from 'src/app/tasks/tasks.service';
@@ -14,12 +14,12 @@ import { ProjectMembersService } from '../../services/project-members.service';
 })
 export class ProjectSideBarComponent implements OnInit,OnDestroy  {
 
-  private dismissReason:string="Resizing";
+  private dismissReason:string;
   private sidenavStateSub: Subscription;
   private sidenavStateSource:BehaviorSubject<boolean> ;
   project$:Observable<IProject|undefined>;
   sidenavState$:Observable<boolean>;
-  @ViewChild('sideBar', { static: true }) sideBarRef: TemplateRef<any> | undefined ;
+  @ViewChild('sideBar', { static: true }) sideBarRef: TemplateRef<unknown> | undefined ;
 
   constructor(private activatedRoute: ActivatedRoute,
               private projectService:ProjectService,
@@ -29,6 +29,7 @@ export class ProjectSideBarComponent implements OnInit,OnDestroy  {
               private offcanvasService: NgbOffcanvas,
               private breadcrumbService: BreadcrumbService
               ) {
+    this.dismissReason="Resizing";
 
     this.project$=this.projectService.project$;
     this.sidenavStateSource = new BehaviorSubject<boolean>(true);
@@ -42,14 +43,19 @@ export class ProjectSideBarComponent implements OnInit,OnDestroy  {
   }
   ngOnInit(): void {
     this.onResize()
+    const state = { skip: 0 , take: 10 };
 
-    let projectId = this.activatedRoute.snapshot.params['id'];
+    const projectId = this.activatedRoute.snapshot.params['id'];
 
-    this.projectService.get(projectId).pipe(take(1)).subscribe({
-      next: (project) => {
+    this.projectService.get(projectId).pipe(
+      take(1),
+      concatMap((project)=>{
         this.breadcrumbService.set('@projectSideBar', project.name);
-        const state = { skip: 0 , take: 10 };
-        this.tasksService.execute(state);
+        return this.tasksService.execute(state);
+      })
+    )
+    .subscribe({
+      next: () => {
         this.projectMembersService.execute(state);
       },
       error:()=> this.router.navigate(['../projects']),
@@ -63,11 +69,11 @@ export class ProjectSideBarComponent implements OnInit,OnDestroy  {
   }
   @HostListener('window:resize') onResize() {
 
-    const mdBreakpoint:number = 768;
-    const screenWidth:number = window.innerWidth;
+    const mdBreakpoint = 768;
+    const screenWidth = window.innerWidth;
 
     if (screenWidth <= mdBreakpoint && this.sideBarRef && !this.offcanvasService.hasOpenOffcanvas() && this.sidenavStateSource.getValue() ) {
-      this.offcanvasService.open(this.sideBarRef,{ panelClass: 'sidebar-width default-transition', scroll: true  }).result.then((result) => {
+      this.offcanvasService.open(this.sideBarRef,{ panelClass: 'sidebar-width default-transition', scroll: true  }).result.then(() => {
         this.sidenavStateSource.next(false);
       }).catch((error) => {
         if (error===this.dismissReason)

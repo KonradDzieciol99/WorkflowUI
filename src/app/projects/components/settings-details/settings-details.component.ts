@@ -24,12 +24,11 @@ export class SettingsDetailsComponent implements OnInit  {
     this.projectMembers$ = this.projectService.project$.pipe(map(x => {return x?.projectMembers ?? [];}));
   }
   ngOnInit(): void {
-
     this.projectService.project$.pipe().subscribe(project=>{
 
       if (!project) 
         return;   
-      var leader = project.projectMembers.find(x=>x.type===ProjectMemberType.Leader)
+      const leader = project.projectMembers.find(x=>x.type===ProjectMemberType.Leader)
       this.settingsForm = new FormGroup({
         id: new FormControl<string>(project.id,{ nonNullable: true, validators: [Validators.required]}),
         name: new FormControl<string>(project.name,{ nonNullable: true, validators: [Validators.required]}),
@@ -41,14 +40,14 @@ export class SettingsDetailsComponent implements OnInit  {
 
       this.settingsForm.valueChanges.subscribe(x=>{
 
-          let f=this.initialProjectValue?.iconUrl ===  x.iconUrl
-          let g= this.initialProjectValue?.name ===  x.name;
-          let test = this.initialProjectValue?.projectMembers.find(m=>m.type===ProjectMemberType.Leader)?.id === x.leader.id;
+      const f=this.initialProjectValue?.iconUrl ===  x.iconUrl
+      const g= this.initialProjectValue?.name ===  x.name;
+      const test = this.initialProjectValue?.projectMembers.find(m=>m.type===ProjectMemberType.Leader)?.id === x.leader.id;
 
-        if ( f && g && test)
-          this.formHasChanged = false;
-        else
-          this.formHasChanged = true;
+      if ( f && g && test)
+        this.formHasChanged = false;
+      else
+        this.formHasChanged = true;
          
       })
     })
@@ -56,7 +55,7 @@ export class SettingsDetailsComponent implements OnInit  {
     this.photosService.getProjectsIcons().pipe(take(1)).subscribe();
   }
   openIconPicker(){
-    let bsModalRef = this.modalService.show(IconPickerComponent, {class: 'modal-sm modal-dialog-centered'});
+    const bsModalRef = this.modalService.show(IconPickerComponent, {class: 'modal-sm modal-dialog-centered'});
     
     if (bsModalRef.content) 
       bsModalRef.content.icons = this.photosService.icons$; 

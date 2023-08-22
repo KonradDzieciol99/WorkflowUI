@@ -13,12 +13,15 @@
       </div>
     </div>
   </div>
-  <app-input-custom class="form" [formGroup]="projektForm" [nameFormControl]="'name'" [validatorsKeyValue]="[{key: 'required', value: 'Name is required'},
-                                    {key: 'minlength', value: 'Minimum project name length is 6'}]" 
-                                    
-    [readonly]="false"
-    [label]="'Name:'" [type]="'text'">
-  </app-input-custom>
+  <form [formGroup]="projektForm">
+    <app-reactive-input class="form" [formGroup]="projektForm" formControlName="name" [validatorsKeyValue]="[{key: 'required', value: 'Name is required'},
+                                      {key: 'minlength', value: 'Minimum project name length is 6'}]" 
+                                      
+      [readonly]="false"
+      [label]="'Name:'" 
+      [type]="'text'">
+    </app-reactive-input>
+  </form>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-secondary" (click)="bsModalRef.hide()">Cancel</button>

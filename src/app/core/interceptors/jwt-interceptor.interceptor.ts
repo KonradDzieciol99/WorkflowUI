@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
 import {
-  HttpRequest,
-  HttpHandler,
   HttpEvent,
-  HttpInterceptor
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest
 } from '@angular/common/http';
-import { delay, finalize, mergeMap, Observable, take } from 'rxjs';
+import { Injectable } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class JwtInterceptorInterceptor implements HttpInterceptor {
@@ -15,27 +15,16 @@ export class JwtInterceptorInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
 
-    if (request.url.includes('openid-configuration')) {
+    if (request.url.includes('openid-configuration'))
       return next.handle(request);
-    }
+    
 
     const userToken = this.oAuthService.getAccessToken();
+
     const modifiedReq = request.clone({
       headers: request.headers.set('Authorization', `Bearer ${userToken}`),
     });
 
     return next.handle(modifiedReq);
-
-    // const token = localStorage.getItem('token');
-
-    // if (token) {
-    //   request = request.clone({
-    //     setHeaders: {
-    //       Authorization: `Bearer ${token}`
-    //     }
-    //   })
-    // }
-
-    // return next.handle(request);
   }
 }

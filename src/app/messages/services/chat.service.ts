@@ -1,8 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { BehaviorSubject, concatMap, debounce, debounceTime, delay, filter, from, interval, map, mergeMap, Observable, of, skip, take, takeUntil, tap, timer } from 'rxjs';
-import { IChatGroupMember } from 'src/app/shared/models/IChatGroupMember';
+import { BehaviorSubject, Observable, concatMap, debounceTime, filter, from, of, skip, take, takeUntil, tap } from 'rxjs';
 import { Message } from 'src/app/shared/models/IMessage';
 import { IUser } from 'src/app/shared/models/IUser';
 import { environment } from 'src/environments/environment';
@@ -66,7 +65,7 @@ export class ChatService {
     })
 
     this.hubConnection.on('UpdatedGroup', (group: Array<string>) => {
-      let recipient = group.find(x => x === recipientEmail)
+      const recipient = group.find(x => x === recipientEmail)
       if (recipient) {
         this.messageThread$.pipe(take(1)).subscribe({
           next: messages => {
@@ -93,9 +92,9 @@ export class ChatService {
       })
     });
     
-    var hubConnectionState = this.hubConnection.start()
+    const hubConnectionState = this.hubConnection.start()
       .catch(error => console.log(error))
-      .finally(/*() => this.busyService.idle()*/);
+      .finally();
 
     return hubConnectionState;
   }
@@ -109,13 +108,12 @@ export class ChatService {
   sendMessage(recipient: IUser, content: string){
     return this.http.post(`${this.chatUrl}/Messages`,{recipientUserId:recipient.id,recipientEmail: recipient.email, content:content});
   }
-  getMessages(recipient:IUser,take:number=15): Observable<Message[]>{
+  getMessages(recipient:IUser,take=15): Observable<Message[]>{
     return this.messageThread$.pipe(
       filter((messages): messages is Message[] => messages !== undefined),
       concatMap((currentMessages)=> {
 
-        let params = new HttpParams();
-        
+        let params = new HttpParams(); 
         params = params.append('RecipientEmail', recipient.email);
         params = params.append('RecipientId', recipient.id);
         params = params.append('Skip', currentMessages.length.toString());

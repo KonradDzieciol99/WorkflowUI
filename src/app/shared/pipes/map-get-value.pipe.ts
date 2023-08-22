@@ -11,7 +11,7 @@ export class MapGetValuePipe<T> implements PipeTransform {
     if (!value) 
       return undefined;
     
-    let mapValue = value.get(args)
+    const mapValue = value.get(args)
 
     return mapValue;
   }

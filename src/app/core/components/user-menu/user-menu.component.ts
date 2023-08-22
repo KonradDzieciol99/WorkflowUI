@@ -17,11 +17,11 @@ export class UserMenuComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    let idToken=this.oAuthService.getIdentityClaims();
+    const idToken=this.oAuthService.getIdentityClaims();
 
-    let picture = idToken['picture'] as string | undefined;
+    const picture = idToken['picture'] as string | undefined;
 
-    let email = idToken['email'] as string | undefined;
+    const email = idToken['email'] as string | undefined;
     
     if(email)
       this.email=email;
@@ -33,7 +33,6 @@ export class UserMenuComponent implements OnInit {
   
   logout():void{
      this.oAuthService.logOut()
-    // this.oAuthService.revokeTokenAndLogout()
   }
   onOpenChange(isOpen: boolean): void {
     this.isNotificationPanelOpen = isOpen;

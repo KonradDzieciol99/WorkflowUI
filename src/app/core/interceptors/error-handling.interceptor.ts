@@ -1,19 +1,18 @@
-import { Injectable } from '@angular/core';
 import {
-  HttpRequest,
-  HttpHandler,
+  HttpErrorResponse,
   HttpEvent,
+  HttpHandler,
   HttpInterceptor,
-  HttpErrorResponse
+  HttpRequest
 } from '@angular/common/http';
-import { catchError, Observable, of, retry, throwError } from 'rxjs';
+import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { CookieService } from 'ngx-cookie-service';
+import { Observable, catchError, throwError } from 'rxjs';
 
 @Injectable()
 export class ErrorHandlingInterceptor implements HttpInterceptor {
 
-  constructor(private toastrService: ToastrService,private cookieService: CookieService) {}
+  constructor(private toastrService: ToastrService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(

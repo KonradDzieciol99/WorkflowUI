@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
-import { BehaviorSubject, forkJoin, merge, Observable, take } from 'rxjs';
-import { IUser } from '../shared/models/IUser';
+import { BehaviorSubject, Observable, forkJoin, take } from 'rxjs';
 import { ISearchedUser } from '../shared/models/ISearchedUser';
+import { IUser } from '../shared/models/IUser';
 import { MessagesService } from './messages.service';
 import { ChatService } from './services/chat.service';
 

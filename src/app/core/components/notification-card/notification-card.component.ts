@@ -1,11 +1,11 @@
-import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
-import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
 import { mergeMap, of, take, takeUntil, tap } from 'rxjs';
 import { MessagesService } from 'src/app/messages/messages.service';
 import { ProjectsService } from 'src/app/projects/projects.service';
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window/confirm-window.component';
-import { EventType, INotification, isINotification, NotificationType } from 'src/app/shared/models/INotification';
+import { INotification, NotificationType, isINotification } from 'src/app/shared/models/INotification';
 import { PresenceService } from 'src/app/shared/services/presence.service';
 
 @Component({
@@ -13,8 +13,8 @@ import { PresenceService } from 'src/app/shared/services/presence.service';
   templateUrl: './notification-card.component.html',
   styleUrls: ['./notification-card.component.scss']
 })
-export class NotificationCardComponent implements OnInit{
-  @Input("notification") notificationValue: any;
+export class NotificationCardComponent implements OnChanges{
+  @Input("notification") notificationValue?: INotification;
   notification?:INotification;
   notificationsTypes: typeof NotificationType = NotificationType;
   constructor(public messagesService:MessagesService,
@@ -29,15 +29,10 @@ export class NotificationCardComponent implements OnInit{
         throw new Error("Invalid input value 'notificationValue' in NotificationCardComponent");
       }
        this.notification = this.notificationValue;
-       console.debug(this.notificationValue);
     }
-    
-  }
-  ngOnInit(): void {
-
   }
   acceptProjectInvitation(notification:INotification){
-    this.projectsService.acceptProjectInvitation(notification.notificationPartnerId!)
+    this.projectsService.acceptProjectInvitation(notification.notificationPartnerId)
     .pipe(
       take(1),
       mergeMap(()=>this.presenceService.setADifferentTypeOfNotification(notification.id,NotificationType.InvitationToProjectAccepted,true))
@@ -47,7 +42,7 @@ export class NotificationCardComponent implements OnInit{
     });
   }
   rejectProjectInvitation(notification:INotification){
-    this.projectsService.declineProjectInvitation(notification.notificationPartnerId!)
+    this.projectsService.declineProjectInvitation(notification.notificationPartnerId)
     .pipe(
       take(1),
       mergeMap(()=>this.presenceService.setADifferentTypeOfNotification(notification.id,NotificationType.InvitationToProjectDeclined,true))
@@ -57,7 +52,7 @@ export class NotificationCardComponent implements OnInit{
     });
   }
   acceptFriendInvitation(notification:INotification){
-    this.messagesService.acceptFriendInvitation({inviterUserId: notification.notificationPartnerId!, invitedUserId: notification.userId!})
+    this.messagesService.acceptFriendInvitation({inviterUserId: notification.notificationPartnerId, invitedUserId: notification.userId})
     .pipe(
       take(1),
       mergeMap(()=>this.presenceService.setADifferentTypeOfNotification(notification.id,NotificationType.FriendRequestAccepted))
@@ -67,7 +62,7 @@ export class NotificationCardComponent implements OnInit{
     });
   }
   rejectFriendInvitation(notification:INotification){
-    this.messagesService.declineFriendInvitation({inviterUserId: notification.notificationPartnerId!, invitedUserId: notification.userId!})
+    this.messagesService.declineFriendInvitation({inviterUserId: notification.notificationPartnerId, invitedUserId: notification.userId})
     .pipe(
       take(1),
       mergeMap(()=>this.presenceService.setADifferentTypeOfNotification(notification.id,NotificationType.FriendRequestAccepted))
@@ -87,7 +82,7 @@ export class NotificationCardComponent implements OnInit{
 
   deleteNotification(notification:INotification){
 
-    let bsModalRef = this.modalService.show(ConfirmWindowComponent, {class: 'modal-sm'});
+    const bsModalRef = this.modalService.show(ConfirmWindowComponent, {class: 'modal-sm'});
     bsModalRef.content?.result?.pipe(
       take(1),
       takeUntil(this.modalService.onHide),
