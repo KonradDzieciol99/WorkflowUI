@@ -30,7 +30,7 @@ export class AccordionFindPeopleComponent implements OnInit {
       debounceTime(600),
       distinctUntilChanged(),
       switchMap((term: string)=>{
-        if (Boolean(term)) {return this.messagesService.findUsersByEmailAndCheckState(term).pipe(take(1));}
+        if (term) {return this.messagesService.findUsersByEmailAndCheckState(term).pipe(take(1));}
         return of([]);
       })
     ).subscribe(searchNewUsers=>{
@@ -39,7 +39,7 @@ export class AccordionFindPeopleComponent implements OnInit {
   }
 
   sendInvitation(searchUser: ISearchedUser) {
-    let searchedUser: IUser = {
+    const searchedUser: IUser = {
       email: searchUser.email,
       id: searchUser.id,
       photoUrl: searchUser.photoUrl

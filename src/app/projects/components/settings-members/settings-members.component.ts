@@ -1,13 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ProjectService } from '../../services/project.service';
-import { Observable, concatMap, debounceTime, distinctUntilChanged, map, of, take } from 'rxjs';
-import { IProjectMember, InvitationStatus, ProjectMemberType } from 'src/app/shared/models/IProjectMember';
-import { DataSourceChangedEventArgs, DataStateChangeEventArgs, EditSettingsModel, GridComponent, PageSettingsModel, ToolbarItems } from '@syncfusion/ej2-angular-grids';
 import { FormControl, Validators } from '@angular/forms';
-import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window/confirm-window.component';
+import { DataSourceChangedEventArgs, DataStateChangeEventArgs, EditSettingsModel, GridComponent, PageSettingsModel, ToolbarItems } from '@syncfusion/ej2-angular-grids';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { ProjectMembersService } from '../../services/project-members.service';
 import { ToastrService } from 'ngx-toastr';
+import { concatMap, debounceTime, distinctUntilChanged, of, take } from 'rxjs';
+import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window/confirm-window.component';
+import { InvitationStatus, ProjectMemberType } from 'src/app/shared/models/IProjectMember';
+import { ProjectMembersService } from '../../services/project-members.service';
+import { ProjectService } from '../../services/project.service';
 
 @Component({
   selector: 'app-settings-members',
@@ -49,7 +49,7 @@ export class SettingsMembersComponent implements OnInit {
 
     if (state.requestType === 'delete') {
 
-      let bsModalRef = this.modalService.show(ConfirmWindowComponent, {class: 'modal-sm modal-dialog-centered'});
+      const bsModalRef = this.modalService.show(ConfirmWindowComponent, {class: 'modal-sm modal-dialog-centered'});
 
       bsModalRef.content?.result?.pipe(
         take(1),

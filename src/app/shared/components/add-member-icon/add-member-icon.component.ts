@@ -13,7 +13,8 @@ export class AddMemberIconComponent {
   
   }
   open(){
-    let bsModalRef = this.modalService.show(AddProjectMemberModalComponent, {class: 'modal-sm modal-dialog-centered'});
+    //let bsModalRef = 
+    this.modalService.show(AddProjectMemberModalComponent, {class: 'modal-sm modal-dialog-centered'});
 
   }
 }

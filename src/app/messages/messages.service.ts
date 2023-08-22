@@ -1,13 +1,13 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { BehaviorSubject, combineLatest, concatMap, map, mergeMap, Observable, of, switchMap, take, tap } from 'rxjs';
+import { OAuthService } from 'angular-oauth2-oidc';
+import { BehaviorSubject, Observable, combineLatest, concatMap, map, mergeMap, take, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { IFriendInvitation } from '../shared/models/IFriendInvitation';
-import { IUser } from '../shared/models/IUser';
 import { ISearchedUser } from '../shared/models/ISearchedUser';
+import { IUser } from '../shared/models/IUser';
 import { PresenceService } from '../shared/services/presence.service';
-import { OAuthService } from 'angular-oauth2-oidc';
 
 @Injectable({
   providedIn: 'root'
@@ -15,34 +15,27 @@ import { OAuthService } from 'angular-oauth2-oidc';
 export class MessagesService  {
   private confirmedInvitationsSource : BehaviorSubject<IFriendInvitation[]>;
   confirmedInvitations$:Observable<IFriendInvitation[]>;
-  //onlineUsers$:Observable<string[]>; 
   receivedFriendRequestsSource: BehaviorSubject<IFriendInvitation[]>;
   receivedFriendRequests$ :Observable<IFriendInvitation[]>; 
   friendsWithActivityStatus$:Observable<IUser[]>; 
   private chatUrl:string;
-  private identityServerUrl:string
   private aggregatorUrl:string
   private hubUrl:string; 
   private hubConnection?: HubConnection;
   constructor(private http: HttpClient,private readonly presenceService:PresenceService,private readonly oAuthService: OAuthService) {
     this.chatUrl = environment.chatUrl;
     this.hubUrl=environment.signalRhubUrl;
-    this.identityServerUrl=environment.identityServerUrl;
     this.aggregatorUrl=environment.aggregator;
-    //this.onlineUsers$ = presenceService.onlineUsers$; // sunscription?
     this.confirmedInvitationsSource = new BehaviorSubject<IFriendInvitation[]>([]);
     this.confirmedInvitations$ = this.confirmedInvitationsSource.asObservable();
     this.receivedFriendRequestsSource = new BehaviorSubject<IFriendInvitation[]>([]);
     this.receivedFriendRequests$= this.receivedFriendRequestsSource.asObservable();
-
     const userClaims = this.oAuthService.getIdentityClaims();
-
-    let user:IUser = {
+    const user:IUser = {
       email: userClaims['email'],
       id: userClaims['sub'],
       photoUrl: userClaims['picture']
     }
-
     this.friendsWithActivityStatus$ = this.getFriendsWithActivityStatus(user);
    }
   findUsersByEmailAndCheckState(email:string){
@@ -63,10 +56,10 @@ export class MessagesService  {
     .pipe(
       map(([confirmedInvitations,onlineUsers])=> {
         return confirmedInvitations.map(invitation=>{
-          let friendEmail = invitation.inviterUserEmail === user.email ? invitation.invitedUserEmail : invitation.inviterUserEmail;
-          let friendId =  invitation.inviterUserId === user.id ? invitation.invitedUserId : invitation.inviterUserId;
-          let friendPhoto = invitation.inviterPhotoUrl === user.photoUrl ? invitation.invitedPhotoUrl : invitation.inviterPhotoUrl
-          let person : IUser ={
+          const friendEmail = invitation.inviterUserEmail === user.email ? invitation.invitedUserEmail : invitation.inviterUserEmail;
+          const friendId =  invitation.inviterUserId === user.id ? invitation.invitedUserId : invitation.inviterUserId;
+          const friendPhoto = invitation.inviterPhotoUrl === user.photoUrl ? invitation.invitedPhotoUrl : invitation.inviterPhotoUrl
+          const person : IUser ={
             email: friendEmail,
             id: friendId,
             photoUrl: friendPhoto,
@@ -84,7 +77,7 @@ export class MessagesService  {
         return this.receivedFriendRequests$.pipe(
           take(1),
           tap(receivedFriendRequests=>{
-            let newReceivedFriendRequests = receivedFriendRequests.filter(receivedFriendRequest=>{
+            const newReceivedFriendRequests = receivedFriendRequests.filter(receivedFriendRequest=>{
               return !((receivedFriendRequest.inviterUserId===invitationId.invitedUserId && receivedFriendRequest.invitedUserId === invitationId.inviterUserId) 
               || (receivedFriendRequest.inviterUserId===invitationId.inviterUserId && receivedFriendRequest.invitedUserId === invitationId.invitedUserId));
             })
@@ -99,7 +92,7 @@ export class MessagesService  {
         return this.receivedFriendRequests$.pipe(
           take(1),
           map(invitations=>{
-            let invitationIndex = invitations.findIndex(invitation=>{
+            const invitationIndex = invitations.findIndex(invitation=>{
              return (invitation.inviterUserId===invitationId.invitedUserId && invitation.invitedUserId === invitationId.inviterUserId) 
              || (invitation.inviterUserId===invitationId.inviterUserId && invitation.invitedUserId === invitationId.invitedUserId)
             })
@@ -111,23 +104,6 @@ export class MessagesService  {
       })
     );
   }
-  // declineAcceptedFriendInvitation(friendId:string,currentUserId:string){
-  //   //invitationId:{inviterUserId:string,invitedUserId:string}
-  //   return this.http.delete(`${this.chatUrl}/FriendRequests/${friendId}`).pipe(
-  //     take(1),
-  //     tap(x=>{this.confirmedInvitations$.pipe(take(1)).subscribe(invitations=>{
-  //       let invitationIndex = invitations.findIndex(invitation=>{
-  //         return (invitation.inviterUserId===friendId && invitation.invitedUserId === currentUserId) 
-  //         || (invitation.inviterUserId===currentUserId && invitation.invitedUserId === friendId)
-  //        });
-  //        if (invitationIndex !== -1) {
-  //         invitations.splice(invitationIndex,1)//invitations.splice(invitationIndex)
-  //         this.confirmedInvitationsSource.next(invitations)
-  //       }
-  //     })}
-  //   ))
-  // }
-
   declineAcceptedFriendInvitation(friend:IUser, currentUserId:string) {
     return this.http.delete(`${this.chatUrl}/FriendRequests/${friend.id}`).pipe(
       take(1),
@@ -138,19 +114,18 @@ export class MessagesService  {
         ]).pipe(take(1))
       ),
       tap(([confirmedInvitations, onlineUsers]) => {
-        var filteredConfirmedInvitations = confirmedInvitations.filter(confirmedInvitation =>
+        const filteredConfirmedInvitations = confirmedInvitations.filter(confirmedInvitation =>
           !((confirmedInvitation.inviterUserId === friend.id && confirmedInvitation.invitedUserId === currentUserId) 
           || (confirmedInvitation.inviterUserId === currentUserId && confirmedInvitation.invitedUserId === friend.id))
         );
         this.confirmedInvitationsSource.next(filteredConfirmedInvitations);
-        var filteredOnlineUsers = onlineUsers.filter(email=>email !== friend.email)
+        const filteredOnlineUsers = onlineUsers.filter(email=>email !== friend.email)
         this.presenceService.onlineUsersSource.next(filteredOnlineUsers);
       }),
      
     );
   }
-  
-  GetConfirmedFriendRequests(searchTerm: string = "",takeAmount: number = 15,isScroll:boolean=false){ //zakkceptowane zaproszenia
+  GetConfirmedFriendRequests(searchTerm = "",takeAmount = 15,isScroll=false){
 
     return this.confirmedInvitations$.pipe(
       take(1),
@@ -180,13 +155,13 @@ export class MessagesService  {
       .withAutomaticReconnect()
       .build();
 
-    this.hubConnection.on('FriendInvitationAccepted', (invitation: IFriendInvitation) => { ///FriendActeptedmyInvitation
-      this.confirmedInvitations$.pipe(take(1)).subscribe(invitations=>{///FriendActeptedmyInvitation
+    this.hubConnection.on('FriendInvitationAccepted', (invitation: IFriendInvitation) => {
+      this.confirmedInvitations$.pipe(take(1)).subscribe(invitations=>{
         this.confirmedInvitationsSource.next([...invitations,invitation]);
-      })//totaj nie intations tylko friends!!
+      })
     });
-    this.hubConnection.on('NewInvitationToFriendsReceived', (invitation: IFriendInvitation) => { ///FriendActeptedmyInvitation
-      this.receivedFriendRequests$.pipe(take(1)).subscribe(invitations=>{///FriendActeptedmyInvitation
+    this.hubConnection.on('NewInvitationToFriendsReceived', (invitation: IFriendInvitation) => {
+      this.receivedFriendRequests$.pipe(take(1)).subscribe(invitations=>{
         this.receivedFriendRequestsSource.next([...invitations,invitation]);
       })
     });
@@ -197,23 +172,20 @@ export class MessagesService  {
       ]).pipe(
         take(1),
       ).subscribe(([confirmedInvitations, onlineUsers])=>{
-        var filterdConfirmedInvitations = confirmedInvitations.filter(c=>!(c.invitedUserEmail===removerEmail || c.inviterUserEmail === removerEmail));
+        const filterdConfirmedInvitations = confirmedInvitations.filter(c=>!(c.invitedUserEmail===removerEmail || c.inviterUserEmail === removerEmail));
         this.confirmedInvitationsSource.next(filterdConfirmedInvitations);
-        var filteredOnlineUsers = onlineUsers.filter(email=>email !== removerEmail)
+        const filteredOnlineUsers = onlineUsers.filter(email=>email !== removerEmail)
         this.presenceService.onlineUsersSource.next(filteredOnlineUsers);
       })
     });
 
-    var hubConnectionState = this.hubConnection.start()
-      .catch(error => console.log(error))
-      .finally(/*() => this.busyService.idle()*/);
-
+    const hubConnectionState = this.hubConnection.start()
+                                                .catch(error => console.log(error))
+                                                .finally();
     return hubConnectionState;
   }
 
   stopHubConnection() {
-    if (this.hubConnection) {
-      this.hubConnection.stop();
-    }
+      this.hubConnection?.stop();
   }
 }

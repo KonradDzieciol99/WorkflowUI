@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { InputCustomComponent } from './components/input-custom/input-custom.component';
+// import { InputCustomComponent } from './components/input-custom/input-custom.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { ConfirmWindowComponent } from './components/confirm-window/confirm-window.component';
@@ -19,7 +19,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 
 @NgModule({
   declarations: [
-    InputCustomComponent,
+    // InputCustomComponent,
     ConfirmWindowComponent,
     ReactiveInputComponent,
     ReactiveDatePickerComponent,
@@ -39,7 +39,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
     TabsModule.forRoot(),
   ]
   ,exports:[
-    InputCustomComponent,
+    // InputCustomComponent,
     ReactiveFormsModule,
     ReactiveInputComponent,
     ReactiveDatePickerComponent,

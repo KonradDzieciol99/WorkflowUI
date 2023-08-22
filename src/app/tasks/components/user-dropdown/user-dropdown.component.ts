@@ -1,7 +1,6 @@
 import { Component, Input, OnInit, Self } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
 import { IProjectMember } from 'src/app/shared/models/IProjectMember';
-import { IUser } from 'src/app/shared/models/IUser';
 
 @Component({
   selector: 'app-user-dropdown[projectMember]',
@@ -24,12 +23,16 @@ export class UserDropdownComponent implements OnInit,ControlValueAccessor  {
   onOpenChange(isOpen: boolean): void {
     this.isStatusPanelOpen = isOpen;
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function, @typescript-eslint/no-explicit-any
   writeValue(obj: any): void {
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function, @typescript-eslint/no-explicit-any
   registerOnChange(fn: any): void {
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function, @typescript-eslint/no-explicit-any
   registerOnTouched(fn: any): void {
   }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function, @typescript-eslint/no-explicit-any
   setDisabledState?(isDisabled: boolean): void {
   }
 }

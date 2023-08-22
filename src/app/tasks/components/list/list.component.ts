@@ -1,9 +1,10 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { DataSourceChangedEventArgs, DataStateChangeEventArgs, EditSettingsModel, GridComponent, PageSettingsModel, ToolbarItems } from '@syncfusion/ej2-angular-grids';
+import { ClickEventArgs } from '@syncfusion/ej2-navigations';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
-import { concatMap, debounceTime, distinctUntilChanged, mergeMap, of, take } from 'rxjs';
+import { concatMap, debounceTime, distinctUntilChanged, of, take } from 'rxjs';
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window/confirm-window.component';
 import { TasksService } from '../../tasks.service';
 import { CreateTaskModalComponent } from '../modals/create-task-modal/create-task-modal.component';
@@ -13,7 +14,7 @@ import { CreateTaskModalComponent } from '../modals/create-task-modal/create-tas
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss']
 })
-export class ListComponent {
+export class ListComponent implements OnInit{
   public pageSettings: PageSettingsModel;
   public toolbar: ToolbarItems[];
   @ViewChild('grid') grid: GridComponent | undefined;
@@ -26,16 +27,19 @@ export class ListComponent {
   }
 
   createTask(){
-    let bsModalRef = this.modalService.show(CreateTaskModalComponent, {class: 'modal-lg modal-dialog-centered'});
+    //let bsModalRef = 
+    this.modalService.show(CreateTaskModalComponent, {class: 'modal-lg modal-dialog-centered'});
   }
   public dataStateChange(state: DataStateChangeEventArgs): void {
-    this.tasksService.execute(state);
+    this.tasksService.execute(state)
+                     .pipe(take(1))
+                     .subscribe();
   }
   public dataSourceChanged(state: DataSourceChangedEventArgs): void {
 
     if (state.requestType === 'delete') {
 
-      let bsModalRef = this.modalService.show(ConfirmWindowComponent, {class: 'modal-sm modal-dialog-centered'});
+      const bsModalRef = this.modalService.show(ConfirmWindowComponent, {class: 'modal-sm modal-dialog-centered'});
 
       bsModalRef.content?.result?.pipe(
         take(1),
@@ -81,15 +85,16 @@ export class ListComponent {
        }
       })
   }
-  toolbarClick(args: any): void {
-    if (args.item.id.endsWith('edit')) {
+  toolbarClick(args: ClickEventArgs): void {
+    
+    if (args.item.id?.endsWith('edit')) {
         const selectedRecord = this.grid?.getSelectedRecords()[0];
         //this.myDialog.open(selectedRecord);
         args.cancel = true; // Prevent the grid's default dialog from opening
         if (!selectedRecord) 
           return;
         
-        let selectedRecordCopy = JSON.parse(JSON.stringify(selectedRecord));
+        const selectedRecordCopy = JSON.parse(JSON.stringify(selectedRecord));
 
         const initialState: ModalOptions = {
           initialState: {
@@ -99,9 +104,8 @@ export class ListComponent {
           class: 'modal-lg modal-dialog-centered'
         };
         
-   
-        let bsModalRef = this.modalService.show(CreateTaskModalComponent, initialState);
-
+        //let bsModalRef = 
+        this.modalService.show(CreateTaskModalComponent, initialState);
     }
 }
 

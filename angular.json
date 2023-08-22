@@ -32,12 +32,12 @@
             "styles": [
               "src/styles.scss",
               {
-                "input":"src/assets/themes/theme-dark.scss",
+                "input": "src/assets/themes/theme-dark.scss",
                 "bundleName": "dark",
                 "inject": false
               },
               {
-                "input":"src/assets/themes/theme-light.scss",
+                "input": "src/assets/themes/theme-light.scss",
                 "bundleName": "light",
                 "inject": false
               }
@@ -119,11 +119,23 @@
             ],
             "scripts": []
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
         }
       }
     }
   },
   "cli": {
-    "analytics": "1ea200fb-f830-4d5d-b390-c087c8c9d400"
+    "analytics": "1ea200fb-f830-4d5d-b390-c087c8c9d400",
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }

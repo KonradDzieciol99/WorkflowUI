@@ -3,13 +3,12 @@ import { Component, OnInit, Renderer2 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, mergeMap, Subject, take, takeUntil } from 'rxjs';
+import { take, takeUntil } from 'rxjs';
 import { ProjectsService } from 'src/app/projects/projects.service';
 import { IIcon } from 'src/app/shared/models/IIcon';
 import { IProjectCreateRequest } from 'src/app/shared/models/IProjectCreateRequest';
 import { PhotosService } from 'src/app/shared/services/photos.service';
 import { IconPickerComponent } from '../../icon-picker/icon-picker.component';
-import { ImageLoader } from '@angular/common';
 
 @Component({
   selector: 'app-create-project-modal',
@@ -18,16 +17,21 @@ import { ImageLoader } from '@angular/common';
 })
 export class CreateProjectModalComponent implements OnInit {
 
-  projektForm: FormGroup = new FormGroup({
-    name: new FormControl<string>('',[Validators.required,Validators.minLength(6)]), //","
-    icon: new FormControl<IIcon|null>(null,[Validators.required]),
-  });
+  public projektForm:FormGroup;
 
   constructor(public bsModalRef: BsModalRef,private projectsService:ProjectsService,
     private toastrService:ToastrService,private photosService:PhotosService
     ,private modalService: BsModalService,private renderer: Renderer2){
+
+     this.projektForm = new FormGroup({
+        name: new FormControl<string>('',{ nonNullable: true,validators:[Validators.required,Validators.minLength(6)]}),
+        icon: new FormControl<IIcon|null>(null, [Validators.required]),
+      });
+
     }
   ngOnInit(): void {
+
+
     this.photosService.getProjectsIcons().pipe(take(1)).subscribe({
       next:(icons)=>{
         const random = Math.floor(Math.random() * icons.length);
@@ -36,7 +40,7 @@ export class CreateProjectModalComponent implements OnInit {
     });
   }
   openIconPicker(){
-    let bsModalRef = this.modalService.show(IconPickerComponent, {class: 'modal-sm modal-dialog-centered'});
+    const bsModalRef = this.modalService.show(IconPickerComponent, {class: 'modal-sm modal-dialog-centered'});
     
     if (bsModalRef.content) 
       bsModalRef.content.icons = this.photosService.icons$; 
@@ -62,7 +66,7 @@ export class CreateProjectModalComponent implements OnInit {
     .pipe(take(1))
     .subscribe({
       next:(project)=>{
-        this.toastrService.success(`Project has been created`);
+        this.toastrService.success(`Project ${project.name} has been created`);
         this.bsModalRef.hide();
       },
       error:(err:HttpErrorResponse)=>{

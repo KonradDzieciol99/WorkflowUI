@@ -1,12 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { Subject } from '@microsoft/signalr';
 import { DataSourceChangedEventArgs, DataStateChangeEventArgs, EditSettingsModel, GridComponent, PageSettingsModel, ToolbarItems } from '@syncfusion/ej2-angular-grids';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, debounceTime, distinctUntilChanged, mergeMap, of, take,takeUntil, tap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, mergeMap, of, take } from 'rxjs';
 import { ConfirmWindowComponent } from '../shared/components/confirm-window/confirm-window.component';
-import { isNullOrEmpty } from '../shared/helpers';
 import { CreateProjectModalComponent } from './components/modals/create-project-modal/create-project-modal.component';
 import { ProjectsService } from './projects.service';
 
@@ -14,7 +12,6 @@ import { ProjectsService } from './projects.service';
   selector: 'app-projects',
   templateUrl: './projects.component.html',
   styleUrls: ['./projects.component.scss'],
-  //providers: [ProjectsService]
 })
 export class ProjectsComponent implements OnInit {
 
@@ -29,7 +26,8 @@ export class ProjectsComponent implements OnInit {
     this.editSettings = { allowEditing: true, allowAdding: true, allowDeleting: true };
   }
   createProject(){
-    let bsModalRef = this.modalService.show(CreateProjectModalComponent, {class: 'modal-sm modal-dialog-centered'});
+    //const bsModalRef = 
+    this.modalService.show(CreateProjectModalComponent, {class: 'modal-sm modal-dialog-centered'});
   }
   public dataStateChange(state: DataStateChangeEventArgs): void {
     this.service.execute(state);
@@ -38,7 +36,7 @@ export class ProjectsComponent implements OnInit {
 
     if (state.requestType === 'delete') {
 
-      let bsModalRef = this.modalService.show(ConfirmWindowComponent, {class: 'modal-sm modal-dialog-centered'});
+      const bsModalRef = this.modalService.show(ConfirmWindowComponent, {class: 'modal-sm modal-dialog-centered'});
 
       bsModalRef.content?.result?.pipe(
         take(1),
@@ -48,8 +46,6 @@ export class ProjectsComponent implements OnInit {
         })
       )
       .subscribe({
-        next:(value)=> {
-        },
         complete:()=> {
           if (state.endEdit) 
             state.endEdit();
@@ -64,10 +60,9 @@ export class ProjectsComponent implements OnInit {
       debounceTime(300),
       distinctUntilChanged(),
     ).subscribe({
-      next:(value)=>{
-        if(this.grid) 
-          this.grid.search(value ?? "");
-       }
+      next:(value) => {
+        this.grid?.search(value ?? "");
+        }
       })
 
   }

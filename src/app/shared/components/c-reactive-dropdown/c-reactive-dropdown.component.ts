@@ -1,5 +1,4 @@
-import { KeyValue } from '@angular/common';
-import { Component, ContentChild, Input, OnInit, Self, TemplateRef } from '@angular/core';
+import { Component, Input, OnInit, Self } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { State } from '../../models/IAppTask';
@@ -30,15 +29,20 @@ export class CReactiveDropdownComponent <T>implements OnInit,ControlValueAccesso
       this.currentValue = this.map?.get(state);
     })
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function, @typescript-eslint/no-explicit-any
   onOpenChange(isOpen: boolean): void {
     this.isStatusPanelOpen = isOpen;
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function, @typescript-eslint/no-explicit-any
   writeValue(obj: any): void {
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function, @typescript-eslint/no-explicit-any
   registerOnChange(fn: any): void {
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function, @typescript-eslint/no-explicit-any
   registerOnTouched(fn: any): void {
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function, @typescript-eslint/no-explicit-any
   setDisabledState?(isDisabled: boolean): void {
   }
 

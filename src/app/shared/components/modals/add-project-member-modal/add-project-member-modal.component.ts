@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { OAuthService } from 'angular-oauth2-oidc';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, debounceTime, distinctUntilChanged, of, switchMap, take } from 'rxjs';
 import { ProjectService } from 'src/app/projects/services/project.service';
 import { ISearchedMember, MemberStatusType } from 'src/app/shared/models/ISearchedMember';
-import { TasksService } from 'src/app/tasks/tasks.service';
 
 @Component({
   selector: 'app-add-project-member-modal',
@@ -19,12 +17,8 @@ export class AddProjectMemberModalComponent implements OnInit {
   searchedMember$: Observable<Array<ISearchedMember>>;
   memberStatusTypes: typeof MemberStatusType = MemberStatusType;
   constructor(public selfBsModalRef: BsModalRef,
-    private tasksService:TasksService,
     private toastrService:ToastrService,
-    private modalService: BsModalService,
-    private projectService:ProjectService,
-    private oAuthService:OAuthService
-    ){
+    private projectService:ProjectService){
       this.searchMember = new FormControl<string>('',{nonNullable: true, validators: [Validators.required]});
       this.searchedMemberSource = new BehaviorSubject<Array<ISearchedMember>>([]);
       this.searchedMember$ = this.searchedMemberSource.asObservable()
@@ -33,8 +27,8 @@ export class AddProjectMemberModalComponent implements OnInit {
     this.searchMember.valueChanges.pipe(
       debounceTime(600),
       distinctUntilChanged(),
-      switchMap((term: string)=>{
-        if (Boolean(term)) {return this.projectService.findMemberByEmailAndCheckState(term).pipe(take(1));}
+      switchMap((term)=>{
+        if (term) {return this.projectService.findMemberByEmailAndCheckState(term).pipe(take(1));}
         return of([]);
       })
     ).subscribe(searchNewUsers=>{

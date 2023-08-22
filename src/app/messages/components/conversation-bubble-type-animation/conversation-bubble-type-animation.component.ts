@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { Message } from 'src/app/shared/models/IMessage';
 import { IUser } from 'src/app/shared/models/IUser';
 
 @Component({
@@ -8,5 +7,5 @@ import { IUser } from 'src/app/shared/models/IUser';
   styleUrls: ['./conversation-bubble-type-animation.component.scss']
 })
 export class ConversationBubbleTypeAnimationComponent {
-  @Input() chatRecipient: IUser|undefined;
+  @Input() chatRecipient?: IUser;
 }
