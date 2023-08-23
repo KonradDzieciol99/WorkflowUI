@@ -16,7 +16,7 @@ export class ProjectSideBarComponent implements OnInit,OnDestroy  {
 
   private dismissReason:string;
   private sidenavStateSub: Subscription;
-  private sidenavStateSource:BehaviorSubject<boolean> ;
+  private sidenavStateSource$:BehaviorSubject<boolean> ;
   project$:Observable<IProject|undefined>;
   sidenavState$:Observable<boolean>;
   @ViewChild('sideBar', { static: true }) sideBarRef: TemplateRef<unknown> | undefined ;
@@ -32,8 +32,8 @@ export class ProjectSideBarComponent implements OnInit,OnDestroy  {
     this.dismissReason="Resizing";
 
     this.project$=this.projectService.project$;
-    this.sidenavStateSource = new BehaviorSubject<boolean>(true);
-    this.sidenavState$ = this.sidenavStateSource.asObservable();
+    this.sidenavStateSource$ = new BehaviorSubject<boolean>(true);
+    this.sidenavState$ = this.sidenavStateSource$.asObservable();
     this.sidenavStateSub = this.sidenavState$.pipe().subscribe(state=>{
       if (state) 
         this.onResize();
@@ -62,7 +62,7 @@ export class ProjectSideBarComponent implements OnInit,OnDestroy  {
     })
   }
   changeStateSideNav(){
-    this.sidenavState$.pipe(take(1)).subscribe(state=>this.sidenavStateSource.next(!state));
+    this.sidenavState$.pipe(take(1)).subscribe(state=>this.sidenavStateSource$.next(!state));
   }
   ngOnDestroy(): void {
     this.sidenavStateSub.unsubscribe();
@@ -72,14 +72,14 @@ export class ProjectSideBarComponent implements OnInit,OnDestroy  {
     const mdBreakpoint = 768;
     const screenWidth = window.innerWidth;
 
-    if (screenWidth <= mdBreakpoint && this.sideBarRef && !this.offcanvasService.hasOpenOffcanvas() && this.sidenavStateSource.getValue() ) {
+    if (screenWidth <= mdBreakpoint && this.sideBarRef && !this.offcanvasService.hasOpenOffcanvas() && this.sidenavStateSource$.getValue() ) {
       this.offcanvasService.open(this.sideBarRef,{ panelClass: 'sidebar-width default-transition', scroll: true  }).result.then(() => {
-        this.sidenavStateSource.next(false);
+        this.sidenavStateSource$.next(false);
       }).catch((error) => {
         if (error===this.dismissReason)
           return;
 
-        this.sidenavStateSource.next(false);
+        this.sidenavStateSource$.next(false);
       });
     }
     

@@ -13,14 +13,16 @@ import { ISyncfusionFormat } from '../shared/models/ISyncfusionFormat';
 })
 export class ProjectsService  {
   projectsUrl: string;
-  private projectsSource:BehaviorSubject<ISyncfusionFormat<IProject>|undefined> = new BehaviorSubject<ISyncfusionFormat<IProject>|undefined>(undefined);
-  public projects$:Observable<ISyncfusionFormat<IProject>| undefined > = this.projectsSource.asObservable();
+  private projectsSource$:BehaviorSubject<ISyncfusionFormat<IProject>>;
+  public projects$:Observable<ISyncfusionFormat<IProject>>;
   constructor(private http: HttpClient,private toastrService:ToastrService) {
     this.projectsUrl = environment.projectsUrl;
+    this.projectsSource$ = new BehaviorSubject({result: [], count: 0} as ISyncfusionFormat<IProject> );
+    this.projects$ = this.projectsSource$.asObservable();
   }
   public execute(state: DataStateChangeEventArgs): void {
     this.getData(state).pipe(take(1)).subscribe(x => {
-      this.projectsSource.next(x)
+      this.projectsSource$.next(x)
     });
   }
   protected getData(state: DataStateChangeEventArgs) {
@@ -34,9 +36,8 @@ export class ProjectsService  {
   createProject(projectCreateRequest:IProjectCreateRequest){
     return this.http.post<IProject>(`${this.projectsUrl}/projects`,projectCreateRequest).pipe(
       mergeMap((project)=>{
-        return this.projectsSource.pipe(
+        return this.projectsSource$.pipe(
             take(1),
-            filter((projects): projects is ISyncfusionFormat<IProject> => project !== undefined),
             tap((projects)=>{
 
               const newData:ISyncfusionFormat<IProject> = {
@@ -47,7 +48,7 @@ export class ProjectsService  {
               newData.result.push(project);
               newData.count = newData.count+1;
          
-              this.projectsSource.next(newData);
+              this.projectsSource$.next(newData);
             }),
             map(() => project)
           )

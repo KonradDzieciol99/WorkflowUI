@@ -20,7 +20,7 @@ import { TasksService } from 'src/app/tasks/tasks.service';
   styleUrls: ['./create-task-modal.component.scss']
 })
 export class CreateTaskModalComponent implements OnInit  {
-  result: Subject<boolean>;
+  private resultSource$: Subject<boolean>;
   taskForm?: FormGroup;
   stateMap: Map<State, ITextIconPair>;
   priorityMap: Map<Priority, ITextIconPair>;
@@ -36,7 +36,7 @@ export class CreateTaskModalComponent implements OnInit  {
               private oAuthService:OAuthService
               )
     {
-      this.result = new Subject<boolean>();
+      this.resultSource$ = new Subject<boolean>();
       
       this.statuses=[State.ToDo,State.InProgress,State.Done];
       this.priorites=[Priority.Low,Priority.Medium,Priority.High]
@@ -141,8 +141,12 @@ export class CreateTaskModalComponent implements OnInit  {
         this.toastrService.success(`Task has been created`);
         this.selfBsModalRef.hide();
       },
-      error:(err:HttpErrorResponse)=>{
-          this.taskForm?.setErrors({serverError: err.error}); 
+      error:(error:unknown)=>{
+        if (error instanceof HttpErrorResponse)
+          this.taskForm?.setErrors({serverError: error.error}); 
+        else 
+          console.error('Nieznany błąd:', error);
+
         },
       });
   }
@@ -180,10 +184,13 @@ export class CreateTaskModalComponent implements OnInit  {
       this.toastrService.success(`Task has been updated`);
       this.selfBsModalRef.hide();
     },
-    error:(err:HttpErrorResponse)=>{
-        this.taskForm?.setErrors({serverError: err.error}); 
-      },
-    });
+    error:(error:unknown)=>{
+          if (error instanceof HttpErrorResponse)
+        this.taskForm?.setErrors({serverError: error.error});  
+          else 
+        console.error('Nieznany błąd:', error);
+      }}
+    );
  }
  mapDateToNgbDateStruct(date:Date):NgbDateStruct{
   const bgbDateStruct:NgbDateStruct={

@@ -13,14 +13,14 @@ import { FormControl } from '@angular/forms';
 })
 export class AccordionFindPeopleComponent implements OnInit {
   UserFriendStatusTypes: typeof UserFriendStatusType = UserFriendStatusType;
-  searchNewUsersSource: BehaviorSubject<Array<ISearchedUser>>;
+  searchNewUsersSource$: BehaviorSubject<Array<ISearchedUser>>;
   searchNewUsers$: Observable<ISearchedUser[]>
   isCollapsedAccordionFindPeople: boolean;
   searchNewUsers: FormControl;
   constructor(public messagesService:MessagesService,
               private toastrService: ToastrService){
-    this.searchNewUsersSource = new BehaviorSubject<Array<ISearchedUser>>([]);
-    this.searchNewUsers$ = this.searchNewUsersSource.asObservable();
+    this.searchNewUsersSource$ = new BehaviorSubject([] as Array<ISearchedUser>);
+    this.searchNewUsers$ = this.searchNewUsersSource$.asObservable();
     this.isCollapsedAccordionFindPeople = false;
     this.searchNewUsers = new FormControl<string>('',{ nonNullable: true });
 
@@ -34,7 +34,7 @@ export class AccordionFindPeopleComponent implements OnInit {
         return of([]);
       })
     ).subscribe(searchNewUsers=>{
-      this.searchNewUsersSource.next(searchNewUsers);
+      this.searchNewUsersSource$.next(searchNewUsers);
     });
   }
 
@@ -53,7 +53,7 @@ export class AccordionFindPeopleComponent implements OnInit {
       const searchNewUsers = users.map(user =>
         user.id === searchUser.id ? { ...user, status: UserFriendStatusType.InvitedByYou } : user
       );
-      this.searchNewUsersSource.next(searchNewUsers);
+      this.searchNewUsersSource$.next(searchNewUsers);
     });
   }
   

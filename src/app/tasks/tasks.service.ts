@@ -16,12 +16,12 @@ import { IProject } from '../shared/models/IProject';
 export class TasksService {
   // private projectId?: string;
   private baseUrl;
-  private tasksSource:BehaviorSubject<ISyncfusionFormat<IAppTask>>;
+  private tasksSource$:BehaviorSubject<ISyncfusionFormat<IAppTask>>;
   public tasks$:Observable<ISyncfusionFormat<IAppTask>>;
   constructor(private http: HttpClient,private toastrService:ToastrService,private projectService:ProjectService) {
     this.baseUrl = environment.tasksUrl;
-    this.tasksSource = new BehaviorSubject<ISyncfusionFormat<IAppTask>>({result: [], count: 0});
-    this.tasks$ = this.tasksSource.asObservable();
+    this.tasksSource$ = new BehaviorSubject<ISyncfusionFormat<IAppTask>>({result: [], count: 0});
+    this.tasks$ = this.tasksSource$.asObservable();
     // projectService.project$.subscribe(project => {
     //   if (project) 
     //     this.projectId = project.id;
@@ -30,7 +30,7 @@ export class TasksService {
   }
   public execute(state: DataStateChangeEventArgs) {
     return this.getData(state).pipe(
-        tap(x=>this.tasksSource.next(x))
+        tap(x=>this.tasksSource$.next(x))
       )
 
   }
@@ -76,7 +76,7 @@ export class TasksService {
            newTask.taskAssignee=task.taskAssignee;
            newTask.taskLeader=task.taskLeader;
            const syncfusionFormat:ISyncfusionFormat<IAppTask> = {result: [...currenTasks.result,newTask], count: (currenTasks.count +1) }
-           this.tasksSource.next(syncfusionFormat)
+           this.tasksSource$.next(syncfusionFormat)
           })
         )
       })
@@ -105,7 +105,7 @@ export class TasksService {
           tap((currentTasks) =>{
             const updatedTasks = currentTasks.result.map(t => t.id === task.id ? task : t);
             const syncfusionFormat:ISyncfusionFormat<IAppTask> = {result: updatedTasks, count: currentTasks.count }
-            this.tasksSource.next(syncfusionFormat)
+            this.tasksSource$.next(syncfusionFormat)
           })
         )
       })

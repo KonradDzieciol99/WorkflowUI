@@ -13,9 +13,9 @@ import { PresenceService } from '../shared/services/presence.service';
   providedIn: 'root'
 })
 export class MessagesService  {
-  private confirmedInvitationsSource : BehaviorSubject<IFriendInvitation[]>;
+  private confirmedInvitationsSource$ : BehaviorSubject<IFriendInvitation[]>;
   confirmedInvitations$:Observable<IFriendInvitation[]>;
-  receivedFriendRequestsSource: BehaviorSubject<IFriendInvitation[]>;
+  receivedFriendRequestsSource$: BehaviorSubject<IFriendInvitation[]>;
   receivedFriendRequests$ :Observable<IFriendInvitation[]>; 
   friendsWithActivityStatus$:Observable<IUser[]>; 
   private chatUrl:string;
@@ -26,10 +26,10 @@ export class MessagesService  {
     this.chatUrl = environment.chatUrl;
     this.hubUrl=environment.signalRhubUrl;
     this.aggregatorUrl=environment.aggregator;
-    this.confirmedInvitationsSource = new BehaviorSubject<IFriendInvitation[]>([]);
-    this.confirmedInvitations$ = this.confirmedInvitationsSource.asObservable();
-    this.receivedFriendRequestsSource = new BehaviorSubject<IFriendInvitation[]>([]);
-    this.receivedFriendRequests$= this.receivedFriendRequestsSource.asObservable();
+    this.confirmedInvitationsSource$ = new BehaviorSubject<IFriendInvitation[]>([]);
+    this.confirmedInvitations$ = this.confirmedInvitationsSource$.asObservable();
+    this.receivedFriendRequestsSource$ = new BehaviorSubject<IFriendInvitation[]>([]);
+    this.receivedFriendRequests$= this.receivedFriendRequestsSource$.asObservable();
     const userClaims = this.oAuthService.getIdentityClaims();
     const user:IUser = {
       email: userClaims['email'],
@@ -47,7 +47,7 @@ export class MessagesService  {
   GetReceivedFriendRequests(){
     return this.http.get<IFriendInvitation[]>(`${this.chatUrl}/FriendRequests/GetReceivedFriendRequests`).pipe(
       take(1),
-      tap(invitations=>this.receivedFriendRequestsSource.next(invitations))
+      tap(invitations=>this.receivedFriendRequestsSource$.next(invitations))
     );
   }
 
@@ -81,7 +81,7 @@ export class MessagesService  {
               return !((receivedFriendRequest.inviterUserId===invitationId.invitedUserId && receivedFriendRequest.invitedUserId === invitationId.inviterUserId) 
               || (receivedFriendRequest.inviterUserId===invitationId.inviterUserId && receivedFriendRequest.invitedUserId === invitationId.invitedUserId));
             })
-            this.receivedFriendRequestsSource.next(newReceivedFriendRequests);
+            this.receivedFriendRequestsSource$.next(newReceivedFriendRequests);
           }))
       })
     );
@@ -98,7 +98,7 @@ export class MessagesService  {
             })
             if (invitationIndex !== -1) {
               invitations.splice(invitationIndex,1)//?? invitations.splice(invitationIndex)
-              this.receivedFriendRequestsSource.next(invitations)
+              this.receivedFriendRequestsSource$.next(invitations)
             }
           }))
       })
@@ -118,9 +118,9 @@ export class MessagesService  {
           !((confirmedInvitation.inviterUserId === friend.id && confirmedInvitation.invitedUserId === currentUserId) 
           || (confirmedInvitation.inviterUserId === currentUserId && confirmedInvitation.invitedUserId === friend.id))
         );
-        this.confirmedInvitationsSource.next(filteredConfirmedInvitations);
+        this.confirmedInvitationsSource$.next(filteredConfirmedInvitations);
         const filteredOnlineUsers = onlineUsers.filter(email=>email !== friend.email)
-        this.presenceService.onlineUsersSource.next(filteredOnlineUsers);
+        this.presenceService.onlineUsersSource$.next(filteredOnlineUsers);
       }),
      
     );
@@ -141,7 +141,7 @@ export class MessagesService  {
 
         return this.http.get<IFriendInvitation[]>(`${this.chatUrl}/FriendRequests/GetConfirmedFriendRequests`,{ params: params} ).pipe(
           take(1),
-          tap(friends=>this.confirmedInvitationsSource.next(friends))
+          tap(friends=>this.confirmedInvitationsSource$.next(friends))
         );
       })
     )
@@ -157,12 +157,12 @@ export class MessagesService  {
 
     this.hubConnection.on('FriendInvitationAccepted', (invitation: IFriendInvitation) => {
       this.confirmedInvitations$.pipe(take(1)).subscribe(invitations=>{
-        this.confirmedInvitationsSource.next([...invitations,invitation]);
+        this.confirmedInvitationsSource$.next([...invitations,invitation]);
       })
     });
     this.hubConnection.on('NewInvitationToFriendsReceived', (invitation: IFriendInvitation) => {
       this.receivedFriendRequests$.pipe(take(1)).subscribe(invitations=>{
-        this.receivedFriendRequestsSource.next([...invitations,invitation]);
+        this.receivedFriendRequestsSource$.next([...invitations,invitation]);
       })
     });
     this.hubConnection.on('FriendRequestRemoved', (removerEmail: string) => {
@@ -173,9 +173,9 @@ export class MessagesService  {
         take(1),
       ).subscribe(([confirmedInvitations, onlineUsers])=>{
         const filterdConfirmedInvitations = confirmedInvitations.filter(c=>!(c.invitedUserEmail===removerEmail || c.inviterUserEmail === removerEmail));
-        this.confirmedInvitationsSource.next(filterdConfirmedInvitations);
+        this.confirmedInvitationsSource$.next(filterdConfirmedInvitations);
         const filteredOnlineUsers = onlineUsers.filter(email=>email !== removerEmail)
-        this.presenceService.onlineUsersSource.next(filteredOnlineUsers);
+        this.presenceService.onlineUsersSource$.next(filteredOnlineUsers);
       })
     });
 

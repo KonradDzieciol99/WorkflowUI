@@ -15,12 +15,12 @@ import { ProjectService } from './project.service';
 export class ProjectMembersService {
   private projectId?: string;
   private baseUrl:string;
-  private projectMemberSource:BehaviorSubject<ISyncfusionFormat<IProjectMember>>;
+  private projectMemberSource$:BehaviorSubject<ISyncfusionFormat<IProjectMember>>;
   public projectMember$:Observable<ISyncfusionFormat<IProjectMember>>;
   constructor(private http: HttpClient,private toastrService:ToastrService,private projectService:ProjectService) {
     this.baseUrl = environment.tasksUrl;
-    this.projectMemberSource = new BehaviorSubject<ISyncfusionFormat<IProjectMember>>({result: [], count: 0});
-    this.projectMember$ = this.projectMemberSource.asObservable();
+    this.projectMemberSource$ = new BehaviorSubject<ISyncfusionFormat<IProjectMember>>({result: [], count: 0});
+    this.projectMember$ = this.projectMemberSource$.asObservable();
     projectService.project$.subscribe(project => {
       if (project) 
         this.projectId = project.id;
@@ -29,10 +29,10 @@ export class ProjectMembersService {
   }
   public execute(state: DataStateChangeEventArgs): void {
     this.get(state).pipe().subscribe(members => {
-      this.projectMemberSource.next(members)
+      this.projectMemberSource$.next(members)
     });
   }
-  private get(state: DataStateChangeEventArgs): Observable<ISyncfusionFormat<IProjectMember>> {
+  private get(state: DataStateChangeEventArgs){
 
     const searchTerm = state.search?.at(0)?.key?.toString() ?? "";
     const skip = state.skip?.toString() ?? 0;

@@ -43,9 +43,9 @@ export class CreateProjectModalComponent implements OnInit {
     const bsModalRef = this.modalService.show(IconPickerComponent, {class: 'modal-sm modal-dialog-centered'});
     
     if (bsModalRef.content) 
-      bsModalRef.content.icons = this.photosService.icons$; 
+      bsModalRef.content.icons$ = this.photosService.icons$; 
     
-    bsModalRef.content?.result?.pipe(
+    bsModalRef.content?.result$?.pipe(
       //take(1),
       takeUntil(this.modalService.onHide),
       takeUntil(this.modalService.onHidden)
@@ -69,8 +69,11 @@ export class CreateProjectModalComponent implements OnInit {
         this.toastrService.success(`Project ${project.name} has been created`);
         this.bsModalRef.hide();
       },
-      error:(err:HttpErrorResponse)=>{
-          this.projektForm.setErrors({serverError: err.error}); 
+      error:(error:unknown)=>{
+        if (error instanceof HttpErrorResponse) 
+          this.projektForm.setErrors({serverError: error.error}); 
+        else 
+          console.error('Nieznany błąd:', error);
         },
       });
   }

@@ -83,10 +83,8 @@ export class NotificationCardComponent implements OnChanges{
   deleteNotification(notification:INotification){
 
     const bsModalRef = this.modalService.show(ConfirmWindowComponent, {class: 'modal-sm'});
-    bsModalRef.content?.result?.pipe(
+    bsModalRef.content?.result$?.pipe(
       take(1),
-      takeUntil(this.modalService.onHide),
-      takeUntil(this.modalService.onHidden),
       mergeMap(x=>{
         if (x) {
           return this.presenceService.deleteNotification(notification).pipe(
@@ -94,7 +92,9 @@ export class NotificationCardComponent implements OnChanges{
             tap(()=>this.toastrService.success("Notification has been removed.")));
         }
         return of()
-      })
+      }),
+      takeUntil(this.modalService.onHide),
+      takeUntil(this.modalService.onHidden),
       ).subscribe()
   }
   stopPropagation($event: MouseEvent) {

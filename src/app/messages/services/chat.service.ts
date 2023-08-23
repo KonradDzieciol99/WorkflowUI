@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { BehaviorSubject, Observable, concatMap, debounceTime, filter, from, of, skip, take, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, Observable, concatMap, debounceTime, filter, from, of, take, takeUntil, tap } from 'rxjs';
 import { Message } from 'src/app/shared/models/IMessage';
 import { IUser } from 'src/app/shared/models/IUser';
 import { environment } from 'src/environments/environment';
@@ -13,25 +13,25 @@ export class ChatService {
   private chatUrl:string;
   private hubUrl:string; 
   private hubConnection?: HubConnection;
-  private messageThreadSource:BehaviorSubject<Message[]|undefined>;
+  private messageThreadSource$:BehaviorSubject<Message[]|undefined>;
   messageThread$:Observable<Message[]|undefined>;
-  private recipientIsWatchingSource:BehaviorSubject<boolean>;
-  chatRecipientSource:BehaviorSubject<IUser|undefined>;
+  private recipientIsWatchingSource$:BehaviorSubject<boolean>;
+  chatRecipientSource$:BehaviorSubject<IUser|undefined>;
   recipientIsWatching$:Observable<boolean>;
-  recipientIsTypingSource:BehaviorSubject<boolean>;
+  recipientIsTypingSource$:BehaviorSubject<boolean>;
   recipientIsTyping$:Observable<boolean>;
   chatRecipient$: Observable<IUser | undefined>;
   constructor(private http: HttpClient) {
     this.chatUrl = environment.chatUrl;
     this.hubUrl=environment.signalRhubUrl;
-    this.messageThreadSource = new BehaviorSubject<Message[]|undefined>(undefined);
-    this.messageThread$ = this.messageThreadSource.asObservable();
-    this.recipientIsWatchingSource = new BehaviorSubject<boolean>(false);
-    this.recipientIsWatching$ = this.recipientIsWatchingSource.asObservable();
-    this.recipientIsTypingSource = new BehaviorSubject<boolean>(false);
-    this.recipientIsTyping$ = this.recipientIsTypingSource.asObservable();
-    this.chatRecipientSource = new BehaviorSubject<IUser|undefined>(undefined);
-    this.chatRecipient$ = this.chatRecipientSource.asObservable()
+    this.messageThreadSource$ = new BehaviorSubject(undefined as Message[] | undefined);
+    this.messageThread$ = this.messageThreadSource$.asObservable();
+    this.recipientIsWatchingSource$ = new BehaviorSubject(false);
+    this.recipientIsWatching$ = this.recipientIsWatchingSource$.asObservable();
+    this.recipientIsTypingSource$ = new BehaviorSubject(false);
+    this.recipientIsTyping$ = this.recipientIsTypingSource$.asObservable();
+    this.chatRecipientSource$ = new BehaviorSubject(undefined as IUser | undefined);
+    this.chatRecipient$ = this.chatRecipientSource$.asObservable()
    }
 
   createHubConnection(recipientEmail:string,userAccessToken:string):Promise<void> {
@@ -44,21 +44,21 @@ export class ChatService {
       .build();
 
     this.hubConnection.on('ReceiveMessageThread', (messages:Message[]) => {
-      this.messageThreadSource.next(messages.reverse());
+      this.messageThreadSource$.next(messages.reverse());
     })
     
     this.hubConnection.on('UserIsTyping', (userEmail: string) => { 
       if (userEmail === recipientEmail) {
 
-        this.recipientIsTypingSource.next(true)
+        this.recipientIsTypingSource$.next(true)
 
         this.recipientIsTyping$.pipe(
-          takeUntil(this.messageThread$.pipe(skip(1))),
-          debounceTime(1500),
           take(1),
+          debounceTime(1500),
+          takeUntil(this.messageThread$),
         ).subscribe({ 
-          next:()=> this.recipientIsTypingSource.next(false),
-          complete:()=>this.recipientIsTypingSource.next(false)
+          next:()=> this.recipientIsTypingSource$.next(false),
+          complete:()=>this.recipientIsTypingSource$.next(false)
         }) 
 
       }
@@ -74,20 +74,20 @@ export class ChatService {
                 message.dateRead = new Date(Date.now())
               }
             })
-            this.messageThreadSource.next(messages ? [...messages] : undefined);
+            this.messageThreadSource$.next(messages ? [...messages] : undefined);
           }
         })
-        this.recipientIsWatchingSource.next(true);
+        this.recipientIsWatchingSource$.next(true);
       }
       else{
-        this.recipientIsWatchingSource.next(false);
+        this.recipientIsWatchingSource$.next(false);
       }
     })
 
     this.hubConnection.on('NewMessage', (message:Message) => {
       this.messageThread$.pipe(take(1)).subscribe({
         next: (messages) => {
-          this.messageThreadSource.next(messages ? [...messages, message] : [message] );
+          this.messageThreadSource$.next(messages ? [...messages, message] : [message] );
         }
       })
     });
@@ -108,7 +108,7 @@ export class ChatService {
   sendMessage(recipient: IUser, content: string){
     return this.http.post(`${this.chatUrl}/Messages`,{recipientUserId:recipient.id,recipientEmail: recipient.email, content:content});
   }
-  getMessages(recipient:IUser,take=15): Observable<Message[]>{
+  getMessages(recipient:IUser,take=15){
     return this.messageThread$.pipe(
       filter((messages): messages is Message[] => messages !== undefined),
       concatMap((currentMessages)=> {
@@ -121,7 +121,7 @@ export class ChatService {
 
         return this.http.get<Array<Message>>(`${this.chatUrl}/Messages`,{params: params}).pipe(         
             tap((oldestMessages)=>{
-              this.messageThreadSource.next([...oldestMessages.reverse(), ...currentMessages]);
+              this.messageThreadSource$.next([...oldestMessages.reverse(), ...currentMessages]);
             })
           );
       })
@@ -129,8 +129,8 @@ export class ChatService {
   }
   stopHubConnectionAndDeleteMessageThread() {
     if (this.hubConnection) {
-      this.messageThreadSource.next(undefined);
-      this.chatRecipientSource.next(undefined);
+      this.messageThreadSource$.next(undefined);
+      this.chatRecipientSource$.next(undefined);
       this.hubConnection.stop();
     }
   }

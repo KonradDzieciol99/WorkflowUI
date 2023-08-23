@@ -48,7 +48,7 @@ export class AccordionMyChatsComponent implements OnInit {
         return from(this.chatService.createHubConnection(user.email, this.oAuthService.getAccessToken()))
       })
     ).subscribe(()=>{
-      this.chatService.chatRecipientSource.next(user)
+      this.chatService.chatRecipientSource$.next(user)
     });
 
   }

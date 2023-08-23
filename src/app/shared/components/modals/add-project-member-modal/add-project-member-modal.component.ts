@@ -13,15 +13,15 @@ import { ISearchedMember, MemberStatusType } from 'src/app/shared/models/ISearch
 })
 export class AddProjectMemberModalComponent implements OnInit {
   searchMember: FormControl<string>;
-  searchedMemberSource: BehaviorSubject<Array<ISearchedMember>>;
+  searchedMemberSource$: BehaviorSubject<Array<ISearchedMember>>;
   searchedMember$: Observable<Array<ISearchedMember>>;
   memberStatusTypes: typeof MemberStatusType = MemberStatusType;
   constructor(public selfBsModalRef: BsModalRef,
     private toastrService:ToastrService,
     private projectService:ProjectService){
       this.searchMember = new FormControl<string>('',{nonNullable: true, validators: [Validators.required]});
-      this.searchedMemberSource = new BehaviorSubject<Array<ISearchedMember>>([]);
-      this.searchedMember$ = this.searchedMemberSource.asObservable()
+      this.searchedMemberSource$ = new BehaviorSubject<Array<ISearchedMember>>([]);
+      this.searchedMember$ = this.searchedMemberSource$.asObservable()
     }
   ngOnInit(): void {
     this.searchMember.valueChanges.pipe(
@@ -33,7 +33,7 @@ export class AddProjectMemberModalComponent implements OnInit {
       })
     ).subscribe(searchNewUsers=>{
       
-      this.searchedMemberSource.next([...searchNewUsers,...searchNewUsers,...searchNewUsers,...searchNewUsers,...searchNewUsers,...searchNewUsers,...searchNewUsers,...searchNewUsers,...searchNewUsers]);
+      this.searchedMemberSource$.next([...searchNewUsers,...searchNewUsers,...searchNewUsers,...searchNewUsers,...searchNewUsers,...searchNewUsers,...searchNewUsers,...searchNewUsers,...searchNewUsers]);
     });
   }
   sendInvitation(user:ISearchedMember):void{
@@ -44,7 +44,7 @@ export class AddProjectMemberModalComponent implements OnInit {
       const searchNewUsers = searchedMembers.map(user =>
         user.id === user.id ? { ...user, status: MemberStatusType.Invited } : user
       );
-      this.searchedMemberSource.next(searchNewUsers);
+      this.searchedMemberSource$.next(searchNewUsers);
     
       this.toastrService.success("The invitation has been sent")
     })

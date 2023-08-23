@@ -15,29 +15,29 @@ export class PresenceService {
   hubUrl = environment.signalRhubUrl;
   notificationUrl = environment.notificationUrl;
   private hubConnection?: HubConnection;
-  onlineUsersSource: BehaviorSubject<string[]>;
+  onlineUsersSource$: BehaviorSubject<string[]>;
   onlineUsers$:Observable<string[]>;
-  private notificationsSource: BehaviorSubject<INotification[]>;
+  private notificationsSource$: BehaviorSubject<INotification[]>;
   notifications$:Observable<INotification[]>;
-  private unreadNotificationsIdsSource: BehaviorSubject<string[]>;
+  private unreadNotificationsIdsSource$: BehaviorSubject<string[]>;
   unreadNotificationsIds$:Observable<string[]>;
-  private allNotificationsCountSource: BehaviorSubject<number>;
+  private allNotificationsCountSource$: BehaviorSubject<number>;
   allNotificationsCount$:Observable<number>;
 
   constructor(private toastr: ToastrService, private router: Router,private http: HttpClient) {
-    this.onlineUsersSource = new BehaviorSubject<string[]>([]);
-    this.onlineUsers$ = this.onlineUsersSource.asObservable();
-    this.notificationsSource = new BehaviorSubject<INotification[]>([]);
-    this.notifications$ = this.notificationsSource.asObservable();
-    this.unreadNotificationsIdsSource = new BehaviorSubject<string[]>([]);
-    this.unreadNotificationsIds$ = this.unreadNotificationsIdsSource.asObservable();
-    this.allNotificationsCountSource = new BehaviorSubject<number>(0);
-    this.allNotificationsCount$ = this.allNotificationsCountSource.asObservable();
+    this.onlineUsersSource$ = new BehaviorSubject<string[]>([]);
+    this.onlineUsers$ = this.onlineUsersSource$.asObservable();
+    this.notificationsSource$ = new BehaviorSubject<INotification[]>([]);
+    this.notifications$ = this.notificationsSource$.asObservable();
+    this.unreadNotificationsIdsSource$ = new BehaviorSubject<string[]>([]);
+    this.unreadNotificationsIds$ = this.unreadNotificationsIdsSource$.asObservable();
+    this.allNotificationsCountSource$ = new BehaviorSubject(0);
+    this.allNotificationsCount$ = this.allNotificationsCountSource$.asObservable();
    }
   getAllNotifications(){
     return this.http.get<INotification[]>(`${this.notificationUrl}/AppNotification`).pipe(
       take(1),
-      tap(notifications=>this.notificationsSource.next(notifications))
+      tap(notifications=>this.notificationsSource$.next(notifications))
     );
   }
   markNotificationAsRead(id:string){
@@ -58,8 +58,8 @@ export class PresenceService {
           unreadNotificationId !== id
         );
   
-        this.notificationsSource.next(updatedNotifications);
-        this.unreadNotificationsIdsSource.next(updatedUnreadNotificationsIds);
+        this.notificationsSource$.next(updatedNotifications);
+        this.unreadNotificationsIdsSource$.next(updatedUnreadNotificationsIds);
       }),
     );
   }
@@ -70,16 +70,16 @@ export class PresenceService {
         if (notificationToDelete.displayed == false) {
           this.unreadNotificationsIds$.pipe(take(1)).subscribe(unreadNotificationsIds =>  {
             const nextUnreadNotificationsIds = unreadNotificationsIds.filter(unreadNotification =>unreadNotification !== notificationToDelete.id);
-            this.unreadNotificationsIdsSource.next(nextUnreadNotificationsIds);
+            this.unreadNotificationsIdsSource$.next(nextUnreadNotificationsIds);
           })
         }
         this.notifications$.pipe(take(1)).subscribe(notifications=>{
           const nextNotifications = notifications.filter(n => n.id !== notificationToDelete.id);
-          this.notificationsSource.next(nextNotifications);
+          this.notificationsSource$.next(nextNotifications);
         })
         this.allNotificationsCount$.pipe(take(1)).subscribe(allNotificationsCount=>{
           const nextAllNotificationsCount = allNotificationsCount-1;
-          this.allNotificationsCountSource.next(nextAllNotificationsCount);
+          this.allNotificationsCountSource$.next(nextAllNotificationsCount);
         })
       })
     );
@@ -99,11 +99,11 @@ export class PresenceService {
             return notification.id === id ? { ...notification, notificationType: notificationType } : notification
           }
         );
-        this.notificationsSource.next(updatedNotifications);
+        this.notificationsSource$.next(updatedNotifications);
   
         if (setDisplay) {
           const newUnreadNotificationsIds = unreadNotificationsIds.filter(x=>x !== id);    
-          this.unreadNotificationsIdsSource.next(newUnreadNotificationsIds);
+          this.unreadNotificationsIdsSource$.next(newUnreadNotificationsIds);
         }
       })
     );
@@ -123,7 +123,7 @@ export class PresenceService {
         next: emails => {
         const index = emails.findIndex(e => e === email)
         if (index === -1)
-          this.onlineUsersSource.next([...emails, email]);
+          this.onlineUsersSource$.next([...emails, email]);
 
         }
       })
@@ -131,7 +131,7 @@ export class PresenceService {
     })
     this.hubConnection.on('UserIsOffline', email => {
       this.onlineUsers$.pipe(take(1)).subscribe({
-        next: (emails:string[]) => this.onlineUsersSource.next(emails.filter(e => e !== email))
+        next: (emails:string[]) => this.onlineUsersSource$.next(emails.filter(e => e !== email))
       })
     })
     this.hubConnection.on('NewMessageReceived', ({username, knownAs}) => {
@@ -179,21 +179,21 @@ export class PresenceService {
 
           }
         }
-        this.unreadNotificationsIdsSource.next(newUnreadNotificationsIds);
-        this.notificationsSource.next(newNotifications);
-        this.allNotificationsCountSource.next(allNotificationsCount + 1);
+        this.unreadNotificationsIdsSource$.next(newUnreadNotificationsIds);
+        this.notificationsSource$.next(newNotifications);
+        this.allNotificationsCountSource$.next(allNotificationsCount + 1);
       })}
     );
 
     this.hubConnection.on('ReceiveNotifications',(PagedAppNotifications: {appNotifications: INotification[], totalCount: number}) => {
-      this.notificationsSource.next(PagedAppNotifications.appNotifications);
-      this.allNotificationsCountSource.next(PagedAppNotifications.totalCount);
+      this.notificationsSource$.next(PagedAppNotifications.appNotifications);
+      this.allNotificationsCountSource$.next(PagedAppNotifications.totalCount);
     });
     this.hubConnection.on('ReceiveOnlineUsers' , (emails:string[]) => {
-      this.onlineUsersSource.next(emails);
+      this.onlineUsersSource$.next(emails);
     });
     this.hubConnection.on('ReceiveUnreadNotifications' , (unreadIds:string[]) => {
-      this.unreadNotificationsIdsSource.next(unreadIds);
+      this.unreadNotificationsIdsSource$.next(unreadIds);
     });
     const hubConnectionState = this.hubConnection.start()
     .catch(error => console.log(error))

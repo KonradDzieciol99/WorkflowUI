@@ -22,10 +22,9 @@ export const authConfig: AuthConfig = {
 })
 export class IdentityServerService {
 
-  private isDoneLoadingSubject$ = new BehaviorSubject<boolean>(false);
-  public isDoneLoading$ = this.isDoneLoadingSubject$.asObservable();
-  userProfileSubject = new Subject<UserInfo>();
-
+  private isDoneLoadingSubjectSource$ = new BehaviorSubject(false);
+  public isDoneLoading$ = this.isDoneLoadingSubjectSource$.asObservable();
+  userProfileSubjectSource$ = new Subject<UserInfo>();
   constructor(private readonly oAuthService: OAuthService) {
     this.load()
   }
@@ -47,10 +46,10 @@ export class IdentityServerService {
     await this.oAuthService.tryLoginCodeFlow()
 
     if (this.oAuthService.hasValidAccessToken()) 
-      this.isDoneLoadingSubject$.next(true);  
+      this.isDoneLoadingSubjectSource$.next(true);  
     else {
       this.oAuthService.initLoginFlow();
-      this.isDoneLoadingSubject$.next(false);
+      this.isDoneLoadingSubjectSource$.next(false);
       throw new Error('The token is invalid or does not exist');
     }
     

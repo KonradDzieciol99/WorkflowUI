@@ -21,19 +21,19 @@ import { environment } from 'src/environments/environment';
 export class ProjectService {
   aggregatorUrl: string;
   projectsUrl: string;
-  private projectSource: BehaviorSubject<IProject | undefined>;
+  private projectSource$: BehaviorSubject<IProject | undefined>;
   project$: Observable<IProject | undefined>;
 
   constructor(private http: HttpClient, private router: Router) {
     this.projectsUrl = environment.projectsUrl;
     this.aggregatorUrl = environment.aggregator;
-    this.projectSource = new BehaviorSubject<IProject | undefined>(undefined);
-    this.project$ = this.projectSource.asObservable();
+    this.projectSource$ = new BehaviorSubject(undefined as IProject | undefined);
+    this.project$ = this.projectSource$.asObservable();
   }
   get(projectId: string) {
     return this.http
       .get<IProject>(`${this.projectsUrl}/projects/${projectId}`)
-      .pipe(tap((project) => this.projectSource.next(project)));
+      .pipe(tap((project) => this.projectSource$.next(project)));
   }
   update(updateProject: {
     name?: string;
@@ -69,7 +69,7 @@ export class ProjectService {
           }))
       }),
       tap((updatedProject)=>{
-        this.projectSource.next(updatedProject)
+        this.projectSource$.next(updatedProject)
       })
     );
   }
@@ -89,7 +89,7 @@ export class ProjectService {
           }));
       }),
       tap((updatedProject)=>{
-        this.projectSource.next(updatedProject)
+        this.projectSource$.next(updatedProject)
       })
     );
   }

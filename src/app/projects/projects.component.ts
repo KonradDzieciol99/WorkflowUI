@@ -38,7 +38,7 @@ export class ProjectsComponent implements OnInit {
 
       const bsModalRef = this.modalService.show(ConfirmWindowComponent, {class: 'modal-sm modal-dialog-centered'});
 
-      bsModalRef.content?.result?.pipe(
+      bsModalRef.content?.result$?.pipe(
         take(1),
         mergeMap(value=>{
           if(!value) return of();
