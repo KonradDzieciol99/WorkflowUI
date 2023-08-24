@@ -2,12 +2,11 @@ import { Injectable } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BusyService {
-
   busyRequestCount = 0;
-  constructor(private ngxSpinnerService: NgxSpinnerService) { }
+  constructor(private ngxSpinnerService: NgxSpinnerService) {}
 
   async busy() {
     this.busyRequestCount++;

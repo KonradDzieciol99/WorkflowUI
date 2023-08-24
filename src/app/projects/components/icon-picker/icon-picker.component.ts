@@ -6,26 +6,27 @@ import { IIcon } from 'src/app/shared/models/IIcon';
 @Component({
   selector: 'app-icon-picker',
   templateUrl: './icon-picker.component.html',
-  styleUrls: ['./icon-picker.component.scss']
+  styleUrls: ['./icon-picker.component.scss'],
 })
 export class IconPickerComponent {
-  private resultSource$: Subject<IIcon> 
+  private resultSource$: Subject<IIcon>;
   result$: Observable<IIcon>;
-  icons$?:Observable<IIcon[]>;
-  selectedIcon?:IIcon;
-  constructor(public bsModalRef: BsModalRef,private renderer: Renderer2) {
+  icons$?: Observable<IIcon[]>;
+  selectedIcon?: IIcon;
+  constructor(
+    public bsModalRef: BsModalRef,
+    private renderer: Renderer2,
+  ) {
     this.resultSource$ = new Subject();
     this.result$ = this.resultSource$.asObservable();
   }
-  select(){
-    if (!this.selectedIcon) 
-      return;
-    
+  select() {
+    if (!this.selectedIcon) return;
+
     this.resultSource$.next(this.selectedIcon);
     this.bsModalRef.hide();
   }
-  onImageLoad(event: Event ){
+  onImageLoad(event: Event) {
     this.renderer.addClass(event.target as HTMLImageElement, 'loaded');
   }
-
 }

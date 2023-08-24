@@ -8,7 +8,7 @@ import {
   map,
   switchMap,
   take,
-  tap
+  tap,
 } from 'rxjs';
 import { IProject } from 'src/app/shared/models/IProject';
 import { IProjectMember } from 'src/app/shared/models/IProjectMember';
@@ -24,10 +24,15 @@ export class ProjectService {
   private projectSource$: BehaviorSubject<IProject | undefined>;
   project$: Observable<IProject | undefined>;
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+  ) {
     this.projectsUrl = environment.projectsUrl;
     this.aggregatorUrl = environment.aggregator;
-    this.projectSource$ = new BehaviorSubject(undefined as IProject | undefined);
+    this.projectSource$ = new BehaviorSubject(
+      undefined as IProject | undefined,
+    );
     this.project$ = this.projectSource$.asObservable();
   }
   get(projectId: string) {
@@ -43,7 +48,7 @@ export class ProjectService {
   }) {
     return this.http.put(
       `${this.projectsUrl}/projects/${updateProject.projectId}`,
-      updateProject
+      updateProject,
     );
   }
   findMemberByEmailAndCheckState(email: string) {
@@ -52,8 +57,11 @@ export class ProjectService {
       switchMap((project) => {
         const params = new HttpParams().set('projectId', project.id);
 
-        return this.http.get<ISearchedMember[]>(`${this.aggregatorUrl}/Identity/searchMember/${email}`,{ params: params });
-      })
+        return this.http.get<ISearchedMember[]>(
+          `${this.aggregatorUrl}/Identity/searchMember/${email}`,
+          { params: params },
+        );
+      }),
     );
   }
   addMember(email: string) {
@@ -61,16 +69,25 @@ export class ProjectService {
       take(1),
       filter((project): project is IProject => project !== undefined),
       switchMap((project) => {
-        return this.http.post<IProjectMember>(`${this.aggregatorUrl}/Projects/${project.id}/projectMembers/${email}`,{}).pipe(
-          take(1),
-          map(newMember =>{ 
-            const updatedProject: IProject = {...project, projectMembers: [...project.projectMembers, newMember ]};
-            return updatedProject;
-          }))
+        return this.http
+          .post<IProjectMember>(
+            `${this.aggregatorUrl}/Projects/${project.id}/projectMembers/${email}`,
+            {},
+          )
+          .pipe(
+            take(1),
+            map((newMember) => {
+              const updatedProject: IProject = {
+                ...project,
+                projectMembers: [...project.projectMembers, newMember],
+              };
+              return updatedProject;
+            }),
+          );
       }),
-      tap((updatedProject)=>{
-        this.projectSource$.next(updatedProject)
-      })
+      tap((updatedProject) => {
+        this.projectSource$.next(updatedProject);
+      }),
     );
   }
   deleteMember(id: string) {
@@ -78,20 +95,26 @@ export class ProjectService {
       take(1),
       filter((project): project is IProject => project !== undefined),
       switchMap((project) => {
-        return this.http.delete<void>(`${this.projectsUrl}/Projects/${project.id}/projectMembers/${id}`).pipe(
-          take(1),
-          map(() =>{ 
-            const updatedProject: IProject = {
-              ...project, 
-              projectMembers: project.projectMembers.filter(p=>p.id !==id)
-            };
-            return updatedProject;
-          }));
+        return this.http
+          .delete<void>(
+            `${this.projectsUrl}/Projects/${project.id}/projectMembers/${id}`,
+          )
+          .pipe(
+            take(1),
+            map(() => {
+              const updatedProject: IProject = {
+                ...project,
+                projectMembers: project.projectMembers.filter(
+                  (p) => p.id !== id,
+                ),
+              };
+              return updatedProject;
+            }),
+          );
       }),
-      tap((updatedProject)=>{
-        this.projectSource$.next(updatedProject)
-      })
+      tap((updatedProject) => {
+        this.projectSource$.next(updatedProject);
+      }),
     );
   }
-
 }

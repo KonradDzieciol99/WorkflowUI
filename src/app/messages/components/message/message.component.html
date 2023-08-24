@@ -1,32 +1,53 @@
-<ng-container *ngIf="message && currentRecipientEmail && currentRecipient ">
-  <div class="mb-1 text-break w-75 d-flex flex-row align-items-end " [ngClass]="isMyMessage ? 'me ms-auto justify-content-end' : 'me-auto him'"
-    [class.start]="isStartMessage" [class.end]="isEndMessage" [class.last-read]="isLastRead">
-      <img width="30" height="30" class="border border-1 rounded-circle me-2 main-photo"
-        [src]="currentRecipient.photoUrl ?? './assets/user.png' " 
-        [tooltip]="message.senderEmail"
-        placement="bottom" />
-      <div class="border p-2 speech-bubble bg-secondary" 
-        [tooltip]="(message.messageSent | date : 'd MMMM HH:mm') ?? 'lack of data'" placement="right"
-        >
-        <span style="font-size: 20px">
-          {{ message.content }}
-        </span>
-      </div>
-      <ng-container *ngIf="isMyMessage" >
-        <div class="position-relative ms-1" style="bottom: -0.2rem;">
-          <ng-container *ngIf="!message.dateRead; then unreadMessage; else messageRead"></ng-container>
-        </div>
-        <ng-template #unreadMessage>
-          <i class="bi bi-eye-slash" container="body"  tooltip="Unread" placement="left"></i>
-        </ng-template>
-        <ng-template #messageRead>
-          <img width="16" height="16" class="border border-1 rounded-circle  message-read-photo"
-            [src]="currentRecipient.photoUrl ?? './assets/user.png' " 
-            container="body"
-            tooltip="Read {{ message.dateRead | date : 'd MMMM HH:mm' }}"
-            placement="bottom" 
-          />
-        </ng-template>
-      </ng-container>
+<ng-container *ngIf="message && currentRecipientEmail && currentRecipient">
+  <div
+    class="mb-1 text-break w-75 d-flex flex-row align-items-end"
+    [ngClass]="isMyMessage ? 'me ms-auto justify-content-end' : 'me-auto him'"
+    [class.start]="isStartMessage"
+    [class.end]="isEndMessage"
+    [class.last-read]="isLastRead"
+  >
+    <img
+      width="30"
+      height="30"
+      class="border border-1 rounded-circle me-2 main-photo"
+      [src]="currentRecipient.photoUrl ?? './assets/user.png'"
+      [tooltip]="message.senderEmail"
+      placement="bottom"
+    />
+    <div
+      class="border p-2 speech-bubble bg-secondary"
+      [tooltip]="(message.messageSent | date: 'd MMMM HH:mm') ?? 'lack of data'"
+      placement="right"
+    >
+      <span style="font-size: 20px">
+        {{ message.content }}
+      </span>
     </div>
+    <ng-container *ngIf="isMyMessage">
+      <div class="position-relative ms-1" style="bottom: -0.2rem">
+        <ng-container
+          *ngIf="!message.dateRead; then unreadMessage; else messageRead"
+        ></ng-container>
+      </div>
+      <ng-template #unreadMessage>
+        <i
+          class="bi bi-eye-slash"
+          container="body"
+          tooltip="Unread"
+          placement="left"
+        ></i>
+      </ng-template>
+      <ng-template #messageRead>
+        <img
+          width="16"
+          height="16"
+          class="border border-1 rounded-circle message-read-photo"
+          [src]="currentRecipient.photoUrl ?? './assets/user.png'"
+          container="body"
+          tooltip="Read {{ message.dateRead | date: 'd MMMM HH:mm' }}"
+          placement="bottom"
+        />
+      </ng-template>
+    </ng-container>
+  </div>
 </ng-container>

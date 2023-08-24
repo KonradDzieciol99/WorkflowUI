@@ -1,21 +1,30 @@
 <ng-container *ngIf="control">
-    <!-- <div class="d-flex ms-auto"> -->
-        <div dropdown btnRadioGroup [formControl]="control" class="d-flex flex-column dropdown" 
-            (isOpenChange)="onOpenChange($event)"> 
-            <button dropdownToggle type="button" class="btn dropdown-toggle d-flex justify-content-center align-items-center focus-ring" [class.active]="isStatusPanelOpen">
-                <i *ngIf="currentValue?.iconClass" [class]="currentValue?.iconClass"></i>
-                <span *ngIf="currentValue" >{{currentValue.text}}</span>
-            </button>
-            <ul *dropdownMenu class="dropdown-menu dropdown-menu-end mt-1" role="menu">
-                
-                <li *ngFor="let item of (map | keyvalue) " role="menuitem">
-                    <button [btnRadio]="item.key" class="dropdown-item d-flex gap-1">
-                        <i *ngIf="item.value.iconClass" [class]="item.value.iconClass"></i>
-                        <span>{{item.value.text}}</span>
-                    </button>
-                </li>
+  <!-- <div class="d-flex ms-auto"> -->
+  <div
+    dropdown
+    btnRadioGroup
+    [formControl]="control"
+    class="d-flex flex-column dropdown"
+    (isOpenChange)="onOpenChange($event)"
+  >
+    <button
+      dropdownToggle
+      type="button"
+      class="btn dropdown-toggle d-flex justify-content-center align-items-center focus-ring"
+      [class.active]="isStatusPanelOpen"
+    >
+      <i *ngIf="currentValue?.iconClass" [class]="currentValue?.iconClass"></i>
+      <span *ngIf="currentValue">{{ currentValue.text }}</span>
+    </button>
+    <ul *dropdownMenu class="dropdown-menu dropdown-menu-end mt-1" role="menu">
+      <li *ngFor="let item of map | keyvalue" role="menuitem">
+        <button [btnRadio]="item.key" class="dropdown-item d-flex gap-1">
+          <i *ngIf="item.value.iconClass" [class]="item.value.iconClass"></i>
+          <span>{{ item.value.text }}</span>
+        </button>
+      </li>
 
-                <!-- <li *ngFor="let item of map " role="menuitem">
+      <!-- <li *ngFor="let item of map " role="menuitem">
                     <ng-container *ngTemplateOutlet="selectButtonTemplate ?? selectButtonDefaultTemplate;context:{ $implicit: item }"></ng-container>
                 </li>
                 <ng-template #selectButtonDefaultTemplate let-item>
@@ -24,8 +33,8 @@
                         <span>{{item.value.text}}</span>
                     </button>
                 </ng-template> -->
-            
-                <!-- <li role="menuitem">
+
+      <!-- <li role="menuitem">
                     <button [btnRadio]="statuses.ToDo" class="dropdown-item d-flex justify-content-center gap-1">
                         <i class="bi bi-brightness-high-fill"></i>
                         <span>ToDo</span>
@@ -44,7 +53,7 @@
                         <span>Done</span>
                     </button>
                 </li> -->
-            </ul>
-        </div>
-    <!-- </div> -->
+    </ul>
+  </div>
+  <!-- </div> -->
 </ng-container>

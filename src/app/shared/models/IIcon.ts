@@ -1,4 +1,4 @@
 export interface IIcon {
-    url: string;
-    name: string;
+  url: string;
+  name: string;
 }

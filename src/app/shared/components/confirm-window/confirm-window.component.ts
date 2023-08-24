@@ -5,7 +5,7 @@ import { Observable, Subject } from 'rxjs';
 @Component({
   selector: 'app-confirm-window',
   templateUrl: './confirm-window.component.html',
-  styleUrls: ['./confirm-window.component.scss']
+  styleUrls: ['./confirm-window.component.scss'],
 })
 export class ConfirmWindowComponent {
   private resultSource$: Subject<boolean>;
@@ -15,11 +15,11 @@ export class ConfirmWindowComponent {
     this.result$ = this.resultSource$.asObservable();
   }
   confirm(): void {
-    this.resultSource$.next(true)
+    this.resultSource$.next(true);
     this.bsModalRef.hide();
   }
   decline(): void {
-    this.resultSource$.next(false)
+    this.resultSource$.next(false);
     this.bsModalRef.hide();
   }
 }

@@ -2,11 +2,9 @@
 //     background-color: var(--bs-primary-bg-subtle);
 // }
 
-
 // .is-not-displayed{
 //     border-color: var(--bs-info) !important;
 // }
-
 
 // .display-button{
 //      opacity: 1;
@@ -24,9 +22,9 @@
 //     left: 0 !important;
 //     right: 0 !important;
 // }
-.dropdown-item:hover{
-    .display-options{
-        transition: all 0.2s ease-in-out;
-        opacity: 1 !important;
-    }
+.dropdown-item:hover {
+  .display-options {
+    transition: all 0.2s ease-in-out;
+    opacity: 1 !important;
+  }
 }

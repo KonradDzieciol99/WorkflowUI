@@ -3,22 +3,27 @@
 <!-- [ngClass]="notification.displayed ? 'border-start border-3 border-info' : 'border border-1 border-primary'" -->
 <!-- [ngClass]="{'border border-primary border-1': notification.displayed === false}"
 [ngClass]="{'border-start border-3 border-info': notification.notificationType === notificationsTypes.FriendRequestSent}" -->
-<div *ngIf="notification" 
-  class="dropdown-item w-100 h-100 d-flex flex-wrap text-break position-relative" 
+<div
+  *ngIf="notification"
+  class="dropdown-item w-100 h-100 d-flex flex-wrap text-break position-relative"
   [ngClass]="{
     'border border-primary border-1': notification.displayed === false,
-    'border-start border-3 border-info': notification.notificationType === notificationsTypes.FriendRequestSent && notification.displayed
+    'border-start border-3 border-info':
+      notification.notificationType === notificationsTypes.FriendRequestSent &&
+      notification.displayed
   }"
-  type="button" 
-  style="white-space: normal;"
+  type="button"
+  style="white-space: normal"
   (click)="markNotificationAsRead(notification)"
-  >
+>
   <div class="col-2 m-auto">
     <img
       [src]="notification.notificationPartnerPhotoUrl"
-      class="rounded-circle border border-3" width="35" height="35" 
+      class="rounded-circle border border-3"
+      width="35"
+      height="35"
       alt="..."
-    >
+    />
   </div>
   <div class="col-10">
     <ng-container [ngSwitch]="notification.notificationType">
@@ -28,13 +33,19 @@
         ></ng-container>
       </ng-container>
       <ng-container *ngSwitchCase="notificationsTypes.FriendRequestReceived">
-        <ng-container *ngTemplateOutlet="friendRequestReceivedNotificationTemplate"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="friendRequestReceivedNotificationTemplate"
+        ></ng-container>
       </ng-container>
       <ng-container *ngSwitchCase="notificationsTypes.FriendRequestAccepted">
-        <ng-container *ngTemplateOutlet="newFriendAddedNotificationTemplate"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="newFriendAddedNotificationTemplate"
+        ></ng-container>
       </ng-container>
       <ng-container *ngSwitchCase="notificationsTypes.WelcomeNotification">
-        <ng-container *ngTemplateOutlet="WelcomeNotificationTemplate"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="WelcomeNotificationTemplate"
+        ></ng-container>
       </ng-container>
       <!-- <ng-container *ngSwitchCase="notificationsTypes.RemovedFromFriend">
         <ng-container *ngTemplateOutlet="WelcomeNotificationTemplate"></ng-container>
@@ -45,37 +56,56 @@
       <ng-container *ngSwitchCase="notificationsTypes.InvitationDeclinedByYou">
         <ng-container *ngTemplateOutlet="genericTemplate"></ng-container>
       </ng-container>
-      <ng-container *ngSwitchCase="notificationsTypes.InvitationToProjectRecived">
-        <ng-container *ngTemplateOutlet="InvitationToProjectRecived"></ng-container>
+      <ng-container
+        *ngSwitchCase="notificationsTypes.InvitationToProjectRecived"
+      >
+        <ng-container
+          *ngTemplateOutlet="InvitationToProjectRecived"
+        ></ng-container>
       </ng-container>
-      <ng-container *ngSwitchCase="notificationsTypes.InvitationToProjectDeclined">
-        <ng-container *ngTemplateOutlet="InvitationToProjectDeclined"></ng-container>
+      <ng-container
+        *ngSwitchCase="notificationsTypes.InvitationToProjectDeclined"
+      >
+        <ng-container
+          *ngTemplateOutlet="InvitationToProjectDeclined"
+        ></ng-container>
       </ng-container>
-      <ng-container *ngSwitchCase="notificationsTypes.InvitationToProjectAccepted">
-        <ng-container *ngTemplateOutlet="InvitationToProjectAccepted"></ng-container>
+      <ng-container
+        *ngSwitchCase="notificationsTypes.InvitationToProjectAccepted"
+      >
+        <ng-container
+          *ngTemplateOutlet="InvitationToProjectAccepted"
+        ></ng-container>
       </ng-container>
       <!-- <div *ngSwitchDefault>{{ notification.description }}</div> -->
     </ng-container>
-    <small>{{ notification.creationDate | date:'short'}}</small>
+    <small>{{ notification.creationDate | date: "short" }}</small>
   </div>
 
-  <div  class="display-options position-absolute top-50  translate-middle d-flex flex-column opacity-0" style="left: 92%;"  >
-    <div class="bg-body-tertiary mb-1 rounded" >
-      <button *ngIf="notification?.displayed===false" 
-              (click)="stopPropagation($event);markNotificationAsRead(notification)" 
-              type="button" 
-              class="btn btn-outline-info btn-sm " 
-              tooltip="Mark as read" 
-              container="body">
-          <i class="bi bi-check-lg"></i>
+  <div
+    class="display-options position-absolute top-50 translate-middle d-flex flex-column opacity-0"
+    style="left: 92%"
+  >
+    <div class="bg-body-tertiary mb-1 rounded">
+      <button
+        *ngIf="notification?.displayed === false"
+        (click)="stopPropagation($event); markNotificationAsRead(notification)"
+        type="button"
+        class="btn btn-outline-info btn-sm"
+        tooltip="Mark as read"
+        container="body"
+      >
+        <i class="bi bi-check-lg"></i>
       </button>
     </div>
     <div class="bg-body-tertiary rounded">
-      <button (click)="stopPropagation($event);deleteNotification(notification)" 
-              type="button" 
-              class="btn btn-outline-warning btn-sm" 
-              tooltip="Delete notification" 
-              container="body">
+      <button
+        (click)="stopPropagation($event); deleteNotification(notification)"
+        type="button"
+        class="btn btn-outline-warning btn-sm"
+        tooltip="Delete notification"
+        container="body"
+      >
         <i class="bi bi-x-lg"></i>
       </button>
     </div>
@@ -87,14 +117,26 @@
     {{ notification?.notificationPartnerEmail }} has sent you a friend request.
   </p>
   <div class="d-flex flex-row mt-1">
-      <button type="button" (click)="acceptFriendInvitation(notification!)" class="btn btn-success btn-sm">Accept</button>
-      <button type="button" (click)="rejectFriendInvitation(notification!)" class="btn btn-danger btn-sm ms-2">Reject </button>
+    <button
+      type="button"
+      (click)="acceptFriendInvitation(notification!)"
+      class="btn btn-success btn-sm"
+    >
+      Accept
+    </button>
+    <button
+      type="button"
+      (click)="rejectFriendInvitation(notification!)"
+      class="btn btn-danger btn-sm ms-2"
+    >
+      Reject
+    </button>
   </div>
 </ng-template>
 <ng-template #friendRequestSentNotificationTemplate>
-    <p class="card-text mb-0 text-break" >
-      You have sent an invitation to {{ notification?.notificationPartnerEmail }}.
-    </p>
+  <p class="card-text mb-0 text-break">
+    You have sent an invitation to {{ notification?.notificationPartnerEmail }}.
+  </p>
 </ng-template>
 <ng-template #newFriendAddedNotificationTemplate>
   <p class="card-text mb-0">
@@ -113,20 +155,35 @@
 </ng-template>
 <ng-template #InvitationToProjectRecived>
   <p class="mb-0">
-    You have been invited to project <b>{{notification?.notificationPartnerEmail }}</b>
+    You have been invited to project
+    <b>{{ notification?.notificationPartnerEmail }}</b>
   </p>
   <div class="d-flex flex-row mt-1">
-    <button type="button" (click)="stopPropagation($event);acceptProjectInvitation(notification!)" class="btn btn-success btn-sm">Accept</button>
-    <button type="button" (click)="stopPropagation($event);rejectProjectInvitation(notification!)" class="btn btn-danger btn-sm ms-2">Reject </button>
-</div>
+    <button
+      type="button"
+      (click)="stopPropagation($event); acceptProjectInvitation(notification!)"
+      class="btn btn-success btn-sm"
+    >
+      Accept
+    </button>
+    <button
+      type="button"
+      (click)="stopPropagation($event); rejectProjectInvitation(notification!)"
+      class="btn btn-danger btn-sm ms-2"
+    >
+      Reject
+    </button>
+  </div>
 </ng-template>
 <ng-template #InvitationToProjectAccepted>
   <p class="mb-0">
-    You are now a member of the project {{ notification?.notificationPartnerEmail }}
+    You are now a member of the project
+    {{ notification?.notificationPartnerEmail }}
   </p>
 </ng-template>
 <ng-template #InvitationToProjectDeclined>
   <p class="mb-0">
-    You declined the invitation to the project {{ notification?.notificationPartnerEmail }}
+    You declined the invitation to the project
+    {{ notification?.notificationPartnerEmail }}
   </p>
 </ng-template>

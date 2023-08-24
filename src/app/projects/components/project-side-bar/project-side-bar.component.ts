@@ -1,7 +1,20 @@
-import { Component, HostListener, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
-import { BehaviorSubject, Observable, Subscription, concatMap, take } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  Subscription,
+  concatMap,
+  take,
+} from 'rxjs';
 import { ProjectService } from 'src/app/projects/services/project.service';
 import { IProject } from 'src/app/shared/models/IProject';
 import { TasksService } from 'src/app/tasks/tasks.service';
@@ -10,81 +23,95 @@ import { ProjectMembersService } from '../../services/project-members.service';
 @Component({
   selector: 'app-project-side-bar',
   templateUrl: './project-side-bar.component.html',
-  styleUrls: ['./project-side-bar.component.scss']
+  styleUrls: ['./project-side-bar.component.scss'],
 })
-export class ProjectSideBarComponent implements OnInit,OnDestroy  {
-
-  private dismissReason:string;
+export class ProjectSideBarComponent implements OnInit, OnDestroy {
+  private dismissReason: string;
   private sidenavStateSub: Subscription;
-  private sidenavStateSource$:BehaviorSubject<boolean> ;
-  project$:Observable<IProject|undefined>;
-  sidenavState$:Observable<boolean>;
-  @ViewChild('sideBar', { static: true }) sideBarRef: TemplateRef<unknown> | undefined ;
+  private sidenavStateSource$: BehaviorSubject<boolean>;
+  project$: Observable<IProject | undefined>;
+  sidenavState$: Observable<boolean>;
+  @ViewChild('sideBar', { static: true }) sideBarRef:
+    | TemplateRef<unknown>
+    | undefined;
 
-  constructor(private activatedRoute: ActivatedRoute,
-              private projectService:ProjectService,
-              private projectMembersService:ProjectMembersService,
-              private tasksService:TasksService,
-              private router: Router,
-              private offcanvasService: NgbOffcanvas,
-              private breadcrumbService: BreadcrumbService
-              ) {
-    this.dismissReason="Resizing";
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private projectService: ProjectService,
+    private projectMembersService: ProjectMembersService,
+    private tasksService: TasksService,
+    private router: Router,
+    private offcanvasService: NgbOffcanvas,
+    private breadcrumbService: BreadcrumbService,
+  ) {
+    this.dismissReason = 'Resizing';
 
-    this.project$=this.projectService.project$;
+    this.project$ = this.projectService.project$;
     this.sidenavStateSource$ = new BehaviorSubject(true);
     this.sidenavState$ = this.sidenavStateSource$.asObservable();
-    this.sidenavStateSub = this.sidenavState$.pipe().subscribe(state=>{
-      if (state) 
-        this.onResize();
-      else
-        this.offcanvasService.dismiss(this.dismissReason);
+    this.sidenavStateSub = this.sidenavState$.pipe().subscribe((state) => {
+      if (state) this.onResize();
+      else this.offcanvasService.dismiss(this.dismissReason);
     });
   }
   ngOnInit(): void {
-    this.onResize()
-    const state = { skip: 0 , take: 10 };
+    this.onResize();
+    const state = { skip: 0, take: 10 };
 
     const projectId = this.activatedRoute.snapshot.params['id'] as string;
-    if (!projectId) 
-      throw new Error("projectId has bad format");   
+    if (!projectId) throw new Error('projectId has bad format');
 
-    this.projectService.get(projectId).pipe(
-      take(1),
-      concatMap((project) => {
-        this.breadcrumbService.set('@projectSideBar', project.name);
-        return this.tasksService.execute(state).pipe(take(1));
-      }),
-      concatMap(() => this.projectMembersService.execute(state).pipe(take(1)) )
-    )
-    .subscribe({
-      next: () => {},
-      error: () => this.router.navigate(['../projects']),
-    })
+    this.projectService
+      .get(projectId)
+      .pipe(
+        take(1),
+        concatMap((project) => {
+          this.breadcrumbService.set('@projectSideBar', project.name);
+          return this.tasksService.execute(state).pipe(take(1));
+        }),
+        concatMap(() =>
+          this.projectMembersService.execute(state).pipe(take(1)),
+        ),
+      )
+      .subscribe({
+        next: () => {},
+        error: () => this.router.navigate(['../projects']),
+      });
   }
-  changeStateSideNav(){
-    this.sidenavState$.pipe(take(1)).subscribe(state=>this.sidenavStateSource$.next(!state));
+  changeStateSideNav() {
+    this.sidenavState$
+      .pipe(take(1))
+      .subscribe((state) => this.sidenavStateSource$.next(!state));
   }
   ngOnDestroy(): void {
     this.sidenavStateSub.unsubscribe();
   }
   @HostListener('window:resize') onResize() {
-
     const mdBreakpoint = 768;
     const screenWidth = window.innerWidth;
 
-    if (screenWidth <= mdBreakpoint && this.sideBarRef && !this.offcanvasService.hasOpenOffcanvas() && this.sidenavStateSource$.getValue() ) {
-      this.offcanvasService.open(this.sideBarRef,{ panelClass: 'sidebar-width default-transition', scroll: true  }).result.then(() => {
-        this.sidenavStateSource$.next(false);
-      }).catch((error) => {
-        if (error===this.dismissReason)
-          return;
+    if (
+      screenWidth <= mdBreakpoint &&
+      this.sideBarRef &&
+      !this.offcanvasService.hasOpenOffcanvas() &&
+      this.sidenavStateSource$.getValue()
+    ) {
+      this.offcanvasService
+        .open(this.sideBarRef, {
+          panelClass: 'sidebar-width default-transition',
+          scroll: true,
+        })
+        .result.then(() => {
+          this.sidenavStateSource$.next(false);
+        })
+        .catch((error) => {
+          if (error === this.dismissReason) return;
 
-        this.sidenavStateSource$.next(false);
-      });
+          this.sidenavStateSource$.next(false);
+        });
     }
-    
-    if(screenWidth > mdBreakpoint)
+
+    if (screenWidth > mdBreakpoint)
       this.offcanvasService.dismiss(this.dismissReason);
   }
 }

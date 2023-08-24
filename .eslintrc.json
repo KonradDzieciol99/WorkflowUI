@@ -1,30 +1,24 @@
 {
   "root": true,
-  "ignorePatterns": [
-    "projects/**/*",
-    "src/environments/environment.prod.ts"
-  ],
+  "ignorePatterns": ["projects/**/*", "src/environments/environment.prod.ts"],
   "overrides": [
     {
-      "files": [
-        "*.ts"
-      ],
+      "files": ["*.ts"],
       "parserOptions": {
         "project": ["tsconfig.(app|lib|spec).json"]
       },
       "plugins": ["rxjs"],
       "extends": [
         "eslint:recommended",
-        
+
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
         "plugin:@typescript-eslint/strict",
-        
+
         "plugin:@angular-eslint/recommended",
         "plugin:@angular-eslint/template/process-inline-templates",
 
         "plugin:rxjs/recommended"
-        
       ],
       "rules": {
         "@angular-eslint/directive-selector": [
@@ -66,18 +60,17 @@
         "rxjs/prefer-observer": "error",
         "@typescript-eslint/no-invalid-void-type": "off",
         "@typescript-eslint/no-extraneous-class": "off",
-        "@typescript-eslint/unbound-method": ["error", {
-          "ignoreStatic": true
-        }]
+        "@typescript-eslint/unbound-method": [
+          "error",
+          {
+            "ignoreStatic": true
+          }
+        ]
       }
     },
     {
-      "files": [
-        "*.html"
-      ],
-      "extends": [
-        "plugin:@angular-eslint/template/recommended"
-      ],
+      "files": ["*.html"],
+      "extends": ["plugin:@angular-eslint/template/recommended"],
       "rules": {}
     }
   ]

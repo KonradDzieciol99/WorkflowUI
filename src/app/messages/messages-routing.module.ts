@@ -6,7 +6,7 @@ import { MessagesComponent } from './messages.component';
 const routes: Routes = [
   {
     path: '',
-    canActivateChild:[AuthGuard],
+    canActivateChild: [AuthGuard],
     component: MessagesComponent,
     // children: [
     //   //{ path: '', component: MessagesComponent },
@@ -14,10 +14,10 @@ const routes: Routes = [
     // ]
   },
   { path: '**', redirectTo: '', pathMatch: 'full' },
-]
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class MessagesRoutingModule { }
+export class MessagesRoutingModule {}

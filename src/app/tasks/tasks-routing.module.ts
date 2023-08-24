@@ -6,17 +6,14 @@ const routes: Routes = [
   {
     path: '',
     children: [
-      { path: 'list', component: ListComponent,},
+      { path: 'list', component: ListComponent },
       { path: '**', redirectTo: 'list', pathMatch: 'full' },
-    ]
+    ],
   },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class TasksRoutingModule { }
-
-
-
+export class TasksRoutingModule {}

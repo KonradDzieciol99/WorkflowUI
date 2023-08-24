@@ -1,16 +1,45 @@
 <ng-container *ngIf="control && selectButtonTemplate && triggerButtonTemplate">
-        <div dropdown btnRadioGroup [formControl]="control" class="d-flex flex-column dropdown" 
-            (isOpenChange)="onOpenChange($event)"> 
-            <button dropdownToggle type="button" class="btn dropdown-toggle d-flex align-items-center focus-ring" [class.active]="isStatusPanelOpen">
-                <ng-container class="" *ngTemplateOutlet="triggerButtonTemplate;context:{ $implicit: control.value, options: additionalKeyValue|mapGetValue:control.value }"></ng-container>
-            </button>
-            <ul *dropdownMenu class="dropdown-menu dropdown-menu-end mt-1" role="menu">
-                <li *ngFor="let item of map " role="menuitem">
-                    <button [btnRadio]="item" class="dropdown-item d-flex align-items-center p-1">
-                        <ng-container *ngTemplateOutlet="selectButtonTemplate;context:{ $implicit: item, options: additionalKeyValue|mapGetValue:item  }"></ng-container>
-                    </button>
-                </li>
-            </ul>
-        </div>
+  <div
+    dropdown
+    btnRadioGroup
+    [formControl]="control"
+    class="d-flex flex-column dropdown"
+    (isOpenChange)="onOpenChange($event)"
+  >
+    <button
+      dropdownToggle
+      type="button"
+      class="btn dropdown-toggle d-flex align-items-center focus-ring"
+      [class.active]="isStatusPanelOpen"
+    >
+      <ng-container
+        class=""
+        *ngTemplateOutlet="
+          triggerButtonTemplate;
+          context: {
+            $implicit: control.value,
+            options: additionalKeyValue | mapGetValue: control.value
+          }
+        "
+      ></ng-container>
+    </button>
+    <ul *dropdownMenu class="dropdown-menu dropdown-menu-end mt-1" role="menu">
+      <li *ngFor="let item of map" role="menuitem">
+        <button
+          [btnRadio]="item"
+          class="dropdown-item d-flex align-items-center p-1"
+        >
+          <ng-container
+            *ngTemplateOutlet="
+              selectButtonTemplate;
+              context: {
+                $implicit: item,
+                options: additionalKeyValue | mapGetValue: item
+              }
+            "
+          ></ng-container>
+        </button>
+      </li>
+    </ul>
+  </div>
 </ng-container>
-

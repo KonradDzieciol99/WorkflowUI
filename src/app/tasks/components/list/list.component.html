@@ -1,63 +1,113 @@
 <div class="container-lg py-3">
-    <div class="d-flex justify-content-between flex-wrap">
-        <div class="d-flex">
-            <h5>Summary</h5>
-        </div>
-        <xng-breadcrumb></xng-breadcrumb>
+  <div class="d-flex justify-content-between flex-wrap">
+    <div class="d-flex">
+      <h5>Summary</h5>
     </div>
-    <div class="row g-0">
-        <div class="col-12 col-sm-5 col-md-4 col-lg-3 col-xl-2">
-            <div class="input-group input-group-sm mb-2">
-                <span class="input-group-text"><i class="fa-solid fa-magnifying-glass fa-sm"></i></span>
-                <input type="text" [formControl]="searchTasks" class="form-control" placeholder="Search..." />
-                <button class="btn btn-outline-secondary btn-sm" type="button" (click)="searchTasks.reset()">
-                    <i class="fa-solid fa-x fa-sm "></i>
-                </button>
-            </div>
-        </div>
-        <div class="mb-sm-0 ms-sm-auto me-sm-1 mx-auto mx-sm-0 col-auto ">
-            <app-add-member-icon ></app-add-member-icon>
-        </div>
-    </div>
-    <div class="border rounded-top" style="max-height: 75%; overflow: auto; min-height: 170px">
-        <ejs-grid #grid [dataSource]="tasksService.tasks$ | async" [allowResizing]="true" [allowPaging]="true"
-            [allowSorting]="true" [allowFiltering]="false" [allowGrouping]="false" [pageSettings]="pageSettings"
-            [editSettings]="editSettings" (dataStateChange)="dataStateChange($event)"
-            (dataSourceChanged)="dataSourceChanged($event)" [toolbar]="toolbar" (toolbarClick)='toolbarClick($event)'>
-            <e-columns>
-                <e-column field='name' headerText="Title">
-                </e-column>
-                <e-column field='priority' headerText="Priority"> 
-                </e-column>
-                <e-column field='state' headerText="State"> 
-                </e-column> 
-                <e-column field='startDate' headerText="Start Date"> 
-                </e-column>       
-                <e-column field='dueDate' headerText="Due Date"> 
-                </e-column> 
-                <e-column field='taskAssignee' headerText="Assignee"  width="200px"> 
-                    <ng-template #template let-data >
-                        <div class="d-flex align-items-center">
-                        <img [src]="data.taskAssignee?.photoUrl ?? 'assets/images/user.png'" width="30" height="30" class="me-2 rounded-circle">
-                        <span style="max-width: 70%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">{{data.taskAssignee?.userEmail ?? 'Unassigned'}}</span>
-                        </div>
-                    </ng-template>
-                </e-column>
-                <e-column field='taskLeader' headerText="Leader"  width="200px"> 
-                    <ng-template #template let-data >
-                        <div class="d-flex align-items-center">
-                        <img [src]="data.taskLeader?.photoUrl ?? 'assets/images/user.png'" width="30" height="30" class="me-2 rounded-circle">
-                        <span style="max-width: 70%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">{{data.taskLeader?.userEmail ?? 'Unassigned'}}</span>
-                        </div>
-                    </ng-template>
-                </e-column>
-            </e-columns>
-        </ejs-grid>
-    </div>
-    <div class="row g-0">
-        <button (click)="createTask()" type="button" class="btn btn-outline-secondary border rounded-0 rounded-bottom text-start">
-            <i class="fa-solid fa-plus me-1"></i>
-            Create
+    <xng-breadcrumb></xng-breadcrumb>
+  </div>
+  <div class="row g-0">
+    <div class="col-12 col-sm-5 col-md-4 col-lg-3 col-xl-2">
+      <div class="input-group input-group-sm mb-2">
+        <span class="input-group-text"
+          ><i class="fa-solid fa-magnifying-glass fa-sm"></i
+        ></span>
+        <input
+          type="text"
+          [formControl]="searchTasks"
+          class="form-control"
+          placeholder="Search..."
+        />
+        <button
+          class="btn btn-outline-secondary btn-sm"
+          type="button"
+          (click)="searchTasks.reset()"
+        >
+          <i class="fa-solid fa-x fa-sm"></i>
         </button>
+      </div>
     </div>
+    <div class="mb-sm-0 ms-sm-auto me-sm-1 mx-auto mx-sm-0 col-auto">
+      <app-add-member-icon></app-add-member-icon>
+    </div>
+  </div>
+  <div
+    class="border rounded-top"
+    style="max-height: 75%; overflow: auto; min-height: 170px"
+  >
+    <ejs-grid
+      #grid
+      [dataSource]="tasksService.tasks$ | async"
+      [allowResizing]="true"
+      [allowPaging]="true"
+      [allowSorting]="true"
+      [allowFiltering]="false"
+      [allowGrouping]="false"
+      [pageSettings]="pageSettings"
+      [editSettings]="editSettings"
+      (dataStateChange)="dataStateChange($event)"
+      (dataSourceChanged)="dataSourceChanged($event)"
+      [toolbar]="toolbar"
+      (toolbarClick)="toolbarClick($event)"
+    >
+      <e-columns>
+        <e-column field="name" headerText="Title"> </e-column>
+        <e-column field="priority" headerText="Priority"> </e-column>
+        <e-column field="state" headerText="State"> </e-column>
+        <e-column field="startDate" headerText="Start Date"> </e-column>
+        <e-column field="dueDate" headerText="Due Date"> </e-column>
+        <e-column field="taskAssignee" headerText="Assignee" width="200px">
+          <ng-template #template let-data>
+            <div class="d-flex align-items-center">
+              <img
+                [src]="data.taskAssignee?.photoUrl ?? 'assets/images/user.png'"
+                width="30"
+                height="30"
+                class="me-2 rounded-circle"
+              />
+              <span
+                style="
+                  max-width: 70%;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                  overflow: hidden;
+                "
+                >{{ data.taskAssignee?.userEmail ?? "Unassigned" }}</span
+              >
+            </div>
+          </ng-template>
+        </e-column>
+        <e-column field="taskLeader" headerText="Leader" width="200px">
+          <ng-template #template let-data>
+            <div class="d-flex align-items-center">
+              <img
+                [src]="data.taskLeader?.photoUrl ?? 'assets/images/user.png'"
+                width="30"
+                height="30"
+                class="me-2 rounded-circle"
+              />
+              <span
+                style="
+                  max-width: 70%;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                  overflow: hidden;
+                "
+                >{{ data.taskLeader?.userEmail ?? "Unassigned" }}</span
+              >
+            </div>
+          </ng-template>
+        </e-column>
+      </e-columns>
+    </ejs-grid>
+  </div>
+  <div class="row g-0">
+    <button
+      (click)="createTask()"
+      type="button"
+      class="btn btn-outline-secondary border rounded-0 rounded-bottom text-start"
+    >
+      <i class="fa-solid fa-plus me-1"></i>
+      Create
+    </button>
+  </div>
 </div>

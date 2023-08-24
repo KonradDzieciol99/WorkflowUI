@@ -1,7 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
-import { EditService, ExcelExportService, FilterService, GridModule, GroupService, PageService, SortService, ToolbarService } from '@syncfusion/ej2-angular-grids';
+import {
+  EditService,
+  ExcelExportService,
+  FilterService,
+  GridModule,
+  GroupService,
+  PageService,
+  SortService,
+  ToolbarService,
+} from '@syncfusion/ej2-angular-grids';
 import { BreadcrumbModule } from 'xng-breadcrumb';
 import { SharedModule } from '../shared/shared.module';
 import { IconPickerComponent } from './components/icon-picker/icon-picker.component';
@@ -24,7 +33,6 @@ import { ProjectsComponent } from './projects.component';
     SettingsComponent,
     SettingsDetailsComponent,
     SettingsMembersComponent,
-    
   ],
   imports: [
     CommonModule,
@@ -32,14 +40,16 @@ import { ProjectsComponent } from './projects.component';
     ProjectsRoutingModule,
     SharedModule,
     NgbCollapseModule,
-    BreadcrumbModule
+    BreadcrumbModule,
   ],
-  providers: [PageService,
-              SortService,
-              FilterService,
-              GroupService,
-              ToolbarService,
-              ExcelExportService,
-              EditService,]
+  providers: [
+    PageService,
+    SortService,
+    FilterService,
+    GroupService,
+    ToolbarService,
+    ExcelExportService,
+    EditService,
+  ],
 })
-export class ProjectsModule { }
+export class ProjectsModule {}

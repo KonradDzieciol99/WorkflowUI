@@ -16,7 +16,6 @@ import { AccordionFindPeopleComponent } from './components/accordion-find-people
 import { AccordionMyChatsComponent } from './components/accordion-my-chats/accordion-my-chats.component';
 import { AccordionInvitationsComponent } from './components/accordion-invitations/accordion-invitations.component';
 
-
 @NgModule({
   declarations: [
     MessagesComponent,
@@ -25,19 +24,18 @@ import { AccordionInvitationsComponent } from './components/accordion-invitation
     ConversationBubbleTypeAnimationComponent,
     AccordionFindPeopleComponent,
     AccordionMyChatsComponent,
-    AccordionInvitationsComponent
+    AccordionInvitationsComponent,
   ],
   imports: [
     CommonModule,
     MessagesRoutingModule,
     SharedModule,
-    AccordionModule.forRoot(), 
+    AccordionModule.forRoot(),
     TooltipModule.forRoot(),
     InfiniteScrollModule,
     ReactiveFormsModule,
     FormsModule,
     CollapseModule.forRoot(),
-
-  ]
+  ],
 })
-export class MessagesModule { }
+export class MessagesModule {}

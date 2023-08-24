@@ -1,99 +1,235 @@
 <ng-container *ngIf="taskForm">
-    <div class="modal-header">
-        <h5 class="modal-title" >Create Task</h5>
-        <button type="button" class="btn-close" (click)="selfBsModalRef.hide()"></button>
-    </div>
-    <div class="modal-body">
-        <form [formGroup]="taskForm">
-            <div class="row">
-                <div class="col-6">
-                    <div class="mb-2">
-                        <app-reactive-input 
-                            formControlName="name" 
-                            [formFloating]="false"
-                            [placeholder]="'Add a title...'"
-                            [validatorsKeyValue]="[{key: 'required', value: 'Field is required.'}]"
-                            [label]="'Title'" 
-                        > 
-                        </app-reactive-input>                
-                    </div>
-                    <div class="mb-2">
-                        <label for="exampleFormControlTextarea1" class="form-label">Description</label>
-                        <textarea class="form-control" formControlName="description"  rows="3" placeholder="Add a description..."></textarea>
-                    </div>
-                    <div class="mb-2"> 
-                        <label class="form-label">Leader</label>
-                        <app-reactive-dropdown class="col" [map]="projectMembers$|async" formControlName="leader">
-                            <ng-template #selectButtonTemplate let-data>
-                                    <img [src]="data?.photoUrl ?? 'assets/images/user.png'" width="30" height="30" class="me-2 rounded-circle">
-                                    <span style="max-width: 70%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">{{data?.userEmail ?? 'Unassigned'}}</span>
-                            </ng-template>
-                            <ng-template #triggerButtonTemplate let-data>
-                                    <img [src]="data?.photoUrl ?? 'assets/images/user.png'" width="30" height="30" class="me-2 rounded-circle">
-                                    <span style="max-width: 70%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">{{data?.userEmail ?? 'Unassigned'}}</span>
-                            </ng-template>
-                        </app-reactive-dropdown> 
-                    </div>
-                </div>
-                <div class="col-6 d-flex flex-column">
-                    <div class="row mb-2">
-                        <div class="col">
-                            <label class="form-label">Status</label>
-                            <app-reactive-dropdown class="col" [map]="statuses" [additionalKeyValue]="stateMap" formControlName="state">
-                                <ng-template #selectButtonTemplate let-data let-oprions="options">
-                                        <i *ngIf="oprions.iconClass" [class]="oprions.iconClass"></i>
-                                        <span>{{oprions.text}}</span>   
-                                </ng-template>
-                                <ng-template #triggerButtonTemplate let-data let-oprions="options">
-                                        <i *ngIf="oprions.iconClass" [class]="oprions.iconClass"></i>
-                                        <span>{{oprions.text}}</span>
-                                </ng-template>
-                            </app-reactive-dropdown> 
-                        </div>
-                        <div class="col">
-                            <label class="form-label">Priority</label>
-                            <app-reactive-dropdown class="col" [map]="priorites" [additionalKeyValue]="priorityMap" formControlName="priority">
-                                <ng-template #selectButtonTemplate let-data let-oprions="options">
-                                        <i *ngIf="oprions.iconClass" [class]="oprions.iconClass"></i>
-                                        <span>{{oprions.text}}</span>   
-                                </ng-template>
-                                <ng-template #triggerButtonTemplate let-data let-oprions="options">
-                                        <i *ngIf="oprions.iconClass" [class]="oprions.iconClass"></i>
-                                        <span>{{oprions.text}}</span>
-                                </ng-template>
-                            </app-reactive-dropdown> 
-                        </div>
-                    </div>
-                    <div class="mb-2">
-                        <app-date-picker [label]="'Start Date'" [minDate]="minNgbDateStruct" formControlName="startDate"></app-date-picker>
-                    </div>
-                    <div class="mb-2">
-                        <app-date-picker [label]="'Due Date'" [minDate]="minNgbDateStruct" formControlName="dueDate"></app-date-picker>
-                    </div>
-                    <div class="mb-2">        
-                        <label class="form-label">Assignee</label>
-                        <app-reactive-dropdown class="col" [map]="projectMembers$|async" formControlName="assignee">
-                            <ng-template #selectButtonTemplate let-data>
-                                    <img [src]="data?.photoUrl ?? 'assets/images/user.png'" width="30" height="30" class="me-2 rounded-circle">
-                                    <span style="max-width: 70%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">{{data?.userEmail ?? 'Unassigned'}}</span>
-                            </ng-template>
-                            <ng-template #triggerButtonTemplate let-data>
-                                    <img [src]="data?.photoUrl ?? 'assets/images/user.png'" width="30" height="30" class="me-2 rounded-circle">
-                                    <span style="max-width: 70%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">{{data?.userEmail ?? 'Unassigned'}}</span>
-                            </ng-template>
-                        </app-reactive-dropdown> 
-                    </div>
-                </div>
-
+  <div class="modal-header">
+    <h5 class="modal-title">Create Task</h5>
+    <button
+      type="button"
+      class="btn-close"
+      (click)="selfBsModalRef.hide()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="taskForm">
+      <div class="row">
+        <div class="col-6">
+          <div class="mb-2">
+            <app-reactive-input
+              formControlName="name"
+              [formFloating]="false"
+              [placeholder]="'Add a title...'"
+              [validatorsKeyValue]="[
+                { key: 'required', value: 'Field is required.' }
+              ]"
+              [label]="'Title'"
+            >
+            </app-reactive-input>
+          </div>
+          <div class="mb-2">
+            <label for="exampleFormControlTextarea1" class="form-label"
+              >Description</label
+            >
+            <textarea
+              class="form-control"
+              formControlName="description"
+              rows="3"
+              placeholder="Add a description..."
+            ></textarea>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Leader</label>
+            <app-reactive-dropdown
+              class="col"
+              [map]="projectMembers$ | async"
+              formControlName="leader"
+            >
+              <ng-template #selectButtonTemplate let-data>
+                <img
+                  [src]="data?.photoUrl ?? 'assets/images/user.png'"
+                  width="30"
+                  height="30"
+                  class="me-2 rounded-circle"
+                />
+                <span
+                  style="
+                    max-width: 70%;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    overflow: hidden;
+                  "
+                  >{{ data?.userEmail ?? "Unassigned" }}</span
+                >
+              </ng-template>
+              <ng-template #triggerButtonTemplate let-data>
+                <img
+                  [src]="data?.photoUrl ?? 'assets/images/user.png'"
+                  width="30"
+                  height="30"
+                  class="me-2 rounded-circle"
+                />
+                <span
+                  style="
+                    max-width: 70%;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    overflow: hidden;
+                  "
+                  >{{ data?.userEmail ?? "Unassigned" }}</span
+                >
+              </ng-template>
+            </app-reactive-dropdown>
+          </div>
+        </div>
+        <div class="col-6 d-flex flex-column">
+          <div class="row mb-2">
+            <div class="col">
+              <label class="form-label">Status</label>
+              <app-reactive-dropdown
+                class="col"
+                [map]="statuses"
+                [additionalKeyValue]="stateMap"
+                formControlName="state"
+              >
+                <ng-template
+                  #selectButtonTemplate
+                  let-data
+                  let-oprions="options"
+                >
+                  <i *ngIf="oprions.iconClass" [class]="oprions.iconClass"></i>
+                  <span>{{ oprions.text }}</span>
+                </ng-template>
+                <ng-template
+                  #triggerButtonTemplate
+                  let-data
+                  let-oprions="options"
+                >
+                  <i *ngIf="oprions.iconClass" [class]="oprions.iconClass"></i>
+                  <span>{{ oprions.text }}</span>
+                </ng-template>
+              </app-reactive-dropdown>
             </div>
-        </form>
+            <div class="col">
+              <label class="form-label">Priority</label>
+              <app-reactive-dropdown
+                class="col"
+                [map]="priorites"
+                [additionalKeyValue]="priorityMap"
+                formControlName="priority"
+              >
+                <ng-template
+                  #selectButtonTemplate
+                  let-data
+                  let-oprions="options"
+                >
+                  <i *ngIf="oprions.iconClass" [class]="oprions.iconClass"></i>
+                  <span>{{ oprions.text }}</span>
+                </ng-template>
+                <ng-template
+                  #triggerButtonTemplate
+                  let-data
+                  let-oprions="options"
+                >
+                  <i *ngIf="oprions.iconClass" [class]="oprions.iconClass"></i>
+                  <span>{{ oprions.text }}</span>
+                </ng-template>
+              </app-reactive-dropdown>
+            </div>
+          </div>
+          <div class="mb-2">
+            <app-date-picker
+              [label]="'Start Date'"
+              [minDate]="minNgbDateStruct"
+              formControlName="startDate"
+            ></app-date-picker>
+          </div>
+          <div class="mb-2">
+            <app-date-picker
+              [label]="'Due Date'"
+              [minDate]="minNgbDateStruct"
+              formControlName="dueDate"
+            ></app-date-picker>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Assignee</label>
+            <app-reactive-dropdown
+              class="col"
+              [map]="projectMembers$ | async"
+              formControlName="assignee"
+            >
+              <ng-template #selectButtonTemplate let-data>
+                <img
+                  [src]="data?.photoUrl ?? 'assets/images/user.png'"
+                  width="30"
+                  height="30"
+                  class="me-2 rounded-circle"
+                />
+                <span
+                  style="
+                    max-width: 70%;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    overflow: hidden;
+                  "
+                  >{{ data?.userEmail ?? "Unassigned" }}</span
+                >
+              </ng-template>
+              <ng-template #triggerButtonTemplate let-data>
+                <img
+                  [src]="data?.photoUrl ?? 'assets/images/user.png'"
+                  width="30"
+                  height="30"
+                  class="me-2 rounded-circle"
+                />
+                <span
+                  style="
+                    max-width: 70%;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    overflow: hidden;
+                  "
+                  >{{ data?.userEmail ?? "Unassigned" }}</span
+                >
+              </ng-template>
+            </app-reactive-dropdown>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div
+      *ngIf="taskForm.errors?.['checkDateOrder']"
+      class="invalid-feedback d-block w-auto me-auto"
+    >
+      Date order is not correct
     </div>
-    <div class="modal-footer">
-        <div *ngIf="taskForm.errors?.['checkDateOrder']" class="invalid-feedback d-block w-auto me-auto">Date order is not correct</div>
-        <div *ngIf="taskForm.errors?.['serverError']" class="invalid-feedback d-block w-auto me-auto">{{taskForm.errors?.['serverError']}}</div>
-        <button type="button" class="btn btn-secondary" (click)="selfBsModalRef.hide()">Cancel</button>
-        <button *ngIf="!updatedTask" type="button" class="btn btn-primary" (click)="create()">Create</button>
-        <button *ngIf="updatedTask" type="button" class="btn btn-primary" (click)="update()">Update</button>
-        <!-- {{taskForm.errors|json}} -->
+    <div
+      *ngIf="taskForm.errors?.['serverError']"
+      class="invalid-feedback d-block w-auto me-auto"
+    >
+      {{ taskForm.errors?.["serverError"] }}
     </div>
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="selfBsModalRef.hide()"
+    >
+      Cancel
+    </button>
+    <button
+      *ngIf="!updatedTask"
+      type="button"
+      class="btn btn-primary"
+      (click)="create()"
+    >
+      Create
+    </button>
+    <button
+      *ngIf="updatedTask"
+      type="button"
+      class="btn btn-primary"
+      (click)="update()"
+    >
+      Update
+    </button>
+    <!-- {{taskForm.errors|json}} -->
+  </div>
 </ng-container>

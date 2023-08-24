@@ -1,6 +1,6 @@
-import { IIcon } from "./IIcon";
+import { IIcon } from './IIcon';
 
-export interface IProjectCreateRequest{
-    name: string,
-    icon:IIcon,
+export interface IProjectCreateRequest {
+  name: string;
+  icon: IIcon;
 }
