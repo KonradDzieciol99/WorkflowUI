@@ -32,7 +32,7 @@ export class ProjectSideBarComponent implements OnInit,OnDestroy  {
     this.dismissReason="Resizing";
 
     this.project$=this.projectService.project$;
-    this.sidenavStateSource$ = new BehaviorSubject<boolean>(true);
+    this.sidenavStateSource$ = new BehaviorSubject(true);
     this.sidenavState$ = this.sidenavStateSource$.asObservable();
     this.sidenavStateSub = this.sidenavState$.pipe().subscribe(state=>{
       if (state) 
@@ -45,20 +45,21 @@ export class ProjectSideBarComponent implements OnInit,OnDestroy  {
     this.onResize()
     const state = { skip: 0 , take: 10 };
 
-    const projectId = this.activatedRoute.snapshot.params['id'];
+    const projectId = this.activatedRoute.snapshot.params['id'] as string;
+    if (!projectId) 
+      throw new Error("projectId has bad format");   
 
     this.projectService.get(projectId).pipe(
       take(1),
-      concatMap((project)=>{
+      concatMap((project) => {
         this.breadcrumbService.set('@projectSideBar', project.name);
-        return this.tasksService.execute(state);
-      })
+        return this.tasksService.execute(state).pipe(take(1));
+      }),
+      concatMap(() => this.projectMembersService.execute(state).pipe(take(1)) )
     )
     .subscribe({
-      next: () => {
-        this.projectMembersService.execute(state);
-      },
-      error:()=> this.router.navigate(['../projects']),
+      next: () => {},
+      error: () => this.router.navigate(['../projects']),
     })
   }
   changeStateSideNav(){

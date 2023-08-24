@@ -83,7 +83,7 @@ export class NotificationCardComponent implements OnChanges{
   deleteNotification(notification:INotification){
 
     const bsModalRef = this.modalService.show(ConfirmWindowComponent, {class: 'modal-sm'});
-    bsModalRef.content?.result$?.pipe(
+    bsModalRef.content?.result$.pipe(
       take(1),
       mergeMap(x=>{
         if (x) {

@@ -14,11 +14,12 @@ enum Theme {
   styleUrls: ['./theme-switch-button.component.scss']
 })
 export class ThemeSwitchButtonComponent implements OnInit, OnDestroy  {
-  public themeForm?:FormGroup
+  //public themeForm?""
   private themeFormValueChangesSub?:Subscription;
   public currentTheme?:string;
   private themeMap: Map<Theme, string>;
   public isNotificationPanelOpen: boolean;
+  public themeForm?: FormGroup<{ theme: FormControl<Theme>; }>;
 
   constructor(@Inject(DOCUMENT) private document: Document ,private renderer2: Renderer2) 
   {
@@ -36,7 +37,7 @@ export class ThemeSwitchButtonComponent implements OnInit, OnDestroy  {
       theme=Theme.Auto;
        
     this.themeForm = new FormGroup({
-      theme: new FormControl(theme),
+      theme: new FormControl(theme,{nonNullable:true}),
     })
 
     this.setTheme(theme);
@@ -61,7 +62,7 @@ export class ThemeSwitchButtonComponent implements OnInit, OnDestroy  {
 
     let linkElement = head.querySelector(`#${linkElementId}`);
     if (!linkElement) {
-      linkElement = this.renderer2.createElement('link');
+      linkElement = this.renderer2.createElement('link') as HTMLLinkElement;
       this.renderer2.setAttribute(linkElement, 'id', linkElementId);
       this.renderer2.setAttribute(linkElement, 'rel', 'stylesheet');
       this.renderer2.appendChild(head, linkElement);

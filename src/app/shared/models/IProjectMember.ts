@@ -8,6 +8,17 @@ export interface IProjectMember{
     projectId:string,
     photoUrl?:string
 }
+export function isIProjectMember(item: unknown): item is IProjectMember {
+    if (typeof item !== 'object' || item === null) return false;
+
+    return 'id' in item
+        && 'userId' in item
+        && 'userEmail' in item
+        && 'type' in item
+        && 'invitationStatus' in item
+        && 'projectId' in item;
+}
+
 export enum ProjectMemberType {
     Leader,
     Admin,

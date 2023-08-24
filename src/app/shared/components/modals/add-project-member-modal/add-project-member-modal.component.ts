@@ -13,14 +13,14 @@ import { ISearchedMember, MemberStatusType } from 'src/app/shared/models/ISearch
 })
 export class AddProjectMemberModalComponent implements OnInit {
   searchMember: FormControl<string>;
-  searchedMemberSource$: BehaviorSubject<Array<ISearchedMember>>;
-  searchedMember$: Observable<Array<ISearchedMember>>;
+  private searchedMemberSource$: BehaviorSubject<ISearchedMember[]>;
+  searchedMember$: Observable<ISearchedMember[]>;
   memberStatusTypes: typeof MemberStatusType = MemberStatusType;
   constructor(public selfBsModalRef: BsModalRef,
     private toastrService:ToastrService,
     private projectService:ProjectService){
       this.searchMember = new FormControl<string>('',{nonNullable: true, validators: [Validators.required]});
-      this.searchedMemberSource$ = new BehaviorSubject<Array<ISearchedMember>>([]);
+      this.searchedMemberSource$ = new BehaviorSubject([] as ISearchedMember[]);
       this.searchedMember$ = this.searchedMemberSource$.asObservable()
     }
   ngOnInit(): void {

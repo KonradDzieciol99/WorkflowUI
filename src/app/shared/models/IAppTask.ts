@@ -28,8 +28,14 @@ export enum State {
     InProgress,
     Done
  }
-//  export enum Priority {
-//     Leader,
-//     Admin,
-//     Member
-// }
+export function isIAppTask(data: unknown): data is IAppTask {
+    if (typeof data !== 'object' || data === null) return false;
+
+    return 'id' in data 
+        && 'name' in data 
+        && 'projectId' in data
+        && 'priority' in data
+        && 'state' in data
+        && 'dueDate' in data
+        && 'startDate' in data;
+}

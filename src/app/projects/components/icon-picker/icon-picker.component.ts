@@ -9,17 +9,19 @@ import { IIcon } from 'src/app/shared/models/IIcon';
   styleUrls: ['./icon-picker.component.scss']
 })
 export class IconPickerComponent {
-  result$: Subject<IIcon> 
-  icons$?:Observable<Array<IIcon>>;
+  private resultSource$: Subject<IIcon> 
+  result$: Observable<IIcon>;
+  icons$?:Observable<IIcon[]>;
   selectedIcon?:IIcon;
   constructor(public bsModalRef: BsModalRef,private renderer: Renderer2) {
-    this.result$ = new Subject<IIcon>();
+    this.resultSource$ = new Subject();
+    this.result$ = this.resultSource$.asObservable();
   }
   select(){
     if (!this.selectedIcon) 
       return;
     
-    this.result$.next(this.selectedIcon);
+    this.resultSource$.next(this.selectedIcon);
     this.bsModalRef.hide();
   }
   onImageLoad(event: Event ){

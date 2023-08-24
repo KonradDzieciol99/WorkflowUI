@@ -17,13 +17,14 @@ import { CreateTaskModalComponent } from '../modals/create-task-modal/create-tas
 export class ListComponent implements OnInit{
   public pageSettings: PageSettingsModel;
   public toolbar: ToolbarItems[];
-  @ViewChild('grid') grid: GridComponent | undefined;
-  public editSettings: EditSettingsModel;
-  searchTasks = new FormControl<string>('',[Validators.required]);
+  @ViewChild('grid') grid?: GridComponent;
+  public editSettings: EditSettingsModel;  
+  searchTasks: FormControl<string>;
   constructor(public tasksService: TasksService,private modalService: BsModalService,private toastrService:ToastrService) {
     this.pageSettings = { pageSize: 10/*, pageCount: 8*/ };
     this.toolbar = ['Delete','Edit'];
     this.editSettings = { allowEditing: true, allowAdding: true, allowDeleting: true, mode: 'Dialog' };
+    this.searchTasks = new FormControl('',{nonNullable:true,validators:[Validators.required]});
   }
 
   createTask(){
@@ -41,7 +42,7 @@ export class ListComponent implements OnInit{
 
       const bsModalRef = this.modalService.show(ConfirmWindowComponent, {class: 'modal-sm modal-dialog-centered'});
 
-      bsModalRef.content?.result$?.pipe(
+      bsModalRef.content?.result$.pipe(
         take(1),
         concatMap(value=>{
           if(!value) return of();
@@ -81,7 +82,7 @@ export class ListComponent implements OnInit{
     ).subscribe({
       next:(value)=>{
         if(this.grid) 
-          this.grid.search(value ?? "");
+          this.grid.search(value);
        }
       })
   }

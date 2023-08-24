@@ -45,7 +45,7 @@ export class CreateProjectModalComponent implements OnInit {
     if (bsModalRef.content) 
       bsModalRef.content.icons$ = this.photosService.icons$; 
     
-    bsModalRef.content?.result$?.pipe(
+    bsModalRef.content?.result$.pipe(
       //take(1),
       takeUntil(this.modalService.onHide),
       takeUntil(this.modalService.onHidden)

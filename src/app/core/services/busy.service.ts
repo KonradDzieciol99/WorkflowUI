@@ -9,16 +9,16 @@ export class BusyService {
   busyRequestCount = 0;
   constructor(private ngxSpinnerService: NgxSpinnerService) { }
 
-  busy() {
+  async busy() {
     this.busyRequestCount++;
-    this.ngxSpinnerService.show();
+    await this.ngxSpinnerService.show();
   }
 
-  idle() {
+  async idle() {
     this.busyRequestCount--;
     if (this.busyRequestCount <= 0) {
       this.busyRequestCount = 0;
-      this.ngxSpinnerService.hide();
+      await this.ngxSpinnerService.hide();
     }
   }
 }

@@ -19,11 +19,13 @@ export class ProjectsComponent implements OnInit {
   public toolbar: ToolbarItems[];
   @ViewChild('grid') grid: GridComponent | undefined;
   public editSettings: EditSettingsModel;
-  searchProjects = new FormControl<string>('',[Validators.required]);
+  searchProjects: FormControl<string>;
+  
   constructor(public service: ProjectsService,private modalService: BsModalService,private toastrService:ToastrService) {
     this.pageSettings = { pageSize: 10/*, pageCount: 8*/ };
     this.toolbar = ['Delete'];
     this.editSettings = { allowEditing: true, allowAdding: true, allowDeleting: true };
+    this.searchProjects = new FormControl('',{ nonNullable:true ,validators:[Validators.required]});
   }
   createProject(){
     //const bsModalRef = 
@@ -38,7 +40,7 @@ export class ProjectsComponent implements OnInit {
 
       const bsModalRef = this.modalService.show(ConfirmWindowComponent, {class: 'modal-sm modal-dialog-centered'});
 
-      bsModalRef.content?.result$?.pipe(
+      bsModalRef.content?.result$.pipe(
         take(1),
         mergeMap(value=>{
           if(!value) return of();

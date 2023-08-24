@@ -15,7 +15,7 @@ import { PresenceService } from '../shared/services/presence.service';
 export class MessagesService  {
   private confirmedInvitationsSource$ : BehaviorSubject<IFriendInvitation[]>;
   confirmedInvitations$:Observable<IFriendInvitation[]>;
-  receivedFriendRequestsSource$: BehaviorSubject<IFriendInvitation[]>;
+  private receivedFriendRequestsSource$: BehaviorSubject<IFriendInvitation[]>;
   receivedFriendRequests$ :Observable<IFriendInvitation[]>; 
   friendsWithActivityStatus$:Observable<IUser[]>; 
   private chatUrl:string;
@@ -32,14 +32,14 @@ export class MessagesService  {
     this.receivedFriendRequests$= this.receivedFriendRequestsSource$.asObservable();
     const userClaims = this.oAuthService.getIdentityClaims();
     const user:IUser = {
-      email: userClaims['email'],
-      id: userClaims['sub'],
-      photoUrl: userClaims['picture']
+      email: userClaims['email'] as string,
+      id: userClaims['sub'] as string,
+      photoUrl: userClaims['picture'] as string | undefined
     }
     this.friendsWithActivityStatus$ = this.getFriendsWithActivityStatus(user);
    }
   findUsersByEmailAndCheckState(email:string){
-    return this.http.get<Array<ISearchedUser>>(`${this.aggregatorUrl}/Identity/search/${email}`);
+    return this.http.get<ISearchedUser[]>(`${this.aggregatorUrl}/Identity/search/${email}`);
   }
   sendInvitation(user:IUser){
     return this.http.post<IFriendInvitation>(`${this.chatUrl}/FriendRequests`,user);
@@ -120,7 +120,7 @@ export class MessagesService  {
         );
         this.confirmedInvitationsSource$.next(filteredConfirmedInvitations);
         const filteredOnlineUsers = onlineUsers.filter(email=>email !== friend.email)
-        this.presenceService.onlineUsersSource$.next(filteredOnlineUsers);
+        this.presenceService.onlineUsersNext(filteredOnlineUsers);
       }),
      
     );
@@ -175,7 +175,7 @@ export class MessagesService  {
         const filterdConfirmedInvitations = confirmedInvitations.filter(c=>!(c.invitedUserEmail===removerEmail || c.inviterUserEmail === removerEmail));
         this.confirmedInvitationsSource$.next(filterdConfirmedInvitations);
         const filteredOnlineUsers = onlineUsers.filter(email=>email !== removerEmail)
-        this.presenceService.onlineUsersSource$.next(filteredOnlineUsers);
+        this.presenceService.onlineUsersNext(filteredOnlineUsers);
       })
     });
 
@@ -185,7 +185,7 @@ export class MessagesService  {
     return hubConnectionState;
   }
 
-  stopHubConnection() {
-      this.hubConnection?.stop();
+  async stopHubConnection() {
+    await this.hubConnection?.stop();
   }
 }

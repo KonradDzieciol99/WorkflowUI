@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { DataSourceChangedEventArgs, DataStateChangeEventArgs } from '@syncfusion/ej2-angular-grids';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, Observable, combineLatest, concatMap, filter, map, mergeMap, of, take, tap } from 'rxjs';
-import { IAppTask } from 'src/app/shared/models/IAppTask';
+import { IAppTask, isIAppTask } from 'src/app/shared/models/IAppTask';
 import { ISyncfusionFormat } from 'src/app/shared/models/ISyncfusionFormat';
 import { environment } from 'src/environments/environment';
 import { ProjectService } from '../projects/services/project.service';
@@ -85,14 +85,15 @@ export class TasksService {
   delete(state: DataSourceChangedEventArgs){
 
     let id = '' ;
-    if (Array.isArray(state.data))
-      id=state.data[0].id;
+    
+    if (Array.isArray(state.data) && state.data.length > 0 && isIAppTask(state.data[0])) 
+      id = state.data[0].id;
     else
-      this.toastrService.error("Error occured")
-
+      throw new Error("Error occured")
+    
     return this.projectService.project$.pipe(
       filter((project): project is IProject => project !== undefined),
-      mergeMap(project=>this.http.delete<void>(`${this.baseUrl}/projects/${project.id}/task/${id}`))
+      mergeMap(project=>{return this.http.delete<void>(`${this.baseUrl}/projects/${project.id}/task/${id}`)})
     );
   }
   update(task:IAppTask){

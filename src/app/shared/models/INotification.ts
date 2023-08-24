@@ -8,7 +8,7 @@ export interface INotification{
     notificationPartnerEmail:string,
     notificationPartnerId:string,
     notificationPartnerPhotoUrl:string,
-    oldNotificationsIds?:Array<string>
+    oldNotificationsIds?:string[]
 
 }
 export function isINotification(notificationValue:INotification): notificationValue is INotification {

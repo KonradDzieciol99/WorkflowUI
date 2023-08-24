@@ -5,7 +5,7 @@ import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject, map, take } from 'rxjs';
+import { Observable, map, take } from 'rxjs';
 import { ProjectService } from 'src/app/projects/services/project.service';
 import { CustomValidators } from 'src/app/shared/Validators/CustomValidators';
 import { IAppTask, Priority, State } from 'src/app/shared/models/IAppTask';
@@ -20,8 +20,8 @@ import { TasksService } from 'src/app/tasks/tasks.service';
   styleUrls: ['./create-task-modal.component.scss']
 })
 export class CreateTaskModalComponent implements OnInit  {
-  private resultSource$: Subject<boolean>;
-  taskForm?: FormGroup;
+  // private resultSource$: Subject<boolean>;
+  //taskForm?: FormGroup;
   stateMap: Map<State, ITextIconPair>;
   priorityMap: Map<Priority, ITextIconPair>;
   minNgbDateStruct?: NgbDateStruct;
@@ -29,6 +29,7 @@ export class CreateTaskModalComponent implements OnInit  {
   statuses: State[];
   priorites: Priority[];
   updatedTask?:IAppTask;
+  taskForm?: FormGroup<{ id: FormControl<string>; name: FormControl<string>; description: FormControl<string>; projectId: FormControl<string>; state: FormControl<State>; priority: FormControl<Priority>; dueDate: FormControl<NgbDateStruct>; startDate: FormControl<NgbDateStruct>; assignee: FormControl<IProjectMember | undefined>; leader: FormControl<IProjectMember | undefined>; }>;
   constructor(public selfBsModalRef: BsModalRef,
               private tasksService:TasksService,
               private toastrService:ToastrService,
@@ -36,7 +37,7 @@ export class CreateTaskModalComponent implements OnInit  {
               private oAuthService:OAuthService
               )
     {
-      this.resultSource$ = new Subject<boolean>();
+      // this.resultSource$ = new Subject<boolean>();
       
       this.statuses=[State.ToDo,State.InProgress,State.Done];
       this.priorites=[Priority.Low,Priority.Medium,Priority.High]
@@ -58,7 +59,7 @@ export class CreateTaskModalComponent implements OnInit  {
     currentDate.setMonth(currentDate.getMonth() + 1); 
     this.minNgbDateStruct = this.mapDateToNgbDateStruct(currentDate)
     this.projectService.project$.pipe().subscribe(x=>{  
-      if (!x) 
+      if (!x || !this.minNgbDateStruct) 
         return;
 
       currentDate.setDate(currentDate.getDate() + 7)
@@ -68,29 +69,29 @@ export class CreateTaskModalComponent implements OnInit  {
       const leader = x.projectMembers.find(x=>x.userId===userClaims['sub']);
       
       this.taskForm = new FormGroup({
-        id: new FormControl<string|undefined>(undefined,{ nonNullable: true, validators: []}),
+        id: new FormControl<string>('',{ nonNullable: true, validators: []}),
         name: new FormControl<string>('',{ nonNullable: true, validators: [Validators.required]}),
         description: new FormControl<string>('',{ nonNullable: true, validators: []}),
         projectId: new FormControl<string>(x.id,{ nonNullable: true, validators: []}),       
         state: new FormControl<State>(State.ToDo,{ nonNullable: true, validators: [Validators.required]}),
         priority: new FormControl<Priority>(Priority.Medium,{ nonNullable: true, validators: [Validators.required]}),
         dueDate: new FormControl<NgbDateStruct>(dueDate,{ nonNullable: true, validators: [Validators.required]}),
-        startDate: new FormControl<NgbDateStruct>(this.minNgbDateStruct!,{ nonNullable: true, validators: [Validators.required]}),
+        startDate: new FormControl<NgbDateStruct>(this.minNgbDateStruct,{ nonNullable: true, validators: [Validators.required]}),
         assignee: new FormControl<IProjectMember|undefined>(undefined,{nonNullable: true,validators: []}),
         leader: new FormControl<IProjectMember|undefined>(leader,{nonNullable: true, validators: [Validators.required]}),
       }, { validators:  CustomValidators.checkDateOrder() });
 
       if (this.updatedTask) {
-        this.taskForm.get('name')?.setValue(this.updatedTask?.name);
-        this.taskForm.get('description')?.setValue(this.updatedTask?.description);
-        this.taskForm.get('projectId')?.setValue(this.updatedTask?.projectId);
-        this.taskForm.get('state')?.setValue(this.updatedTask?.state);
-        this.taskForm.get('priority')?.setValue(this.updatedTask?.priority);
-        this.taskForm.get('dueDate')?.setValue(this.mapDateToNgbDateStruct( new Date(this.updatedTask?.dueDate)));
-        this.taskForm.get('startDate')?.setValue(this.mapDateToNgbDateStruct( new Date(this.updatedTask?.startDate)));
-        this.taskForm.get('assignee')?.setValue(this.updatedTask?.taskAssignee);
-        this.taskForm.get('leader')?.setValue(this.updatedTask?.taskLeader);
-        this.taskForm.get('id')?.setValue(this.updatedTask?.id);
+        this.taskForm.get('name')?.setValue(this.updatedTask.name);
+        this.taskForm.get('description')?.setValue(this.updatedTask.description ?? '');
+        this.taskForm.get('projectId')?.setValue(this.updatedTask.projectId);
+        this.taskForm.get('state')?.setValue(this.updatedTask.state);
+        this.taskForm.get('priority')?.setValue(this.updatedTask.priority);
+        this.taskForm.get('dueDate')?.setValue(this.mapDateToNgbDateStruct( new Date(this.updatedTask.dueDate)));
+        this.taskForm.get('startDate')?.setValue(this.mapDateToNgbDateStruct( new Date(this.updatedTask.startDate)));
+        this.taskForm.get('assignee')?.setValue(this.updatedTask.taskAssignee);
+        this.taskForm.get('leader')?.setValue(this.updatedTask.taskLeader);
+        this.taskForm.get('id')?.setValue(this.updatedTask.id);
 
         this.taskForm.get('id')?.setValidators(Validators.required)
     }else{
@@ -108,30 +109,33 @@ export class CreateTaskModalComponent implements OnInit  {
       })
     );
   }
-  create(taskForm:FormGroup){
+  create(){
 
-    if (this.taskForm?.invalid) {
-      taskForm.markAllAsTouched();
+    if (!this.taskForm) return;
+  
+    if (this.taskForm.invalid) {
+      this.taskForm.markAllAsTouched();
       return;
     }
+    const values = this.taskForm.getRawValue()
 
-   const dueDateNgbDateStruct = this.taskForm?.value.dueDate as NgbDateStruct;
-   const startDateNgbDateStruct = this.taskForm?.value.startDate as NgbDateStruct;
+   const dueDateNgbDateStruct = values.dueDate;
+   const startDateNgbDateStruct = values.startDate;
    const dueDateDate= new Date(dueDateNgbDateStruct.year,dueDateNgbDateStruct.month - 1 ,dueDateNgbDateStruct.day);
    const startDateDateDate= new Date(startDateNgbDateStruct.year,startDateNgbDateStruct.month - 1,startDateNgbDateStruct.day);
 
     const createAppTask:ICreateAppTask={
-      name:this.taskForm?.value.name,
-      description:this.taskForm?.value.description,
-      projectId:this.taskForm?.value.projectId ,
-      priority:this.taskForm?.value.priority ,
-      state:this.taskForm?.value.state ,
+      name:values.name,
+      description:values.description,
+      projectId:values.projectId ,
+      priority:values.priority ,
+      state:values.state ,
       dueDate:dueDateDate ,
       startDate:startDateDateDate,
-      taskAssigneeMemberId:this.taskForm?.value?.assignee?.id,
-      taskAssignee:this.taskForm?.value?.assignee,
-      taskLeaderId:this.taskForm?.value?.leader?.id,
-      taskLeader:this.taskForm?.value?.leade
+      taskAssigneeMemberId:values.assignee?.id,
+      taskAssignee:values.assignee,
+      taskLeaderId:values.leader?.id,
+      taskLeader:values.leader
     }
 
     this.tasksService.create(createAppTask)
@@ -150,31 +154,36 @@ export class CreateTaskModalComponent implements OnInit  {
         },
       });
   }
- update(taskForm:FormGroup){
-  if (this.taskForm?.invalid) {
-    taskForm.markAllAsTouched();
+ update(){
+  if (!this.taskForm) return;
+  
+  if (this.taskForm.invalid) {
+    this.taskForm.markAllAsTouched();
     return;
   }
+  
+  const values = this.taskForm.getRawValue()
 
-  const dueDateNgbDateStruct = this.taskForm?.value.dueDate as NgbDateStruct;
-  const startDateNgbDateStruct = this.taskForm?.value.startDate as NgbDateStruct;
+  const dueDateNgbDateStruct = values.dueDate
+  
+  const startDateNgbDateStruct = values.startDate
 
   const dueDateDate= new Date(dueDateNgbDateStruct.year,dueDateNgbDateStruct.month - 1,dueDateNgbDateStruct.day);
   const startDateDateDate= new Date(startDateNgbDateStruct.year,startDateNgbDateStruct.month - 1,startDateNgbDateStruct.day);
 
   const updatedTask:IAppTask={
-    name: this.taskForm?.value.name,
-    description: this.taskForm?.value.description,
-    projectId: this.taskForm?.value.projectId,
-    priority: this.taskForm?.value.priority,
-    state: this.taskForm?.value.state,
+    name: values.name,
+    description: values.description,
+    projectId: values.projectId,
+    priority: values.priority,
+    state: values.state,
     dueDate: dueDateDate,
     startDate: startDateDateDate,
-    taskAssigneeMemberId: this.taskForm?.value?.assignee?.id,
-    taskAssignee: this.taskForm?.value?.assignee,
-    taskLeaderId: this.taskForm?.value?.leader?.id,
-    taskLeader: this.taskForm?.value?.leader,
-    id: this.taskForm?.value.id
+    taskAssigneeMemberId: values.assignee?.id,
+    taskAssignee: values.assignee,
+    taskLeaderId: values.leader?.id,
+    taskLeader: values.leader,
+    id: values.id
   }
 
   this.tasksService.update(updatedTask)

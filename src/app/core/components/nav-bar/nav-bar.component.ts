@@ -18,7 +18,7 @@ export class NavBarComponent {
     this.isNumberOfOnlineUsersTooltipVisible=false;
 
       this.notificationsLength$ = this.presenceService.notifications$.pipe(
-        map(x=>{ return x.filter(n=>n.displayed==false).length})
+        map(x=>{ return x.filter(n=>!n.displayed).length})
       );
 
       this.numberOfOnlineUsers$ = this.presenceService.onlineUsers$.pipe(

@@ -16,9 +16,9 @@ export class ChatService {
   private messageThreadSource$:BehaviorSubject<Message[]|undefined>;
   messageThread$:Observable<Message[]|undefined>;
   private recipientIsWatchingSource$:BehaviorSubject<boolean>;
-  chatRecipientSource$:BehaviorSubject<IUser|undefined>;
+  private chatRecipientSource$:BehaviorSubject<IUser|undefined>;
   recipientIsWatching$:Observable<boolean>;
-  recipientIsTypingSource$:BehaviorSubject<boolean>;
+  private recipientIsTypingSource$:BehaviorSubject<boolean>;
   recipientIsTyping$:Observable<boolean>;
   chatRecipient$: Observable<IUser | undefined>;
   constructor(private http: HttpClient) {
@@ -47,7 +47,7 @@ export class ChatService {
       this.messageThreadSource$.next(messages.reverse());
     })
     
-    this.hubConnection.on('UserIsTyping', (userEmail: string) => { 
+    this.hubConnection.on('UserIsTyping', (userEmail : string) => { 
       if (userEmail === recipientEmail) {
 
         this.recipientIsTypingSource$.next(true)
@@ -64,7 +64,7 @@ export class ChatService {
       }
     })
 
-    this.hubConnection.on('UpdatedGroup', (group: Array<string>) => {
+    this.hubConnection.on('UpdatedGroup', (group : string[]) => {
       const recipient = group.find(x => x === recipientEmail)
       if (recipient) {
         this.messageThread$.pipe(take(1)).subscribe({
@@ -119,7 +119,7 @@ export class ChatService {
         params = params.append('Skip', currentMessages.length.toString());
         params = params.append('Take', take.toString());
 
-        return this.http.get<Array<Message>>(`${this.chatUrl}/Messages`,{params: params}).pipe(         
+        return this.http.get<Message[]>(`${this.chatUrl}/Messages`,{params: params}).pipe(         
             tap((oldestMessages)=>{
               this.messageThreadSource$.next([...oldestMessages.reverse(), ...currentMessages]);
             })
@@ -127,11 +127,12 @@ export class ChatService {
       })
     )
   }
-  stopHubConnectionAndDeleteMessageThread() {
-    if (this.hubConnection) {
+  chatRecipientNext(next:IUser ){
+    this.chatRecipientSource$.next(next);
+  }
+  async stopHubConnectionAndDeleteMessageThread() {
       this.messageThreadSource$.next(undefined);
       this.chatRecipientSource$.next(undefined);
-      this.hubConnection.stop();
-    }
+      await this.hubConnection?.stop();
   }
 }

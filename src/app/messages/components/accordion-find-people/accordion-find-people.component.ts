@@ -13,20 +13,20 @@ import { FormControl } from '@angular/forms';
 })
 export class AccordionFindPeopleComponent implements OnInit {
   UserFriendStatusTypes: typeof UserFriendStatusType = UserFriendStatusType;
-  searchNewUsersSource$: BehaviorSubject<Array<ISearchedUser>>;
+  private searchNewUsersSource$: BehaviorSubject<ISearchedUser[]>;
   searchNewUsers$: Observable<ISearchedUser[]>
   isCollapsedAccordionFindPeople: boolean;
-  searchNewUsers: FormControl;
+  searchNewUsers: FormControl<string>;
   constructor(public messagesService:MessagesService,
               private toastrService: ToastrService){
-    this.searchNewUsersSource$ = new BehaviorSubject([] as Array<ISearchedUser>);
+    this.searchNewUsersSource$ = new BehaviorSubject([] as ISearchedUser[]);
     this.searchNewUsers$ = this.searchNewUsersSource$.asObservable();
     this.isCollapsedAccordionFindPeople = false;
-    this.searchNewUsers = new FormControl<string>('',{ nonNullable: true });
+    this.searchNewUsers = new FormControl('',{ nonNullable: true });
 
   }
   ngOnInit(): void {
-    this.searchNewUsers?.valueChanges.pipe(
+    this.searchNewUsers.valueChanges.pipe(
       debounceTime(600),
       distinctUntilChanged(),
       switchMap((term: string)=>{
@@ -48,7 +48,7 @@ export class AccordionFindPeopleComponent implements OnInit {
     this.messagesService.sendInvitation(searchedUser).pipe(
       take(1),
       switchMap(() => this.searchNewUsers$.pipe(take(1))),
-    ).subscribe((users: Array<ISearchedUser>) => {
+    ).subscribe((users: ISearchedUser[]) => {
       this.toastrService.success("The invitation has been sent.")
       const searchNewUsers = users.map(user =>
         user.id === searchUser.id ? { ...user, status: UserFriendStatusType.InvitedByYou } : user

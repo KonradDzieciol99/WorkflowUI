@@ -1,12 +1,9 @@
-import { ValidationErrors, ValidatorFn } from '@angular/forms';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 export class CustomValidators {
     static minimumDateNgb(minDate: NgbDateStruct): ValidatorFn {  
-        return (control): ValidationErrors | null => {
-
-            if (!control.value)
-                return null;
+        return (control:AbstractControl<NgbDateStruct>): ValidationErrors | null => {
             
             const controlDate = new Date(control.value.year, control.value.month, control.value.day, 0, 0, 0, 0);
 
@@ -20,9 +17,9 @@ export class CustomValidators {
         };
     }
     static checkDateOrder(): ValidatorFn {
-        return (control): ValidationErrors | null => {
+        return (control:AbstractControl<{dueDate: NgbDateStruct,startDate: NgbDateStruct}>): ValidationErrors | null => {
             const dueDate = control.get('dueDate')?.value;
-            if (!control.value)
+            if (!dueDate)
                 return null;
 
             const dueDateDate = new Date(dueDate.year, dueDate.month, dueDate.day, 0, 0, 0, 0);
@@ -31,7 +28,7 @@ export class CustomValidators {
                 return null;
 
             const startDate = control.get('startDate')?.value;
-            if (!control.value)
+            if (!startDate)
                 return null;
 
             const startDateDate = new Date(startDate.year, startDate.month, startDate.day, 0, 0, 0, 0);

@@ -2,9 +2,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { DataSourceChangedEventArgs, DataStateChangeEventArgs } from '@syncfusion/ej2-angular-grids';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, Observable, filter, map, mergeMap, take, tap } from 'rxjs';
+import { BehaviorSubject, Observable, map, mergeMap, take, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { IProject } from '../shared/models/IProject';
+import { IProject, isIProject } from '../shared/models/IProject';
 import { IProjectCreateRequest } from '../shared/models/IProjectCreateRequest';
 import { ISyncfusionFormat } from '../shared/models/ISyncfusionFormat';
 
@@ -57,12 +57,13 @@ export class ProjectsService  {
   }
 
   deleteProject(state: DataSourceChangedEventArgs){
-
-    let id='';
-    if (Array.isArray(state.data))
-      id=state.data[0].id;
+    let id = '' ;
+    
+    if (Array.isArray(state.data) && state.data.length > 0 && isIProject(state.data[0])) 
+      id = state.data[0].id;
     else
-      this.toastrService.error("Error occured")
+      throw new Error("Error occured")
+        
     return this.http.delete<void>(`${this.projectsUrl}/projects/${id}`);
   }
   acceptProjectInvitation(projectId:string){

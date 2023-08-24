@@ -72,13 +72,13 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     if (chatRecipient.email && this.messageContent.value) {
       this.loading = true;
       this.chatService.sendMessage(chatRecipient, this.messageContent.value).subscribe({
-        next: () => {this.messageContent?.reset();},
+        next: () => {this.messageContent.reset();},
         complete: () =>{this.loading = false;} 
     });
     }
   }
-  ngOnDestroy(): void {
-    this.chatService.stopHubConnectionAndDeleteMessageThread();
+  async ngOnDestroy() {
+    await this.chatService.stopHubConnectionAndDeleteMessageThread();
   }
 
   loadMoreMessages(){
@@ -95,15 +95,14 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
   @HostListener('window:resize', ['$event'])
-  onResize() {//event: Event
+  onResize() {
     if (!this.hasMoreData) 
       return;
 
     if (!this.chat) 
       return;
     
-    if (this.chat && this.chat.nativeElement.scrollTop === 0) 
+    if (this.chat.nativeElement.scrollTop === 0) 
       this.loadMoreMessages()
-    
   }
 }

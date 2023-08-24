@@ -21,10 +21,10 @@ export class AppComponent implements OnInit {
       console.log("ddd")
     }
     
-  ngOnInit(): void {
-    this.initialize();
+  async ngOnInit() {
+    await this.initialize();
   }
-  initialize():void{
+  async initialize(){
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.showHeader = this.activatedRoute.firstChild?.snapshot.data['showHeader']!== false ? true : false;
@@ -32,7 +32,7 @@ export class AppComponent implements OnInit {
         this.showFooter = this.activatedRoute.firstChild?.snapshot.data['showFooter']!== false ? true : false;
       }
     });
-    this.presenceService.createHubConnection(this.oAuthService.getAccessToken())
+    await this.presenceService.createHubConnection(this.oAuthService.getAccessToken())
   }
 
 }

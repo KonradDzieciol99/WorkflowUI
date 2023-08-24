@@ -15,7 +15,7 @@ export class PresenceService {
   hubUrl = environment.signalRhubUrl;
   notificationUrl = environment.notificationUrl;
   private hubConnection?: HubConnection;
-  onlineUsersSource$: BehaviorSubject<string[]>;
+  private onlineUsersSource$: BehaviorSubject<string[]>;
   onlineUsers$:Observable<string[]>;
   private notificationsSource$: BehaviorSubject<INotification[]>;
   notifications$:Observable<INotification[]>;
@@ -39,6 +39,9 @@ export class PresenceService {
       take(1),
       tap(notifications=>this.notificationsSource$.next(notifications))
     );
+  }
+  onlineUsersNext(next:string[]){
+    this.onlineUsersSource$.next(next);
   }
   markNotificationAsRead(id:string){
     return this.http.put<void>(`${this.notificationUrl}/AppNotification/${id}`,{}).pipe(
@@ -67,7 +70,7 @@ export class PresenceService {
     return this.http.delete<void>(`${this.notificationUrl}/AppNotification/${notificationToDelete.id}`).pipe(
       take(1),
       tap(()=>{
-        if (notificationToDelete.displayed == false) {
+        if (!notificationToDelete.displayed) {
           this.unreadNotificationsIds$.pipe(take(1)).subscribe(unreadNotificationsIds =>  {
             const nextUnreadNotificationsIds = unreadNotificationsIds.filter(unreadNotification =>unreadNotification !== notificationToDelete.id);
             this.unreadNotificationsIdsSource$.next(nextUnreadNotificationsIds);
@@ -117,10 +120,10 @@ export class PresenceService {
       .withAutomaticReconnect()
       .build();
 
-    this.hubConnection.on('UserIsOnline', email => {
+    this.hubConnection.on('UserIsOnline', (email:string) => {
 
       this.onlineUsers$.pipe(take(1)).subscribe({
-        next: emails => {
+        next: (emails) => {
         const index = emails.findIndex(e => e === email)
         if (index === -1)
           this.onlineUsersSource$.next([...emails, email]);
@@ -129,26 +132,25 @@ export class PresenceService {
       })
 
     })
-    this.hubConnection.on('UserIsOffline', email => {
+    this.hubConnection.on('UserIsOffline', (email:string) => {
       this.onlineUsers$.pipe(take(1)).subscribe({
         next: (emails:string[]) => this.onlineUsersSource$.next(emails.filter(e => e !== email))
       })
     })
-    this.hubConnection.on('NewMessageReceived', ({username, knownAs}) => {
-      this.toastr.info(knownAs + ' has sent you a new message! Click me to see it')
+    this.hubConnection.on('NewMessageReceived', (email:string) => {
+      this.toastr.info(`${email} has sent you a new message! Click me to see it`)
         .onTap
         .pipe(take(1))
         .subscribe({
-          next: () => this.router.navigateByUrl('/members/' + username + '?tab=Messages')//!!!!!!!!!!!!!!!!!
+          next: async () => await this.router.navigateByUrl(`/members/${email}?tab=Messages`) 
         })
     });
 
-    this.hubConnection.on('NewInvitationToFriendsReceived', ({inviterEmail}) => {
+    this.hubConnection.on('NewInvitationToFriendsReceived', (inviterEmail:string) => {
       this.toastr.info(`${inviterEmail} sent you a friend request.`)
         .onTap
         .pipe(take(1))
-        .subscribe({
-        })
+        .subscribe()
     });
 
     this.hubConnection.on('NewNotificationReceived', (newNotification:INotification) => {
@@ -161,8 +163,8 @@ export class PresenceService {
       .pipe(take(1))
       .subscribe(([notifications, unreadNotificationsIds,allNotificationsCount])=>{
 
-        let newUnreadNotificationsIds:Array<string> = [...unreadNotificationsIds, newNotification.id];
-        let newNotifications:Array<INotification> = [...notifications, newNotification];
+        let newUnreadNotificationsIds = [...unreadNotificationsIds, newNotification.id];
+        let newNotifications = [...notifications, newNotification];
 
         if (newNotification.oldNotificationsIds) {
           for (const oldNotificationsId of newNotification.oldNotificationsIds) {
@@ -170,7 +172,7 @@ export class PresenceService {
 
             if (oldNotificationIndex !== -1) {
               const oldNotification = notifications[oldNotificationIndex];
-              if (oldNotification.displayed == false) {
+              if (!oldNotification.displayed) {
                 newUnreadNotificationsIds = unreadNotificationsIds.filter(x=>x !== oldNotification.id);
                 allNotificationsCount=allNotificationsCount-1;
               }

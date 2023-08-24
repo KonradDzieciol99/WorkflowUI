@@ -14,7 +14,7 @@ import { IProject } from 'src/app/shared/models/IProject';
   styleUrls: ['./settings-details.component.scss']
 })
 export class SettingsDetailsComponent implements OnInit,OnDestroy  {
-  private ngUnsubscribe$:Subject<void>;
+  private ngUnsubscribeSource$:Subject<void>;
   settingsForm?: FormGroup;
   projectMembers$:Observable<IProjectMember[]>
   initialProjectValue?: IProject;
@@ -23,7 +23,7 @@ export class SettingsDetailsComponent implements OnInit,OnDestroy  {
   constructor(private modalService:BsModalService,private photosService:PhotosService,private projectService:ProjectService) {
     this.formHasChanged = false;
     this.projectMembers$ = this.projectService.project$.pipe(map(x => {return x?.projectMembers ?? [];}));
-    this.ngUnsubscribe$ = new Subject<void>();
+    this.ngUnsubscribeSource$ = new Subject<void>();
   }
   ngOnInit(): void {
     this.projectService.project$.pipe(
@@ -50,7 +50,7 @@ export class SettingsDetailsComponent implements OnInit,OnDestroy  {
     
         this.formHasChanged = !(isSameIconUrl && isSameName && isSameLeader);
       }),
-      takeUntil(this.ngUnsubscribe$)
+      takeUntil(this.ngUnsubscribeSource$)
     ).subscribe();
 
     this.photosService.getProjectsIcons().pipe(take(1)).subscribe();
@@ -75,7 +75,7 @@ export class SettingsDetailsComponent implements OnInit,OnDestroy  {
     this.settingsForm?.get('iconUrl')?.value
   }
   ngOnDestroy() {
-    this.ngUnsubscribe$.next();
-    this.ngUnsubscribe$.complete();
+    this.ngUnsubscribeSource$.next();
+    this.ngUnsubscribeSource$.complete();
   }
 }

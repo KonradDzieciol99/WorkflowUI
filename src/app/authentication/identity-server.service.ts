@@ -24,7 +24,7 @@ export class IdentityServerService {
 
   private isDoneLoadingSubjectSource$ = new BehaviorSubject(false);
   public isDoneLoading$ = this.isDoneLoadingSubjectSource$.asObservable();
-  userProfileSubjectSource$ = new Subject<UserInfo>();
+  private userProfileSubjectSource$ = new Subject<UserInfo>();
   constructor(private readonly oAuthService: OAuthService) {
     this.load()
   }

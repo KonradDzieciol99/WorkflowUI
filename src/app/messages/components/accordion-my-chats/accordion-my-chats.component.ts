@@ -30,12 +30,10 @@ export class AccordionMyChatsComponent implements OnInit {
 
   }
   ngOnInit(): void {
-    this.searchUsersFormControl?.valueChanges.pipe(
+    this.searchUsersFormControl.valueChanges.pipe(
       debounceTime(600),
       distinctUntilChanged(),
-      switchMap((term: string)=>{
-          return this.messagesService.GetConfirmedFriendRequests(term ?? "").pipe(take(1));
-      })
+      switchMap((term)=>this.messagesService.GetConfirmedFriendRequests(term).pipe(take(1)))
     ).subscribe();
   }
   onFriendSelected(user:IUser){
@@ -43,17 +41,14 @@ export class AccordionMyChatsComponent implements OnInit {
     this.chatService.chatRecipient$.pipe(
       take(1),
       filter(chatRecipient => chatRecipient?.email !== user.email),
-      mergeMap(()=>{
-        this.chatService.stopHubConnectionAndDeleteMessageThread();
+      mergeMap(async ()=>{
+        await this.chatService.stopHubConnectionAndDeleteMessageThread();
         return from(this.chatService.createHubConnection(user.email, this.oAuthService.getAccessToken()))
       })
-    ).subscribe(()=>{
-      this.chatService.chatRecipientSource$.next(user)
-    });
-
+    ).subscribe(()=>this.chatService.chatRecipientNext(user));
   }
   declineAcceptedFriendInvitation(friend:IUser){
-    this.messagesService.declineAcceptedFriendInvitation(friend,this.userClaims['sub']).subscribe(()=>{
+    this.messagesService.declineAcceptedFriendInvitation(friend,this.userClaims['sub'] as string).subscribe(()=>{
       //this.allFriendsInvitationsSource.next(invitations);
       this.toastrService.success("you removed the user from friends.");
     });

@@ -52,7 +52,7 @@ export class ProjectService {
       switchMap((project) => {
         const params = new HttpParams().set('projectId', project.id);
 
-        return this.http.get<Array<ISearchedMember>>(`${this.aggregatorUrl}/Identity/searchMember/${email}`,{ params: params });
+        return this.http.get<ISearchedMember[]>(`${this.aggregatorUrl}/Identity/searchMember/${email}`,{ params: params });
       })
     );
   }

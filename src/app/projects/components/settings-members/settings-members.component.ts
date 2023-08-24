@@ -5,7 +5,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
 import { concatMap, debounceTime, distinctUntilChanged, of, take } from 'rxjs';
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window/confirm-window.component';
-import { InvitationStatus, ProjectMemberType } from 'src/app/shared/models/IProjectMember';
+import { InvitationStatus, ProjectMemberType, isIProjectMember } from 'src/app/shared/models/IProjectMember';
 import { ProjectMembersService } from '../../services/project-members.service';
 import { ProjectService } from '../../services/project.service';
 
@@ -19,10 +19,9 @@ export class SettingsMembersComponent implements OnInit {
   public toolbar: ToolbarItems[];
   @ViewChild('grid') grid?: GridComponent;
   public editSettings: EditSettingsModel;
-  searchMembers = new FormControl<string>('',[Validators.required]);
   invitationStatus: typeof InvitationStatus = InvitationStatus;
   projectMemberType: typeof ProjectMemberType = ProjectMemberType;
-
+  searchMembers: FormControl<string>;
   constructor(public projectMembersService:ProjectMembersService,
               private projectService:ProjectService,
               private modalService: BsModalService,
@@ -30,6 +29,7 @@ export class SettingsMembersComponent implements OnInit {
       this.pageSettings = { pageSize: 10/*, pageCount: 8*/ };
       this.toolbar = ['Delete'];
       this.editSettings = { allowEditing: false, allowAdding: true, allowDeleting: true, mode: 'Dialog' };
+      this.searchMembers = new FormControl('',{nonNullable:true ,validators:[Validators.required]});
   }
   ngOnInit(): void {
     this.searchMembers.valueChanges.pipe(
@@ -38,12 +38,12 @@ export class SettingsMembersComponent implements OnInit {
     ).subscribe({
       next:(value)=>{
         if(this.grid) 
-          this.grid.search(value ?? "");
+          this.grid.search(value);
        }
       })
   }
   public dataStateChange(state: DataStateChangeEventArgs): void {
-    this.projectMembersService.execute(state);
+    this.projectMembersService.execute(state).subscribe();
   }
   public dataSourceChanged(state: DataSourceChangedEventArgs): void {
 
@@ -51,18 +51,19 @@ export class SettingsMembersComponent implements OnInit {
 
       const bsModalRef = this.modalService.show(ConfirmWindowComponent, {class: 'modal-sm modal-dialog-centered'});
 
-      bsModalRef.content?.result$?.pipe(
+      bsModalRef.content?.result$.pipe(
         take(1),
         concatMap(value=>{
           
           if(!value) return of();
 
-          let id:string;
-          if (Array.isArray(state.data))
-            id=state.data[0]?.id
+          let id = '' ;
+    
+          if (Array.isArray(state.data) && state.data.length > 0 && isIProjectMember(state.data[0])) 
+            id = state.data[0].id;
           else
             throw new Error('id not given')
-          
+       
           return this.projectService.deleteMember(id);
         })
       )
@@ -71,9 +72,8 @@ export class SettingsMembersComponent implements OnInit {
           this.toastrService.success(`Task has been deleted`);
 
       },
-        complete:()=> {
-          if (state.endEdit) 
-            state.endEdit();
+        complete:() => {
+          if (state.endEdit) state.endEdit();
         },
       });
     }

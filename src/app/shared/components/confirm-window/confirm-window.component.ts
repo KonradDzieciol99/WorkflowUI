@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-confirm-window',
@@ -8,16 +8,18 @@ import { Subject } from 'rxjs';
   styleUrls: ['./confirm-window.component.scss']
 })
 export class ConfirmWindowComponent {
-  result$: Subject<boolean>;
+  private resultSource$: Subject<boolean>;
+  result$: Observable<boolean>;
   constructor(public bsModalRef: BsModalRef) {
-    this.result$ = new Subject<boolean>();
+    this.resultSource$ = new Subject();
+    this.result$ = this.resultSource$.asObservable();
   }
   confirm(): void {
-    this.result$.next(true)
-    this.bsModalRef?.hide();
+    this.resultSource$.next(true)
+    this.bsModalRef.hide();
   }
   decline(): void {
-    this.result$.next(false)
-    this.bsModalRef?.hide();
+    this.resultSource$.next(false)
+    this.bsModalRef.hide();
   }
 }

@@ -1,6 +1,6 @@
-import { Component, Input, OnInit, Self } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, Self } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { State } from '../../models/IAppTask';
 import { ITextIconPair } from '../../models/ITextIconPair';
 
@@ -9,23 +9,30 @@ import { ITextIconPair } from '../../models/ITextIconPair';
   templateUrl: './c-reactive-dropdown.component.html',
   styleUrls: ['./c-reactive-dropdown.component.scss']
 })
-export class CReactiveDropdownComponent <T>implements OnInit,ControlValueAccessor  {
+export class CReactiveDropdownComponent <T>implements OnInit,ControlValueAccessor,OnDestroy  {
   isStatusPanelOpen: boolean;
   statuses: typeof State = State;
   control?: FormControl<T>;
   @Input() map?: Map<T, ITextIconPair>;
   currentValue?:ITextIconPair;
-  sub?:Subscription;
+  private ngUnsubscribeSource$: Subject<void>;
+  ngUnsubscribe$: Observable<void>;
   constructor(@Self() public controlDir: NgControl) {
     this.controlDir.valueAccessor = this;
-    this.isStatusPanelOpen=false;
+    this.isStatusPanelOpen = false;
+    this.ngUnsubscribeSource$ = new Subject<void>();
+    this.ngUnsubscribe$ = this.ngUnsubscribeSource$.asObservable();
+
   }
+
   ngOnInit(): void {
 
     this.control = this.controlDir.control as FormControl;
 
-    this.currentValue = this.map?.get(this.control?.value);
-    this.sub = this.control?.valueChanges.subscribe(state=>{
+    this.currentValue = this.map?.get(this.control.value);
+    this.control.valueChanges.pipe(
+      takeUntil(this.ngUnsubscribe$)
+    ).subscribe(state=>{
       this.currentValue = this.map?.get(state);
     })
   }
@@ -46,4 +53,7 @@ export class CReactiveDropdownComponent <T>implements OnInit,ControlValueAccesso
   setDisabledState?(isDisabled: boolean): void {
   }
 
+  ngOnDestroy(): void {
+    this.ngUnsubscribeSource$.next();
+  }
 }
