@@ -11,7 +11,7 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { filter, of, switchMap, take } from 'rxjs';
+import { Subject, filter, of, switchMap, take, takeUntil } from 'rxjs';
 import { Message } from 'src/app/shared/models/IMessage';
 import { IUser } from 'src/app/shared/models/IUser';
 import { ChatService } from '../../services/chat.service';
@@ -32,6 +32,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChildren('messages') messages?: QueryList<ElementRef>;
   @ViewChild('chat') chat?: ElementRef<HTMLDivElement>;
   @ViewChild('formInput') formInput?: ElementRef;
+  private ngUnsubscribeSource$: Subject<void>;
   constructor(public chatService: ChatService) {
     this.messageContent = new FormControl('Hello', {
       nonNullable: true,
@@ -41,6 +42,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isloadingOlderMessages = false;
     this.hasMoreData = true;
     this.hasScrolledOnce = false;
+    this.ngUnsubscribeSource$ = new Subject<void>();
   }
   ngOnInit(): void {
     this.messageContent.valueChanges
@@ -51,10 +53,14 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
           }
           return of([]);
         }),
+        takeUntil(this.ngUnsubscribeSource$),
       )
       .subscribe();
     this.chatService.messageThread$
-      .pipe(filter((messages): messages is Message[] => messages !== undefined))
+      .pipe(
+        filter((messages): messages is Message[] => messages !== undefined),
+        takeUntil(this.ngUnsubscribeSource$),
+      )
       .subscribe((x) => {
         for (let index = 0; index < x.length; index++) {
           if (
@@ -68,7 +74,9 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       });
   }
   ngAfterViewInit() {
-    this.messages?.changes.pipe().subscribe(() => this.scrollToBottom('auto'));
+    this.messages?.changes
+      .pipe(takeUntil(this.ngUnsubscribeSource$))
+      .subscribe(() => this.scrollToBottom('auto'));
   }
   scrollToBottom = (behavior: ScrollBehavior) => {
     if (!this.chat) return;
@@ -94,6 +102,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       this.loading = true;
       this.chatService
         .sendMessage(chatRecipient, this.messageContent.value)
+        .pipe(takeUntil(this.ngUnsubscribeSource$))
         .subscribe({
           next: () => {
             this.messageContent.reset();
@@ -105,6 +114,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
   async ngOnDestroy() {
+    this.ngUnsubscribeSource$.next();
     await this.chatService.stopHubConnectionAndDeleteMessageThread();
   }
 
@@ -114,7 +124,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isloadingOlderMessages = true;
     this.chatService
       .getMessages(this.chatRecipient, 15)
-      .pipe(take(1))
+      .pipe(take(1), takeUntil(this.ngUnsubscribeSource$))
       .subscribe((messages) => {
         if (messages.length < 15) this.hasMoreData = false;
 

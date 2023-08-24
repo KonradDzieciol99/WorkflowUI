@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import {
   DataSourceChangedEventArgs,
@@ -10,7 +10,16 @@ import {
 } from '@syncfusion/ej2-angular-grids';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
-import { debounceTime, distinctUntilChanged, mergeMap, of, take } from 'rxjs';
+import {
+  Observable,
+  Subject,
+  debounceTime,
+  distinctUntilChanged,
+  mergeMap,
+  of,
+  take,
+  takeUntil,
+} from 'rxjs';
 import { ConfirmWindowComponent } from '../shared/components/confirm-window/confirm-window.component';
 import { CreateProjectModalComponent } from './components/modals/create-project-modal/create-project-modal.component';
 import { ProjectsService } from './projects.service';
@@ -20,17 +29,16 @@ import { ProjectsService } from './projects.service';
   templateUrl: './projects.component.html',
   styleUrls: ['./projects.component.scss'],
 })
-export class ProjectsComponent implements OnInit {
+export class ProjectsComponent implements OnInit, OnDestroy {
   public pageSettings: PageSettingsModel;
   public toolbar: ToolbarItems[];
-  @ViewChild('grid') grid: GridComponent | undefined;
+  @ViewChild('grid') grid?: GridComponent;
   public editSettings: EditSettingsModel;
   searchProjects: FormControl<string>;
-
+  private ngUnsubscribeSource$: Subject<void>;
   constructor(
     public service: ProjectsService,
     private modalService: BsModalService,
-    private toastrService: ToastrService,
   ) {
     this.pageSettings = { pageSize: 10 /*, pageCount: 8*/ };
     this.toolbar = ['Delete'];
@@ -43,7 +51,9 @@ export class ProjectsComponent implements OnInit {
       nonNullable: true,
       validators: [Validators.required],
     });
+    this.ngUnsubscribeSource$ = new Subject<void>();
   }
+
   createProject() {
     //const bsModalRef =
     this.modalService.show(CreateProjectModalComponent, {
@@ -66,6 +76,7 @@ export class ProjectsComponent implements OnInit {
             if (!value) return of();
             return this.service.deleteProject(state);
           }),
+          takeUntil(this.ngUnsubscribeSource$),
         )
         .subscribe({
           complete: () => {
@@ -78,11 +89,18 @@ export class ProjectsComponent implements OnInit {
     const state = { skip: 0, take: 10 };
     this.service.execute(state);
     this.searchProjects.valueChanges
-      .pipe(debounceTime(300), distinctUntilChanged())
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntil(this.ngUnsubscribeSource$),
+      )
       .subscribe({
         next: (value) => {
-          this.grid?.search(value ?? '');
+          this.grid?.search(value);
         },
       });
+  }
+  ngOnDestroy(): void {
+    this.ngUnsubscribeSource$.next();
   }
 }

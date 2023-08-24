@@ -1,7 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 enum Theme {
   Light = 'light',
   Dark = 'dark',
@@ -15,12 +15,11 @@ enum Theme {
 })
 export class ThemeSwitchButtonComponent implements OnInit, OnDestroy {
   //public themeForm?""
-  private themeFormValueChangesSub?: Subscription;
   public currentTheme?: string;
   private themeMap: Map<Theme, string>;
   public isNotificationPanelOpen: boolean;
   public themeForm?: FormGroup<{ theme: FormControl<Theme> }>;
-
+  private ngUnsubscribeSource$: Subject<void>;
   constructor(
     @Inject(DOCUMENT) private document: Document,
     private renderer2: Renderer2,
@@ -31,6 +30,7 @@ export class ThemeSwitchButtonComponent implements OnInit, OnDestroy {
       [Theme.Auto, 'bi bi-arrow-left-right'],
     ]);
     this.isNotificationPanelOpen = false;
+    this.ngUnsubscribeSource$ = new Subject<void>();
   }
   ngOnInit(): void {
     let theme = localStorage.getItem('theme') as Theme | undefined;
@@ -60,9 +60,10 @@ export class ThemeSwitchButtonComponent implements OnInit, OnDestroy {
       });
   }
   watchThemeButton() {
-    this.themeFormValueChangesSub = this.themeForm
+    this.themeForm
       ?.get('theme')
-      ?.valueChanges.subscribe((value) => this.setTheme(value));
+      ?.valueChanges.pipe(takeUntil(this.ngUnsubscribeSource$))
+      .subscribe((value) => this.setTheme(value));
   }
   private loadSyncfusionStyles(isDarkTheme: boolean): void {
     const themeUrl = isDarkTheme ? 'dark.css' : 'light.css';
@@ -125,8 +126,6 @@ export class ThemeSwitchButtonComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.themeFormValueChangesSub) {
-      this.themeFormValueChangesSub.unsubscribe();
-    }
+    this.ngUnsubscribeSource$.next();
   }
 }

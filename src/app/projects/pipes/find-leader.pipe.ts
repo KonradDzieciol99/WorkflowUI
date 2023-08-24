@@ -9,9 +9,9 @@ import {
   pure: true,
 })
 export class FindLeaderPipe implements PipeTransform {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   transform(
     value: IProjectMember[],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ...args: unknown[]
   ): IProjectMember | undefined {
     return value.find((x) => x.type === ProjectMemberType.Leader);

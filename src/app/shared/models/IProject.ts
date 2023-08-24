@@ -1,5 +1,4 @@
-import { isArrayOfType } from '../functions/isArrayOfType';
-import { IProjectMember, isIProjectMember } from './IProjectMember';
+import { IProjectMember } from './IProjectMember';
 
 export interface IProject {
   name: string;

@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { ToastrService } from 'ngx-toastr';
 import {
   Observable,
+  Subject,
   debounceTime,
   distinctUntilChanged,
   filter,
@@ -11,6 +12,7 @@ import {
   mergeMap,
   switchMap,
   take,
+  takeUntil,
 } from 'rxjs';
 import { IUser } from 'src/app/shared/models/IUser';
 import { MessagesService } from '../../messages.service';
@@ -21,12 +23,13 @@ import { ChatService } from '../../services/chat.service';
   templateUrl: './accordion-my-chats.component.html',
   styleUrls: ['./accordion-my-chats.component.scss'],
 })
-export class AccordionMyChatsComponent implements OnInit {
+export class AccordionMyChatsComponent implements OnInit, OnDestroy {
   isCollapsedAccordionMyChats: boolean;
   friendsWithActivityStatus$: Observable<IUser[]>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   userClaims: Record<string, any>;
   searchUsersFormControl: FormControl<string>;
+  private ngUnsubscribeSource$: Subject<void>;
   constructor(
     public chatService: ChatService,
     private readonly oAuthService: OAuthService,
@@ -40,7 +43,9 @@ export class AccordionMyChatsComponent implements OnInit {
     this.searchUsersFormControl = new FormControl<string>('', {
       nonNullable: true,
     });
+    this.ngUnsubscribeSource$ = new Subject<void>();
   }
+
   ngOnInit(): void {
     this.searchUsersFormControl.valueChanges
       .pipe(
@@ -49,6 +54,7 @@ export class AccordionMyChatsComponent implements OnInit {
         switchMap((term) =>
           this.messagesService.GetConfirmedFriendRequests(term).pipe(take(1)),
         ),
+        takeUntil(this.ngUnsubscribeSource$),
       )
       .subscribe();
   }
@@ -66,15 +72,20 @@ export class AccordionMyChatsComponent implements OnInit {
             ),
           );
         }),
+        takeUntil(this.ngUnsubscribeSource$),
       )
       .subscribe(() => this.chatService.chatRecipientNext(user));
   }
   declineAcceptedFriendInvitation(friend: IUser) {
     this.messagesService
       .declineAcceptedFriendInvitation(friend, this.userClaims['sub'] as string)
+      .pipe(takeUntil(this.ngUnsubscribeSource$))
       .subscribe(() => {
         //this.allFriendsInvitationsSource.next(invitations);
         this.toastrService.success('you removed the user from friends.');
       });
+  }
+  ngOnDestroy(): void {
+    this.ngUnsubscribeSource$.next();
   }
 }

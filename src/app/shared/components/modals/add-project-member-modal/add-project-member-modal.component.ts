@@ -1,15 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
 import {
   BehaviorSubject,
   Observable,
+  Subject,
   debounceTime,
   distinctUntilChanged,
   of,
   switchMap,
   take,
+  takeUntil,
 } from 'rxjs';
 import { ProjectService } from 'src/app/projects/services/project.service';
 import {
@@ -22,11 +24,12 @@ import {
   templateUrl: './add-project-member-modal.component.html',
   styleUrls: ['./add-project-member-modal.component.scss'],
 })
-export class AddProjectMemberModalComponent implements OnInit {
+export class AddProjectMemberModalComponent implements OnInit, OnDestroy {
   searchMember: FormControl<string>;
   private searchedMemberSource$: BehaviorSubject<ISearchedMember[]>;
   searchedMember$: Observable<ISearchedMember[]>;
-  memberStatusTypes: typeof MemberStatusType = MemberStatusType;
+  memberStatusTypes: typeof MemberStatusType;
+  private ngUnsubscribeSource$: Subject<void>;
   constructor(
     public selfBsModalRef: BsModalRef,
     private toastrService: ToastrService,
@@ -38,7 +41,10 @@ export class AddProjectMemberModalComponent implements OnInit {
     });
     this.searchedMemberSource$ = new BehaviorSubject([] as ISearchedMember[]);
     this.searchedMember$ = this.searchedMemberSource$.asObservable();
+    this.ngUnsubscribeSource$ = new Subject<void>();
+    this.memberStatusTypes = MemberStatusType;
   }
+
   ngOnInit(): void {
     this.searchMember.valueChanges
       .pipe(
@@ -48,23 +54,14 @@ export class AddProjectMemberModalComponent implements OnInit {
           if (term) {
             return this.projectService
               .findMemberByEmailAndCheckState(term)
-              .pipe(take(1));
+              .pipe(take(1), takeUntil(this.ngUnsubscribeSource$));
           }
           return of([]);
         }),
+        takeUntil(this.ngUnsubscribeSource$),
       )
       .subscribe((searchNewUsers) => {
-        this.searchedMemberSource$.next([
-          ...searchNewUsers,
-          ...searchNewUsers,
-          ...searchNewUsers,
-          ...searchNewUsers,
-          ...searchNewUsers,
-          ...searchNewUsers,
-          ...searchNewUsers,
-          ...searchNewUsers,
-          ...searchNewUsers,
-        ]);
+        this.searchedMemberSource$.next([...searchNewUsers]);
       });
   }
   sendInvitation(user: ISearchedMember): void {
@@ -73,6 +70,7 @@ export class AddProjectMemberModalComponent implements OnInit {
       .pipe(
         take(1),
         switchMap(() => this.searchedMember$.pipe(take(1))),
+        takeUntil(this.ngUnsubscribeSource$),
       )
       .subscribe((searchedMembers) => {
         const searchNewUsers = searchedMembers.map((user) =>
@@ -84,5 +82,8 @@ export class AddProjectMemberModalComponent implements OnInit {
 
         this.toastrService.success('The invitation has been sent');
       });
+  }
+  ngOnDestroy(): void {
+    this.ngUnsubscribeSource$.next();
   }
 }

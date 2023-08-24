@@ -28,7 +28,9 @@ export class LoadingInterceptor implements HttpInterceptor {
 
     return from(this.busyService.busy()).pipe(
       mergeMap(() => next.handle(request)),
-      finalize(async () => void (await this.busyService.idle())),
+      finalize(async () => {
+        await this.busyService.idle();
+      }),
     );
 
     //return next.handle(request)//new

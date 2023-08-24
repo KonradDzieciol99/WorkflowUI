@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   BehaviorSubject,
   Observable,
+  Subject,
   debounceTime,
   distinctUntilChanged,
   of,
   switchMap,
   take,
+  takeUntil,
 } from 'rxjs';
 import {
   ISearchedUser,
@@ -22,12 +24,13 @@ import { FormControl } from '@angular/forms';
   templateUrl: './accordion-find-people.component.html',
   styleUrls: ['./accordion-find-people.component.scss'],
 })
-export class AccordionFindPeopleComponent implements OnInit {
-  UserFriendStatusTypes: typeof UserFriendStatusType = UserFriendStatusType;
+export class AccordionFindPeopleComponent implements OnInit, OnDestroy {
+  UserFriendStatusTypes: typeof UserFriendStatusType;
   private searchNewUsersSource$: BehaviorSubject<ISearchedUser[]>;
   searchNewUsers$: Observable<ISearchedUser[]>;
   isCollapsedAccordionFindPeople: boolean;
   searchNewUsers: FormControl<string>;
+  private ngUnsubscribeSource$: Subject<void>;
   constructor(
     public messagesService: MessagesService,
     private toastrService: ToastrService,
@@ -36,7 +39,10 @@ export class AccordionFindPeopleComponent implements OnInit {
     this.searchNewUsers$ = this.searchNewUsersSource$.asObservable();
     this.isCollapsedAccordionFindPeople = false;
     this.searchNewUsers = new FormControl('', { nonNullable: true });
+    this.UserFriendStatusTypes = UserFriendStatusType;
+    this.ngUnsubscribeSource$ = new Subject<void>();
   }
+
   ngOnInit(): void {
     this.searchNewUsers.valueChanges
       .pipe(
@@ -50,6 +56,7 @@ export class AccordionFindPeopleComponent implements OnInit {
           }
           return of([]);
         }),
+        takeUntil(this.ngUnsubscribeSource$),
       )
       .subscribe((searchNewUsers) => {
         this.searchNewUsersSource$.next(searchNewUsers);
@@ -68,6 +75,7 @@ export class AccordionFindPeopleComponent implements OnInit {
       .pipe(
         take(1),
         switchMap(() => this.searchNewUsers$.pipe(take(1))),
+        takeUntil(this.ngUnsubscribeSource$),
       )
       .subscribe((users: ISearchedUser[]) => {
         this.toastrService.success('The invitation has been sent.');
@@ -78,5 +86,8 @@ export class AccordionFindPeopleComponent implements OnInit {
         );
         this.searchNewUsersSource$.next(searchNewUsers);
       });
+  }
+  ngOnDestroy(): void {
+    this.ngUnsubscribeSource$.next();
   }
 }

@@ -193,8 +193,9 @@ export class PresenceService {
         .info(`${email} has sent you a new message! Click me to see it`)
         .onTap.pipe(take(1))
         .subscribe({
-          next: async () =>
-            await this.router.navigateByUrl(`/members/${email}?tab=Messages`),
+          next: async () => {
+            await this.router.navigateByUrl(`/members/${email}?tab=Messages`);
+          },
         });
     });
 

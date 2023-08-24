@@ -7,7 +7,7 @@
       "parserOptions": {
         "project": ["tsconfig.(app|lib|spec).json"]
       },
-      "plugins": ["rxjs"],
+      "plugins": ["rxjs", "rxjs-angular"],
       "extends": [
         "eslint:recommended",
 
@@ -65,7 +65,8 @@
           {
             "ignoreStatic": true
           }
-        ]
+        ],
+        "rxjs-angular/prefer-takeuntil": "error"
       }
     },
     {

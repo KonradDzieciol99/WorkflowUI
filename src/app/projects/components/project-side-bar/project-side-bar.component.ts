@@ -11,9 +11,10 @@ import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import {
   BehaviorSubject,
   Observable,
-  Subscription,
+  Subject,
   concatMap,
   take,
+  takeUntil,
 } from 'rxjs';
 import { ProjectService } from 'src/app/projects/services/project.service';
 import { IProject } from 'src/app/shared/models/IProject';
@@ -27,14 +28,11 @@ import { ProjectMembersService } from '../../services/project-members.service';
 })
 export class ProjectSideBarComponent implements OnInit, OnDestroy {
   private dismissReason: string;
-  private sidenavStateSub: Subscription;
   private sidenavStateSource$: BehaviorSubject<boolean>;
   project$: Observable<IProject | undefined>;
   sidenavState$: Observable<boolean>;
-  @ViewChild('sideBar', { static: true }) sideBarRef:
-    | TemplateRef<unknown>
-    | undefined;
-
+  @ViewChild('sideBar', { static: true }) sideBarRef?: TemplateRef<unknown>;
+  private ngUnsubscribeSource$: Subject<void>;
   constructor(
     private activatedRoute: ActivatedRoute,
     private projectService: ProjectService,
@@ -44,15 +42,19 @@ export class ProjectSideBarComponent implements OnInit, OnDestroy {
     private offcanvasService: NgbOffcanvas,
     private breadcrumbService: BreadcrumbService,
   ) {
+    this.ngUnsubscribeSource$ = new Subject<void>();
+
     this.dismissReason = 'Resizing';
 
     this.project$ = this.projectService.project$;
     this.sidenavStateSource$ = new BehaviorSubject(true);
     this.sidenavState$ = this.sidenavStateSource$.asObservable();
-    this.sidenavStateSub = this.sidenavState$.pipe().subscribe((state) => {
-      if (state) this.onResize();
-      else this.offcanvasService.dismiss(this.dismissReason);
-    });
+    this.sidenavState$
+      .pipe(takeUntil(this.ngUnsubscribeSource$))
+      .subscribe((state) => {
+        if (state) this.onResize();
+        else this.offcanvasService.dismiss(this.dismissReason);
+      });
   }
   ngOnInit(): void {
     this.onResize();
@@ -72,19 +74,19 @@ export class ProjectSideBarComponent implements OnInit, OnDestroy {
         concatMap(() =>
           this.projectMembersService.execute(state).pipe(take(1)),
         ),
+        takeUntil(this.ngUnsubscribeSource$),
       )
       .subscribe({
-        next: () => {},
-        error: () => this.router.navigate(['../projects']),
+        error: async () => await this.router.navigate(['../projects']),
       });
   }
   changeStateSideNav() {
     this.sidenavState$
-      .pipe(take(1))
+      .pipe(take(1), takeUntil(this.ngUnsubscribeSource$))
       .subscribe((state) => this.sidenavStateSource$.next(!state));
   }
   ngOnDestroy(): void {
-    this.sidenavStateSub.unsubscribe();
+    this.ngUnsubscribeSource$.next();
   }
   @HostListener('window:resize') onResize() {
     const mdBreakpoint = 768;

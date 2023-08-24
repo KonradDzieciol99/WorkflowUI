@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import {
   DataSourceChangedEventArgs,
@@ -10,7 +10,15 @@ import {
 } from '@syncfusion/ej2-angular-grids';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
-import { concatMap, debounceTime, distinctUntilChanged, of, take } from 'rxjs';
+import {
+  Subject,
+  concatMap,
+  debounceTime,
+  distinctUntilChanged,
+  of,
+  take,
+  takeUntil,
+} from 'rxjs';
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window/confirm-window.component';
 import {
   InvitationStatus,
@@ -25,7 +33,7 @@ import { ProjectService } from '../../services/project.service';
   templateUrl: './settings-members.component.html',
   styleUrls: ['./settings-members.component.scss'],
 })
-export class SettingsMembersComponent implements OnInit {
+export class SettingsMembersComponent implements OnInit, OnDestroy {
   public pageSettings: PageSettingsModel;
   public toolbar: ToolbarItems[];
   @ViewChild('grid') grid?: GridComponent;
@@ -33,6 +41,7 @@ export class SettingsMembersComponent implements OnInit {
   invitationStatus: typeof InvitationStatus = InvitationStatus;
   projectMemberType: typeof ProjectMemberType = ProjectMemberType;
   searchMembers: FormControl<string>;
+  private ngUnsubscribeSource$: Subject<void>;
   constructor(
     public projectMembersService: ProjectMembersService,
     private projectService: ProjectService,
@@ -51,10 +60,16 @@ export class SettingsMembersComponent implements OnInit {
       nonNullable: true,
       validators: [Validators.required],
     });
+    this.ngUnsubscribeSource$ = new Subject<void>();
   }
+
   ngOnInit(): void {
     this.searchMembers.valueChanges
-      .pipe(debounceTime(300), distinctUntilChanged())
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntil(this.ngUnsubscribeSource$),
+      )
       .subscribe({
         next: (value) => {
           if (this.grid) this.grid.search(value);
@@ -62,7 +77,10 @@ export class SettingsMembersComponent implements OnInit {
       });
   }
   public dataStateChange(state: DataStateChangeEventArgs): void {
-    this.projectMembersService.execute(state).subscribe();
+    this.projectMembersService
+      .execute(state)
+      .pipe(takeUntil(this.ngUnsubscribeSource$))
+      .subscribe();
   }
   public dataSourceChanged(state: DataSourceChangedEventArgs): void {
     if (state.requestType === 'delete') {
@@ -88,6 +106,7 @@ export class SettingsMembersComponent implements OnInit {
 
             return this.projectService.deleteMember(id);
           }),
+          takeUntil(this.ngUnsubscribeSource$),
         )
         .subscribe({
           next: () => {
@@ -98,5 +117,8 @@ export class SettingsMembersComponent implements OnInit {
           },
         });
     }
+  }
+  ngOnDestroy(): void {
+    this.ngUnsubscribeSource$.next();
   }
 }

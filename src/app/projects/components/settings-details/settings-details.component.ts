@@ -27,11 +27,15 @@ import { IProject } from 'src/app/shared/models/IProject';
 })
 export class SettingsDetailsComponent implements OnInit, OnDestroy {
   private ngUnsubscribeSource$: Subject<void>;
-  settingsForm?: FormGroup;
   projectMembers$: Observable<IProjectMember[]>;
   initialProjectValue?: IProject;
   formHasChanged: boolean;
-
+  settingsForm?: FormGroup<{
+    id: FormControl<string>;
+    name: FormControl<string>;
+    iconUrl: FormControl<string>;
+    leader: FormControl<IProjectMember | undefined>;
+  }>;
   constructor(
     private modalService: BsModalService,
     private photosService: PhotosService,
@@ -96,7 +100,10 @@ export class SettingsDetailsComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    this.photosService.getProjectsIcons().pipe(take(1)).subscribe();
+    this.photosService
+      .getProjectsIcons()
+      .pipe(take(1), takeUntil(this.ngUnsubscribeSource$))
+      .subscribe();
   }
   openIconPicker() {
     const bsModalRef = this.modalService.show(IconPickerComponent, {
@@ -107,9 +114,10 @@ export class SettingsDetailsComponent implements OnInit, OnDestroy {
       bsModalRef.content.icons$ = this.photosService.icons$;
 
     bsModalRef.content?.result$
-      ?.pipe(
+      .pipe(
         takeUntil(this.modalService.onHide),
         takeUntil(this.modalService.onHidden),
+        takeUntil(this.ngUnsubscribeSource$),
       )
       .subscribe({
         next: (IIcon) => {

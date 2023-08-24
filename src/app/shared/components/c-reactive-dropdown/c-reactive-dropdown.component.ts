@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit, Self } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { State } from '../../models/IAppTask';
 import { ITextIconPair } from '../../models/ITextIconPair';
 
@@ -18,12 +18,10 @@ export class CReactiveDropdownComponent<T>
   @Input() map?: Map<T, ITextIconPair>;
   currentValue?: ITextIconPair;
   private ngUnsubscribeSource$: Subject<void>;
-  ngUnsubscribe$: Observable<void>;
   constructor(@Self() public controlDir: NgControl) {
     this.controlDir.valueAccessor = this;
     this.isStatusPanelOpen = false;
     this.ngUnsubscribeSource$ = new Subject<void>();
-    this.ngUnsubscribe$ = this.ngUnsubscribeSource$.asObservable();
   }
 
   ngOnInit(): void {
@@ -31,7 +29,7 @@ export class CReactiveDropdownComponent<T>
 
     this.currentValue = this.map?.get(this.control.value);
     this.control.valueChanges
-      .pipe(takeUntil(this.ngUnsubscribe$))
+      .pipe(takeUntil(this.ngUnsubscribeSource$))
       .subscribe((state) => {
         this.currentValue = this.map?.get(state);
       });

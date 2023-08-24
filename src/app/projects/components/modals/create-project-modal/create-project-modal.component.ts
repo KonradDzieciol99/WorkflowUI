@@ -1,9 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
-import { take, takeUntil } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
 import { ProjectsService } from 'src/app/projects/projects.service';
 import { IIcon } from 'src/app/shared/models/IIcon';
 import { IProjectCreateRequest } from 'src/app/shared/models/IProjectCreateRequest';
@@ -15,9 +15,9 @@ import { IconPickerComponent } from '../../icon-picker/icon-picker.component';
   templateUrl: './create-project-modal.component.html',
   styleUrls: ['./create-project-modal.component.scss'],
 })
-export class CreateProjectModalComponent implements OnInit {
+export class CreateProjectModalComponent implements OnInit, OnDestroy {
   public projektForm: FormGroup;
-
+  private ngUnsubscribeSource$: Subject<void>;
   constructor(
     public bsModalRef: BsModalRef,
     private projectsService: ProjectsService,
@@ -33,11 +33,13 @@ export class CreateProjectModalComponent implements OnInit {
       }),
       icon: new FormControl<IIcon | null>(null, [Validators.required]),
     });
+    this.ngUnsubscribeSource$ = new Subject<void>();
   }
+
   ngOnInit(): void {
     this.photosService
       .getProjectsIcons()
-      .pipe(take(1))
+      .pipe(take(1), takeUntil(this.ngUnsubscribeSource$))
       .subscribe({
         next: (icons) => {
           const random = Math.floor(Math.random() * icons.length);
@@ -58,6 +60,7 @@ export class CreateProjectModalComponent implements OnInit {
         //take(1),
         takeUntil(this.modalService.onHide),
         takeUntil(this.modalService.onHidden),
+        takeUntil(this.ngUnsubscribeSource$),
       )
       .subscribe({
         next: (IIcon) => {
@@ -76,7 +79,7 @@ export class CreateProjectModalComponent implements OnInit {
 
     this.projectsService
       .createProject(this.projektForm.value as IProjectCreateRequest)
-      .pipe(take(1))
+      .pipe(take(1), takeUntil(this.ngUnsubscribeSource$))
       .subscribe({
         next: (project) => {
           this.toastrService.success(
@@ -93,5 +96,8 @@ export class CreateProjectModalComponent implements OnInit {
   }
   onImageLoad(event: Event) {
     this.renderer.addClass(event.target as HTMLImageElement, 'loaded');
+  }
+  ngOnDestroy(): void {
+    this.ngUnsubscribeSource$.next();
   }
 }

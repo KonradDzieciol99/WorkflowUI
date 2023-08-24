@@ -1,7 +1,13 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges,
+} from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
-import { mergeMap, of, take, takeUntil, tap } from 'rxjs';
+import { Subject, mergeMap, of, take, takeUntil, tap } from 'rxjs';
 import { MessagesService } from 'src/app/messages/messages.service';
 import { ProjectsService } from 'src/app/projects/projects.service';
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window/confirm-window.component';
@@ -17,17 +23,23 @@ import { PresenceService } from 'src/app/shared/services/presence.service';
   templateUrl: './notification-card.component.html',
   styleUrls: ['./notification-card.component.scss'],
 })
-export class NotificationCardComponent implements OnChanges {
-  @Input('notification') notificationValue?: INotification;
-  notification?: INotification;
-  notificationsTypes: typeof NotificationType = NotificationType;
+export class NotificationCardComponent implements OnChanges, OnDestroy {
+  @Input('notification')
+  public notificationValue?: INotification;
+  public notification?: INotification;
+  notificationsTypes: typeof NotificationType;
+  private ngUnsubscribeSource$: Subject<void>;
   constructor(
     public messagesService: MessagesService,
     private toastrService: ToastrService,
     private presenceService: PresenceService,
     private modalService: BsModalService,
     private projectsService: ProjectsService,
-  ) {}
+  ) {
+    this.ngUnsubscribeSource$ = new Subject<void>();
+    this.notificationsTypes = NotificationType;
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['notificationValue']) {
       if (!this.notificationValue || !isINotification(this.notificationValue)) {
@@ -50,6 +62,7 @@ export class NotificationCardComponent implements OnChanges {
             true,
           ),
         ),
+        takeUntil(this.ngUnsubscribeSource$),
       )
       .subscribe(() => {
         this.toastrService.success('Invitation accepted.');
@@ -67,6 +80,7 @@ export class NotificationCardComponent implements OnChanges {
             true,
           ),
         ),
+        takeUntil(this.ngUnsubscribeSource$),
       )
       .subscribe(() => {
         this.toastrService.success('Invitation declined.');
@@ -86,6 +100,7 @@ export class NotificationCardComponent implements OnChanges {
             NotificationType.FriendRequestAccepted,
           ),
         ),
+        takeUntil(this.ngUnsubscribeSource$),
       )
       .subscribe(() => {
         this.toastrService.success('Invitation accepted.');
@@ -105,6 +120,7 @@ export class NotificationCardComponent implements OnChanges {
             NotificationType.FriendRequestAccepted,
           ),
         ),
+        takeUntil(this.ngUnsubscribeSource$),
       )
       .subscribe(() => {
         this.toastrService.success('Invitation declined.');
@@ -115,6 +131,7 @@ export class NotificationCardComponent implements OnChanges {
 
     this.presenceService
       .markNotificationAsRead(notification.id)
+      .pipe(takeUntil(this.ngUnsubscribeSource$))
       .subscribe(() => {
         this.toastrService.success('Notification marked as read.');
       });
@@ -140,10 +157,14 @@ export class NotificationCardComponent implements OnChanges {
         }),
         takeUntil(this.modalService.onHide),
         takeUntil(this.modalService.onHidden),
+        takeUntil(this.ngUnsubscribeSource$),
       )
       .subscribe();
   }
   stopPropagation($event: MouseEvent) {
     $event.stopPropagation();
+  }
+  ngOnDestroy(): void {
+    this.ngUnsubscribeSource$.next();
   }
 }
