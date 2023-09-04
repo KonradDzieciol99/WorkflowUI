@@ -14,9 +14,7 @@ import { authAppInitializerFactory } from './core/initializers/auth-app-initiali
 import { IdentityServerService } from './authentication/identity-server.service';
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -25,24 +23,21 @@ import { IdentityServerService } from './authentication/identity-server.service'
     CoreModule,
     ToastrModule.forRoot({
       positionClass: 'toast-bottom-right',
-      progressBar:true
+      progressBar: true,
     }),
     NgxSpinnerModule.forRoot({ type: 'ball-clip-rotate-multiple' }),
     ButtonsModule.forRoot(),
-    OAuthModule.forRoot(
-    //   {
-    //   resourceServer: {
-    //     allowedUrls: ['https://localhost:8080/api'],
-    //     sendAccessToken: true
-    //   }
-    // }
-    ),
-
+    OAuthModule.forRoot(),
   ],
 
-  providers: [    
-    { provide: APP_INITIALIZER, useFactory: authAppInitializerFactory, deps: [IdentityServerService],multi: true}
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: authAppInitializerFactory,
+      deps: [IdentityServerService],
+      multi: true,
+    },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

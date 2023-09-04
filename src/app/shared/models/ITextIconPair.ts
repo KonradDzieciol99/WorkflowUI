@@ -1,4 +1,4 @@
-export interface ITextIconPair{
-    text: string;
-    iconClass?: string;
+export interface ITextIconPair {
+  text: string;
+  iconClass?: string;
 }

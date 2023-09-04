@@ -3,62 +3,65 @@
 @import "../node_modules/ngx-toastr/toastr.css";
 @import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
-@import '../node_modules/bootstrap/scss/functions';
-@import '../node_modules/bootstrap/scss/variables';
-@import '../node_modules/bootstrap/scss/mixins'; 
-@import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
+@import "../node_modules/bootstrap/scss/functions";
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/mixins";
 @import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
+@import './assets/fonts/poppins';
+:root{
+  --bs-body-font-family: 'Poppins',sans-serif;
+}
 
 html,
 body {
-    height: 100%;
+  height: 100%;
 }
 
-.navbar{
-    height: 60px;
+.navbar {
+  height: 60px;
 
-    @include media-breakpoint-down(sm){
-        height: auto;
-    }
+  @include media-breakpoint-down(sm) {
+    height: auto;
+  }
 
-    &:has(div.navbar-collapse.show ,div.navbar-collapse.collapsing){
-        height: auto;
-    }
+  &:has(div.navbar-collapse.show, div.navbar-collapse.collapsing) {
+    height: auto;
+  }
 }
 
-.messages-container { 
-    height: calc(100% - 60px);
-}  
-.side-panel-container{
-    height: calc(100% - 60px);
+.messages-container {
+  height: calc(100% - 60px);
 }
-// @media only screen and (max-width: 992px) { 
-//     .test123g { 
+.side-panel-container {
+  height: calc(100% - 60px);
+}
+// @media only screen and (max-width: 992px) {
+//     .test123g {
 //         height: calc(100% - 60px);
-//     }  
+//     }
 // }
-// @media only screen and (min-width: 992px) { 
-//     .test123g{ 
+// @media only screen and (min-width: 992px) {
+//     .test123g{
 //         height: calc(100% - 59px);
-//     }  
+//     }
 // }
-// @media only screen and (max-width: 576px) { 
-//     .test123g {  
+// @media only screen and (max-width: 576px) {
+//     .test123g {
 //         height: calc(200% - 63px);
-//     }  
+//     }
 // }
 
 // @include media-breakpoint-down(md){
-//     .test123g {  
+//     .test123g {
 //         height: calc(100% - 57px);
-//     } 
+//     }
 // }
 
 // app-root{
 //     height: 100%;
 //     display: flex;
 //     flex-direction: column;
-    
+
 // }
 // app-header{
 //     height: 50px;
@@ -115,20 +118,20 @@ body {
 //     }
 // }
 
-// @media only screen and (max-width: 992px) { 
-//     #messages-container, .side-panel-container { 
+// @media only screen and (max-width: 992px) {
+//     #messages-container, .side-panel-container {
 //         height: calc(100% - 57px);
-//     }  
+//     }
 // }
-// @media only screen and (min-width: 992px) { 
-//     #messages-container, .side-panel-container { 
+// @media only screen and (min-width: 992px) {
+//     #messages-container, .side-panel-container {
 //         height: calc(100% - 63px);
-//     }  
+//     }
 // }
-// @media only screen and (max-width: 576px) { 
-//     #messages-container{ 
+// @media only screen and (max-width: 576px) {
+//     #messages-container{
 //         height: calc(200% - 63px);
-//     }  
+//     }
 // }
 // #messages-container{
 //     accordion{
@@ -168,139 +171,151 @@ body {
 // }
 
 @include media-breakpoint-down(lg) {
-    .notifications-panel{
-        width: 100% !important;
-        left: 0 !important;
-    }
+  .notifications-panel {
+    width: 100% !important;
+    left: 0 !important;
+  }
 }
 
 ::-webkit-scrollbar {
-    width: 10px;
+  width: 10px;
 }
 ::-webkit-scrollbar-track {
-    background-color: rgba(var(--bs-tertiary-bg-rgb));
+  background-color: rgba(var(--bs-tertiary-bg-rgb));
 }
-   
+
 ::-webkit-scrollbar-thumb {
-    background: grey; 
-    border-radius: 10px;
+  background: grey;
+  border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background:rgb(101, 101, 101); 
+  background: rgb(101, 101, 101);
 }
 
-.btn-bare{
-    background: none;
-    color: inherit;
-    border: none;
-    padding: 0px;
-    font: inherit;
+.btn-bare {
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0px;
+  font: inherit;
 }
 
-.sidebar-width{
-    width: 200px;
-    &.offcanvas{
-        width: 200px !important;
-    }
+.sidebar-width {
+  width: 200px;
+  &.offcanvas {
+    width: 200px !important;
+  }
 }
 
-.default-transition{
-    transition: 0.35s ease !important;
+.default-transition {
+  transition: 0.35s ease !important;
 }
 
 @keyframes gradient {
-	0% {
-        background-position: 70% 10%;
-	}
-	25% {
-		background-position: 50% 25%;
-	}
-	45% {
-		background-position: 25% 75%;
-	} 
-	100% {
-		background-position: 0% 100%;
-	} 
+  0% {
+    background-position: 70% 10%;
+  }
+  25% {
+    background-position: 50% 25%;
+  }
+  45% {
+    background-position: 25% 75%;
+  }
+  100% {
+    background-position: 0% 100%;
+  }
 }
-.btn.btn-primary.with-gradnient{
-
-    &:hover{
-        background-image: linear-gradient(209deg, rgba(89, 131, 252, 1) 0%, rgba(41, 53, 86, 1) 50%,#e73c7e 100%);
-        animation: gradient 5s ease infinite alternate;
-        background-size: 400% 400%;     
-    }
-    &:active{
-        background-image: none;
-    }
-    background-image: linear-gradient(209deg, rgba(89, 131, 252, 1) 0%, rgba(41, 53, 86, 1) 100%);
-    border: 0;
-}   
-
+.btn.btn-primary.with-gradnient {
+  &:hover {
+    background-image: linear-gradient(
+      209deg,
+      rgba(89, 131, 252, 1) 0%,
+      rgba(41, 53, 86, 1) 50%,
+      #e73c7e 100%
+    );
+    animation: gradient 5s ease infinite alternate;
+    background-size: 400% 400%;
+  }
+  &:active {
+    background-image: none;
+  }
+  background-image: linear-gradient(
+    209deg,
+    rgba(89, 131, 252, 1) 0%,
+    rgba(41, 53, 86, 1) 100%
+  );
+  border: 0;
+}
 
 @keyframes navbar-gradient-animation {
-	0% {
-		background-position: 0% 50%;
-	}
-	50% {
-		background-position: 100% 50%;
-	}
-	100% {
-		background-position: 0% 50%;
-	}
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
-.navbar{
-    background-image: linear-gradient(209deg, rgba(89, 131, 252, 1) 0%, rgba(41, 53, 86, 1) 100%);
-    animation: navbar-gradient-animation  15s ease infinite;
-    background-size: 400% 400%;    
+.navbar {
+  background-image: linear-gradient(
+    209deg,
+    rgba(89, 131, 252, 1) 0%,
+    rgba(41, 53, 86, 1) 100%
+  );
+  animation: navbar-gradient-animation 15s ease infinite;
+  background-size: 400% 400%;
 }
 
-.nav-link{
+.nav-link {
+  color: rgba(255, 255, 255, 0.85);
 
-    color: rgba(255,255,255,0.85);
+  &:hover {
+    color: rgba(255, 255, 255, 1);
+  }
+  &.active {
+    color: rgba(255, 255, 255, 1);
+  }
 
-    &:hover{
-        color: rgba(255,255,255,1);
+  // @include media-breakpoint-up(md)  {
+  //     &:not(.dropdown-toggle).active::before{
+  //         content:'';
+  //         position: absolute;
+  //         background-color: var(--bs-primary);
+  //         width: 100%;
+  //         height: 4px;
+  //         bottom: -9px;
+  //         left:0;
+  //     }
+  // }
+  @include media-breakpoint-up(md) {
+    &.underline.active::before {
+      content: "";
+      position: absolute;
+      background-color: var(--bs-primary);
+      width: 100%;
+      height: 4px;
+      bottom: -9px;
+      left: 0;
     }
-    &.active{
-        color: rgba(255,255,255,1);
-    }
-
-    // @include media-breakpoint-up(md)  {
-    //     &:not(.dropdown-toggle).active::before{
-    //         content:'';
-    //         position: absolute;
-    //         background-color: var(--bs-primary);
-    //         width: 100%;
-    //         height: 4px;
-    //         bottom: -9px;
-    //         left:0;
-    //     }
-    // }
-    @include media-breakpoint-up(md)  {
-        &.underline.active::before{
-            content:'';
-            position: absolute;
-            background-color: var(--bs-primary);
-            width: 100%;
-            height: 4px;
-            bottom: -9px;
-            left:0;
-        }
-    }
+  }
 }
 
-.ngb-dp-header,.ngb-dp-weekdays{
-    background-color: var(--bs-body-bg) !important; 
+.ngb-dp-header,
+.ngb-dp-weekdays {
+  background-color: var(--bs-body-bg) !important;
 }
 
-[ngbDatepickerDayView]:hover:not(.bg-primary), [ngbDatepickerDayView].active:not(.bg-primary) {
-    color: var(--bs-dark);
+[ngbDatepickerDayView]:hover:not(.bg-primary),
+[ngbDatepickerDayView].active:not(.bg-primary) {
+  color: var(--bs-dark);
 }
 
-.xng-breadcrumb-root{
-    color: var(--bs-body-color) !important; 
-    .xng-breadcrumb-trail{
-        color: var(--bs-primary-text-emphasis) !important; 
-    }
+.xng-breadcrumb-root {
+  color: var(--bs-body-color) !important;
+  .xng-breadcrumb-trail {
+    color: var(--bs-primary-text-emphasis) !important;
+  }
 }

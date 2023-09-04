@@ -1,4 +1,4 @@
-export interface ISyncfusionFormat<T>{
-    result: Array<T>;
-    count: number;
+export interface ISyncfusionFormat<T> {
+  result: T[];
+  count: number;
 }

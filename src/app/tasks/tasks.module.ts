@@ -1,7 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
-import { EditService, ExcelExportService, FilterService, GridModule, GroupService, PageService, SortService, ToolbarService } from '@syncfusion/ej2-angular-grids';
+import {
+  EditService,
+  ExcelExportService,
+  FilterService,
+  GridModule,
+  GroupService,
+  PageService,
+  SortService,
+  ToolbarService,
+} from '@syncfusion/ej2-angular-grids';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
@@ -19,7 +28,7 @@ import { TasksComponent } from './tasks.component';
     ListComponent,
     BoardComponent,
     CreateTaskModalComponent,
-    UserDropdownComponent
+    UserDropdownComponent,
   ],
   imports: [
     CommonModule,
@@ -32,14 +41,15 @@ import { TasksComponent } from './tasks.component';
     ButtonsModule.forRoot(),
     BreadcrumbModule,
     TooltipModule.forRoot(),
-
   ],
-  providers: [PageService,
+  providers: [
+    PageService,
     SortService,
     FilterService,
     GroupService,
     ToolbarService,
     ExcelExportService,
-    EditService,]
+    EditService,
+  ],
 })
-export class TasksModule { }
+export class TasksModule {}

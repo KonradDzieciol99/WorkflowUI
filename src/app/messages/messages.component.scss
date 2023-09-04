@@ -1,0 +1,46 @@
+// .accordion-collapse:has(.collapse){
+//     display: flex;
+//     flex-direction: column ;
+// }
+
+
+// .flex-container {
+//     display: flex;
+//     flex-direction: column;  /* Ustawiamy kierunek na kolumnę, aby dzieci były jedno pod drugim */
+//     height: 600px;  /* Przykładowa stała wysokość kontenera */
+// }
+
+// .flex-item {
+//     flex: 1;  /* Każdy div dostaje równą część dostępnej przestrzeni w kontenerze */
+//     border: 1px solid black;
+//     overflow-y: auto;  /* Jeśli zawartość diva przekroczy jego wysokość, pojawia się pasek przewijania */
+// }
+
+
+
+// .containerxxxx {
+//     display: flex;
+//     flex-direction: column;
+//     height: 100%; /* Zakładając, że chcesz, aby kontener miał pełną wysokość */
+// }
+
+// .containerxxxx > div {
+//     flex: 1; /* Każdy div zajmuje równe miejsce w kontenerze */
+//     overflow: auto;
+// }
+
+// .accordion-item{
+//     flex: 1; /* Każdy div zajmuje równe miejsce w kontenerze */
+//     overflow: auto;
+// }
+
+.accordion {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important; /* Zakładając, że chcesz, aby kontener miał pełną wysokość */
+}
+
+.accordion > .accordion-item {
+    flex: 1 !important; /* Każdy div zajmuje równe miejsce w kontenerze */
+    // overflow: auto !important;
+}

@@ -8,26 +8,30 @@ import { SettingsComponent } from './components/settings/settings.component';
 const routes: Routes = [
   {
     path: '',
-    canActivateChild:[AuthGuard],
+    canActivateChild: [AuthGuard],
     children: [
-      { path: '', component: ProjectsComponent,},
-      { path: ':id', component: ProjectSideBarComponent, data:{breadcrumb:{alias:'projectSideBar'}},
-       children:[
-        {
-          path: 'tasks',
-          loadChildren: () => import('../tasks/tasks.module').then(m => m.TasksModule)
-        },
-        { path: 'settings', component: SettingsComponent },
-        { path: '**', redirectTo: 'tasks', pathMatch: 'full' },
-       ]
+      { path: '', component: ProjectsComponent },
+      {
+        path: ':id',
+        component: ProjectSideBarComponent,
+        data: { breadcrumb: { alias: 'projectSideBar' } },
+        children: [
+          {
+            path: 'tasks',
+            loadChildren: () =>
+              import('../tasks/tasks.module').then((m) => m.TasksModule),
+          },
+          { path: 'settings', component: SettingsComponent },
+          { path: '**', redirectTo: 'tasks', pathMatch: 'full' },
+        ],
       },
       { path: '**', redirectTo: '', pathMatch: 'full' },
-  ]
+    ],
   },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class ProjectsRoutingModule { }
+export class ProjectsRoutingModule {}

@@ -16,7 +16,6 @@ import { AddMemberIconComponent } from './components/add-member-icon/add-member-
 import { AddProjectMemberModalComponent } from './components/modals/add-project-member-modal/add-project-member-modal.component';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 
-
 @NgModule({
   declarations: [
     // InputCustomComponent,
@@ -27,7 +26,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
     CReactiveDropdownComponent,
     MapGetValuePipe,
     AddMemberIconComponent,
-    AddProjectMemberModalComponent
+    AddProjectMemberModalComponent,
   ],
   imports: [
     CommonModule,
@@ -37,8 +36,8 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
     BsDropdownModule.forRoot(),
     ButtonsModule.forRoot(),
     TabsModule.forRoot(),
-  ]
-  ,exports:[
+  ],
+  exports: [
     // InputCustomComponent,
     ReactiveFormsModule,
     ReactiveInputComponent,
@@ -48,7 +47,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
     MapGetValuePipe,
     AddMemberIconComponent,
     TabsModule,
-    TooltipModule
-  ]
+    TooltipModule,
+  ],
 })
-export class SharedModule { }
+export class SharedModule {}

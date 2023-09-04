@@ -5,22 +5,21 @@ import { IIcon } from '../models/IIcon';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PhotosService {
-  private iconsSource:BehaviorSubject<Array<IIcon>>;
-  public icons$:Observable<Array<IIcon>>;
+  private iconsSource$: BehaviorSubject<IIcon[]>;
+  public icons$: Observable<IIcon[]>;
+  baseUrl: string;
   constructor(private http: HttpClient) {
-    this.iconsSource = new BehaviorSubject<Array<IIcon>>([]);
-    this.icons$ = this.iconsSource.asObservable();
+    this.iconsSource$ = new BehaviorSubject([] as IIcon[]);
+    this.icons$ = this.iconsSource$.asObservable();
+    this.baseUrl = `${environment.WorkflowUrl}/photos`;
   }
 
-  getProjectsIcons (){
-    return this.http.get<Array<IIcon>>(`${environment.photosServiceUrl}/getProjectsIcons`).pipe(
-      tap((icons=>{
-        this.iconsSource.next(icons);
-      }))
-    );
+  getProjectsIcons() {
+    return this.http
+      .get<IIcon[]>(`${this.baseUrl}/api/icon`)
+      .pipe(tap((icons) => this.iconsSource$.next(icons)));
   }
-
 }

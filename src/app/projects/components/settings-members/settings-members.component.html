@@ -1,84 +1,104 @@
 <div class="p-4">
-    <div class="row g-0">
-        <div class="col-12 col-sm-5 col-md-4 col-lg-3 col-xl-2">
-            <div class="input-group input-group-sm mb-2">
-                <span class="input-group-text">
-                    <i class="fa-solid fa-magnifying-glass fa-sm"></i>
-                </span>
-                <input type="text" [formControl]="searchMembers" class="form-control" placeholder="Search..." />
-                <button class="btn btn-outline-secondary btn-sm" type="button" (click)="searchMembers.reset()">
-                    <i class="fa-solid fa-x fa-sm "></i>
-                </button>
-            </div>
-        </div>
-        <div class="mb-sm-0 ms-sm-auto me-sm-1 mx-auto mx-sm-0 col-auto ">
-            <app-add-member-icon></app-add-member-icon>
-        </div>
+  <div class="row g-0">
+    <div class="col-12 col-sm-5 col-md-4 col-lg-3 col-xl-2">
+      <div class="input-group input-group-sm mb-2">
+        <span class="input-group-text">
+          <i class="bi bi-search"></i>
+        </span>
+        <input
+          type="text"
+          [formControl]="searchMembers"
+          class="form-control"
+          placeholder="Search..."
+        />
+        <button
+          class="btn btn-outline-secondary"
+          type="button"
+          (click)="searchMembers.reset()"
+        >
+        <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
     </div>
+    <div class="mb-sm-0 ms-sm-auto me-sm-1 mx-auto mx-sm-0 col-auto">
+      <app-add-member-icon></app-add-member-icon>
+    </div>
+  </div>
 
-    <ejs-grid #grid [dataSource]="projectMembersService.projectMember$ | async" 
-    [allowResizing]="true" 
+  <ejs-grid
+    #grid
+    [dataSource]="projectMembersService.projectMember$ | async"
+    [allowResizing]="true"
     [allowPaging]="true"
-    [allowSorting]="false" 
-    [allowFiltering]="false" 
-    [allowGrouping]="false" 
+    [allowSorting]="false"
+    [allowFiltering]="false"
+    [allowGrouping]="false"
     [pageSettings]="pageSettings"
-    [editSettings]="editSettings" 
-    (dataSourceChanged)="dataSourceChanged($event)" 
-    (dataStateChange)='dataStateChange($event)'
-    [toolbar]="toolbar" >
-        <e-columns>
-            <e-column field='id' headerText='Member'>
-                <ng-template #template let-data>
-                    <div class="d-flex">
-                        <img class="rounded-circle border"
-                            [src]="data?.photoUrl ?? 'assets/images/Sample_User_Icon.png' " width="30px" height="30px"
-                            alt="Leader photo" 
-                        />
-                        <span class="my-auto ms-3 text-truncate">
-                            {{data?.userEmail}}
-                        </span>
-                    </div>
-                </ng-template>
-            </e-column>
-            <e-column field="invitationStatus" headerText='Invitation Status'>
-                <ng-template #template let-data>
-                    <ng-container [ngSwitch]="data?.invitationStatus">
-                        <ng-container *ngSwitchCase="invitationStatus.Invited">
-                            <div class="spinner-border text-primary spinner-border-sm"
-                            role="status"
-                            tooltip="Invitation has been sent"
-                            container="body"
-                            >
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                        </ng-container>
-                        <ng-container *ngSwitchCase="invitationStatus.Accepted">
-                            <div class="d-flex">
-                                <div tooltip="Is a member" container="body" [adaptivePosition]="false" placement="top">
-                                    <i class="bi bi-check-lg"></i>
-                                </div>   
-                            </div>
-                        </ng-container>      
-                    </ng-container>
-                </ng-template>
-            </e-column>
-            <e-column field="type" >
-                <ng-template #template let-data>
-                    <ng-container [ngSwitch]="data?.type">
-                        <ng-container *ngSwitchCase="projectMemberType.Leader">
-                            <span>Leader</span>
-                        </ng-container>
-                        <ng-container *ngSwitchCase="projectMemberType.Admin">
-                            <span>Admin</span>
-                        </ng-container> 
-                        <ng-container *ngSwitchCase="projectMemberType.Member">
-                            <span>Member</span>
-                        </ng-container>      
-                    </ng-container>
-                </ng-template>
-            </e-column>>
-        </e-columns>
-    </ejs-grid>
+    [editSettings]="editSettings"
+    (dataSourceChanged)="dataSourceChanged($event)"
+    (dataStateChange)="dataStateChange($event)"
+    [toolbar]="toolbar"
+  >
+    <e-columns>
+      <e-column field="id" headerText="Member">
+        <ng-template #template let-data>
+          <div class="d-flex">
+            <img
+              class="rounded-circle border"
+              [src]="data?.photoUrl ?? 'assets/images/Sample_User_Icon.png'"
+              width="30px"
+              height="30px"
+              alt="Leader photo"
+            />
+            <span class="my-auto ms-3 text-truncate">
+              {{ data?.userEmail }}
+            </span>
+          </div>
+        </ng-template>
+      </e-column>
+      <e-column field="invitationStatus" headerText="Invitation Status">
+        <ng-template #template let-data>
+          <ng-container [ngSwitch]="data?.invitationStatus">
+            <ng-container *ngSwitchCase="invitationStatus.Invited">
+              <div
+                class="spinner-border text-primary spinner-border-sm"
+                role="status"
+                tooltip="Invitation has been sent"
+                container="body"
+              >
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </ng-container>
+            <ng-container *ngSwitchCase="invitationStatus.Accepted">
+              <div class="d-flex">
+                <div
+                  tooltip="Is a member"
+                  container="body"
+                  [adaptivePosition]="false"
+                  placement="top"
+                >
+                  <i class="bi bi-check-lg"></i>
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+        </ng-template>
+      </e-column>
+      <e-column field="type">
+        <ng-template #template let-data>
+          <ng-container [ngSwitch]="data?.type">
+            <ng-container *ngSwitchCase="projectMemberType.Leader">
+              <span>Leader</span>
+            </ng-container>
+            <ng-container *ngSwitchCase="projectMemberType.Admin">
+              <span>Admin</span>
+            </ng-container>
+            <ng-container *ngSwitchCase="projectMemberType.Member">
+              <span>Member</span>
+            </ng-container>
+          </ng-container>
+        </ng-template> </e-column
+      >>
+    </e-columns>
+  </ejs-grid>
 </div>
-

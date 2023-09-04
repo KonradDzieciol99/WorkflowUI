@@ -1,46 +1,46 @@
-<div class="accordion-item border-top d-flex overflow-hidden flex-column  rounded-0 ">
-    <h2 class="accordion-header">
-        <button class="accordion-button" type="button" [class.collapsed]="isCollapsedAccordionMyChats"
-            (click)="isCollapsedAccordionMyChats = (!isCollapsedAccordionMyChats)">
-            <h6 class="p-0 m-0">My chats </h6>
-            <i class="bi bi-wechat ms-1" style="font-size: 1.1rem;"></i>
-        </button>
-    </h2>
-    <div id="collapseTwo" class="accordion-collapse overflow-auto mb-3" [collapse]="isCollapsedAccordionMyChats" [isAnimated]="false"  *ngIf="friendsWithActivityStatus$ | async as friendsWithActivityStatus">
-        <div class="accordion-body p-0">
-            <div class="input-group input-group-sm">
-                <span class="input-group-text rounded-0">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </span>
-                <input type="text" [formControl]="searchUsersFormControl" class="form-control rounded-0" placeholder="Search...">
+<div class="accordion-item border-top rounded-0">
+  <h2 class="accordion-header">
+    <button class="accordion-button" type="button" [class.collapsed]="isCollapsedAccordionMyChats"
+      (click)="isCollapsedAccordionMyChats = !isCollapsedAccordionMyChats">
+      <h6 class="p-0 m-0">My chats</h6>
+      <i class="bi bi-wechat ms-1" style="font-size: 1.1rem"></i>
+    </button>
+  </h2>
+  <div id="collapseTwo" class="accordion-collapse rounded-0 overflow-auto mb-3" [collapse]="isCollapsedAccordionMyChats"
+    [isAnimated]="false" *ngIf="friendsWithActivityStatus$ | async as friendsWithActivityStatus">
+    <div class="accordion-body p-0 rounded-0">
+      <div class="input-group input-group-sm">
+        <span class="input-group-text rounded-0">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="text" [formControl]="searchUsersFormControl" class="form-control rounded-0"
+          placeholder="Search..." />
+      </div>
+      <div *ngFor="let friend of friendsWithActivityStatus; let i = index" (click)="onFriendSelected(friend)"
+        type="button" class="border border-1 friend-card">
+        <div class="d-flex flex-row justify-content-start">
+          <div class="me-2">
+            <div class="p-1" style="width: 40px; height: 40px">
+              <img [src]="friend.photoUrl" class="img-fluid rounded-circle border border-1" />
             </div>
-            <div *ngFor="let friend of friendsWithActivityStatus; let i = index" (click)="onFriendSelected(friend)" type="button"
-                                    class="border border-1 friend-card">
-                <div class="d-flex flex-row justify-content-start">
-                    <div class="me-2">
-                        <div class="p-1" style="width: 40px; height: 40px;">
-                            <img [src]="friend.photoUrl" class="img-fluid rounded-circle border border-1" >
-                        </div>
-                    </div>
-                    <div class="flex-grow-1 d-flex align-items-center overflow-hidden ">
-                        <div class="text-truncate">{{friend.email}} </div>
-                    </div>
-                    <div class="d-flex align-items-center justify-content-center me-3"
-                        *ngIf="friend.isOnline">
-                        <div class="spinner-grow text-success spinner-grow-sm" container="body"
-                            tooltip="User is online!" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-center me-2">
-                        <button (click)="declineAcceptedFriendInvitation(friend)" type="button"
-                            class="btn btn-outline-danger btn-sm" style="width: 35px;" container="body"
-                            tooltip="Remove friend.">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    </div>
-                </div>
+          </div>
+          <div class="flex-grow-1 d-flex align-items-center overflow-hidden">
+            <div class="text-truncate">{{ friend.email }}</div>
+          </div>
+          <div class="d-flex align-items-center justify-content-center me-3" *ngIf="friend.isOnline">
+            <div class="spinner-grow text-success spinner-grow-sm" container="body" tooltip="User is online!"
+              role="status">
+              <span class="visually-hidden">Loading...</span>
             </div>
+          </div>
+          <div class="d-flex align-items-center me-2">
+            <button (click)="declineAcceptedFriendInvitation(friend)" type="button" class="btn btn-outline-danger"
+              style="width: 35px" container="body" tooltip="Remove friend.">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>

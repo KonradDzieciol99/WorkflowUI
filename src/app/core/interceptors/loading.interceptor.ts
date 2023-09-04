@@ -2,19 +2,20 @@ import {
   HttpEvent,
   HttpHandler,
   HttpInterceptor,
-  HttpRequest
+  HttpRequest,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, finalize } from 'rxjs';
+import { Observable, finalize, from, mergeMap } from 'rxjs';
 import { BusyService } from '../services/busy.service';
 
 @Injectable()
 export class LoadingInterceptor implements HttpInterceptor {
-
   constructor(private busyService: BusyService) {}
 
-  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-
+  intercept(
+    request: HttpRequest<unknown>,
+    next: HttpHandler,
+  ): Observable<HttpEvent<unknown>> {
     // if (request.method === 'POST') {
     //   return next.handle(request);
     // }
@@ -25,14 +26,13 @@ export class LoadingInterceptor implements HttpInterceptor {
     //   return next.handle(request);
     // }
 
-    this.busyService.busy();
-    return next.handle(request).pipe(
-      //delay(250),
-      finalize(() => {
-        this.busyService.idle();
-      })
+    return from(this.busyService.busy()).pipe(
+      mergeMap(() => next.handle(request)),
+      finalize(async () => {
+        await this.busyService.idle();
+      }),
     );
 
-    return next.handle(request)//new
+    //return next.handle(request)//new
   }
 }

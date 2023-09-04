@@ -8,7 +8,7 @@ import {
   map,
   switchMap,
   take,
-  tap
+  tap,
 } from 'rxjs';
 import { IProject } from 'src/app/shared/models/IProject';
 import { IProjectMember } from 'src/app/shared/models/IProjectMember';
@@ -19,21 +19,25 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class ProjectService {
-  aggregatorUrl: string;
-  projectsUrl: string;
-  private projectSource: BehaviorSubject<IProject | undefined>;
+  private projectSource$: BehaviorSubject<IProject | undefined>;
   project$: Observable<IProject | undefined>;
+  baseUrl: string;
 
-  constructor(private http: HttpClient, private router: Router) {
-    this.projectsUrl = environment.projectsUrl;
-    this.aggregatorUrl = environment.aggregator;
-    this.projectSource = new BehaviorSubject<IProject | undefined>(undefined);
-    this.project$ = this.projectSource.asObservable();
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+  ) {
+    this.baseUrl = `${environment.WorkflowUrl}/projects`;
+
+    this.projectSource$ = new BehaviorSubject(
+      undefined as IProject | undefined,
+    );
+    this.project$ = this.projectSource$.asObservable();
   }
   get(projectId: string) {
     return this.http
-      .get<IProject>(`${this.projectsUrl}/projects/${projectId}`)
-      .pipe(tap((project) => this.projectSource.next(project)));
+      .get<IProject>(`${this.baseUrl}/api/projects/${projectId}`)
+      .pipe(tap((project) => this.projectSource$.next(project)));
   }
   update(updateProject: {
     name?: string;
@@ -42,8 +46,8 @@ export class ProjectService {
     projectId: string;
   }) {
     return this.http.put(
-      `${this.projectsUrl}/projects/${updateProject.projectId}`,
-      updateProject
+      `${this.baseUrl}/api/projects/${updateProject.projectId}`,
+      updateProject,
     );
   }
   findMemberByEmailAndCheckState(email: string) {
@@ -52,8 +56,11 @@ export class ProjectService {
       switchMap((project) => {
         const params = new HttpParams().set('projectId', project.id);
 
-        return this.http.get<Array<ISearchedMember>>(`${this.aggregatorUrl}/Identity/searchMember/${email}`,{ params: params });
-      })
+        return this.http.get<ISearchedMember[]>(
+          `${environment.WorkflowUrl}/aggregator/api/Identity/searchMember/${email}`,
+          { params: params },
+        );
+      }),
     );
   }
   addMember(email: string) {
@@ -61,16 +68,25 @@ export class ProjectService {
       take(1),
       filter((project): project is IProject => project !== undefined),
       switchMap((project) => {
-        return this.http.post<IProjectMember>(`${this.aggregatorUrl}/Projects/${project.id}/projectMembers/${email}`,{}).pipe(
-          take(1),
-          map(newMember =>{ 
-            const updatedProject: IProject = {...project, projectMembers: [...project.projectMembers, newMember ]};
-            return updatedProject;
-          }))
+        return this.http
+          .post<IProjectMember>(
+            `${environment.WorkflowUrl}/aggregator/api/Projects/${project.id}/projectMembers/${email}`,
+            {},
+          )
+          .pipe(
+            take(1),
+            map((newMember) => {
+              const updatedProject: IProject = {
+                ...project,
+                projectMembers: [...project.projectMembers, newMember],
+              };
+              return updatedProject;
+            }),
+          );
       }),
-      tap((updatedProject)=>{
-        this.projectSource.next(updatedProject)
-      })
+      tap((updatedProject) => {
+        this.projectSource$.next(updatedProject);
+      }),
     );
   }
   deleteMember(id: string) {
@@ -78,20 +94,26 @@ export class ProjectService {
       take(1),
       filter((project): project is IProject => project !== undefined),
       switchMap((project) => {
-        return this.http.delete<void>(`${this.projectsUrl}/Projects/${project.id}/projectMembers/${id}`).pipe(
-          take(1),
-          map(() =>{ 
-            const updatedProject: IProject = {
-              ...project, 
-              projectMembers: project.projectMembers.filter(p=>p.id !==id)
-            };
-            return updatedProject;
-          }));
+        return this.http
+          .delete<void>(
+            `${this.baseUrl}/api/Projects/${project.id}/projectMembers/${id}`,
+          )
+          .pipe(
+            take(1),
+            map(() => {
+              const updatedProject: IProject = {
+                ...project,
+                projectMembers: project.projectMembers.filter(
+                  (p) => p.id !== id,
+                ),
+              };
+              return updatedProject;
+            }),
+          );
       }),
-      tap((updatedProject)=>{
-        this.projectSource.next(updatedProject)
-      })
+      tap((updatedProject) => {
+        this.projectSource$.next(updatedProject);
+      }),
     );
   }
-
 }

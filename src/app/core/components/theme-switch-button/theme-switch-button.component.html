@@ -1,32 +1,55 @@
 <ng-container *ngIf="themeForm">
-    <form [formGroup]="themeForm" class="d-flex ms-auto">
-        <div dropdown btnRadioGroup formControlName="theme" class="d-inline-block dropdown" 
-            (isOpenChange)="onOpenChange($event)"> <!--  btn-group  -->
-            <button dropdownToggle type="button" class="btn btn-link dropdown-toggle nav-link d-flex align-items-center"
-                tooltip="Swith theme" container="body" #pop="bs-tooltip" [class.active]="isNotificationPanelOpen">
-                <i [ngClass]="currentTheme"></i>
-                <small class="d-md-none ms-2">Swith theme</small>
-            </button>
-            <ul *dropdownMenu class="dropdown-menu dropdown-menu-end" role="menu">
-                <li role="menuitem">
-                    <button btnRadio="light" class="dropdown-item d-flex justify-content-center gap-1">
-                        <i class="bi bi-brightness-high-fill"></i>
-                        <span> Light mode</span>
-                    </button>
-                </li>
-                <li role="menuitem">
-                    <button btnRadio="dark" class="dropdown-item d-flex justify-content-center gap-1" type="button">
-                        <i class="bi bi-moon-stars-fill"> Dark mode</i>
-                    </button>
-                </li>
-                <li class="divider dropdown-divider"></li>
-                <li role="menuitem">
-                    <button btnRadio="auto" class="dropdown-item d-flex justify-content-center gap-1" type="button">
-                        <i class="bi bi-arrow-left-right"> Auto mode</i>
-                    </button>
-                </li>
-            </ul>
-        </div>
-    </form>
+  <form [formGroup]="themeForm" class="d-flex ms-auto">
+    <div
+      dropdown
+      btnRadioGroup
+      formControlName="theme"
+      class="d-inline-block dropdown"
+      (isOpenChange)="onOpenChange($event)"
+    >
+      <!--  btn-group  -->
+      <button
+        dropdownToggle
+        type="button"
+        class="btn btn-link dropdown-toggle nav-link d-flex align-items-center"
+        tooltip="Swith theme"
+        container="body"
+        #pop="bs-tooltip"
+        [class.active]="isNotificationPanelOpen"
+      >
+        <i [ngClass]="currentTheme"></i>
+        <small class="d-md-none ms-2">Swith theme</small>
+      </button>
+      <ul *dropdownMenu class="dropdown-menu dropdown-menu-end" role="menu">
+        <li role="menuitem">
+          <button
+            btnRadio="light"
+            class="dropdown-item d-flex justify-content-center gap-1"
+          >
+            <i class="bi bi-brightness-high-fill"></i>
+            <span> Light mode</span>
+          </button>
+        </li>
+        <li role="menuitem">
+          <button
+            btnRadio="dark"
+            class="dropdown-item d-flex justify-content-center gap-1"
+            type="button"
+          >
+            <i class="bi bi-moon-stars-fill"> Dark mode</i>
+          </button>
+        </li>
+        <li class="divider dropdown-divider"></li>
+        <li role="menuitem">
+          <button
+            btnRadio="auto"
+            class="dropdown-item d-flex justify-content-center gap-1"
+            type="button"
+          >
+            <i class="bi bi-arrow-left-right"> Auto mode</i>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </form>
 </ng-container>
-
