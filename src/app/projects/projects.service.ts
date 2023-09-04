@@ -15,14 +15,14 @@ import { ISyncfusionFormat } from '../shared/models/ISyncfusionFormat';
   providedIn: 'root',
 })
 export class ProjectsService {
-  projectsUrl: string;
   private projectsSource$: BehaviorSubject<ISyncfusionFormat<IProject>>;
   public projects$: Observable<ISyncfusionFormat<IProject>>;
+  baseUrl: string;
   constructor(
     private http: HttpClient,
     private toastrService: ToastrService,
   ) {
-    this.projectsUrl = environment.projectsUrl;
+    this.baseUrl = `${environment.WorkflowUrl}/projects`;
     this.projectsSource$ = new BehaviorSubject({
       result: [],
       count: 0,
@@ -45,13 +45,13 @@ export class ProjectsService {
       state.search?.at(0)?.key?.toString() ?? '',
     );
     return this.http.get<ISyncfusionFormat<IProject>>(
-      `${this.projectsUrl}/projects`,
+      `${this.baseUrl}/api/projects`,
       { params: params },
     );
   }
   createProject(projectCreateRequest: IProjectCreateRequest) {
     return this.http
-      .post<IProject>(`${this.projectsUrl}/projects`, projectCreateRequest)
+      .post<IProject>(`${this.baseUrl}/api/projects`, projectCreateRequest)
       .pipe(
         mergeMap((project) => {
           return this.projectsSource$.pipe(
@@ -84,17 +84,17 @@ export class ProjectsService {
       id = state.data[0].id;
     else throw new Error('Error occured');
 
-    return this.http.delete<void>(`${this.projectsUrl}/projects/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/api/projects/${id}`);
   }
   acceptProjectInvitation(projectId: string) {
     return this.http.put<void>(
-      `${this.projectsUrl}/Projects/${projectId}/AcceptInvitation`,
+      `${this.baseUrl}/api/Projects/${projectId}/AcceptInvitation`,
       {},
     );
   }
   declineProjectInvitation(projectId: string) {
     return this.http.delete<void>(
-      `${this.projectsUrl}/Projects/${projectId}/DeclineInvitation`,
+      `${this.baseUrl}/api/Projects/${projectId}/DeclineInvitation`,
     );
   }
 }

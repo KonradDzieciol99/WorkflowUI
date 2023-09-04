@@ -16,7 +16,7 @@ export class AccordionInvitationsComponent implements OnDestroy {
     public messagesService: MessagesService,
     private toastrService: ToastrService,
   ) {
-    this.isCollapsedAccordionInvitations = false;
+    this.isCollapsedAccordionInvitations = true;
     this.ngUnsubscribeSource$ = new Subject<void>();
   }
   acceptFriendInvitation(invitation: IFriendInvitation) {

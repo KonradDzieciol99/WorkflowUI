@@ -10,14 +10,16 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 export class PhotosService {
   private iconsSource$: BehaviorSubject<IIcon[]>;
   public icons$: Observable<IIcon[]>;
+  baseUrl: string;
   constructor(private http: HttpClient) {
     this.iconsSource$ = new BehaviorSubject([] as IIcon[]);
     this.icons$ = this.iconsSource$.asObservable();
+    this.baseUrl = `${environment.WorkflowUrl}/photos`;
   }
 
   getProjectsIcons() {
     return this.http
-      .get<IIcon[]>(`${environment.photosServiceUrl}/getProjectsIcons`)
+      .get<IIcon[]>(`${this.baseUrl}/api/icon`)
       .pipe(tap((icons) => this.iconsSource$.next(icons)));
   }
 }

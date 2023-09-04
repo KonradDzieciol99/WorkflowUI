@@ -1,22 +1,13 @@
 <div class="row g-0 messages-container">
   <div class="col-12 col-sm-4 border-bottom h-100">
-    <!-- <form [formGroup]="messagesForm" class="h-100"> -->
     <div
       class="accordion accordion-flush h-100 d-flex flex-column"
       id="accordionExample"
     >
-      <!-- <div class="accordion-item rounded-0"> -->
       <app-accordion-find-people></app-accordion-find-people>
-      <!-- </div> -->
-      <!-- <div class="accordion-item d-flex overflow-hidden flex-column  rounded-0 "> -->
       <app-accordion-my-chats></app-accordion-my-chats>
-      <!-- </div> -->
-      <!-- <div class="accordion-item rounded-0 d-flex overflow-hidden flex-column flex-grow-1" style=""
-                    *ngIf="messagesService.receivedFriendRequests$ | async as receivedFriendRequests"> -->
       <app-accordion-invitations></app-accordion-invitations>
-      <!-- </div> -->
     </div>
-    <!-- </form> -->
   </div>
   <div
     class="col-12 col-sm-8 d-flex flex-column border border-end-0 border-top-0 h-100"

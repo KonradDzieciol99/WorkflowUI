@@ -31,18 +31,15 @@ export class MessagesService {
   private receivedFriendRequestsSource$: BehaviorSubject<IFriendInvitation[]>;
   receivedFriendRequests$: Observable<IFriendInvitation[]>;
   friendsWithActivityStatus$: Observable<IUser[]>;
-  private chatUrl: string;
-  private aggregatorUrl: string;
-  private hubUrl: string;
   private hubConnection?: HubConnection;
+  baseUrl: string;
   constructor(
     private http: HttpClient,
     private readonly presenceService: PresenceService,
     private readonly oAuthService: OAuthService,
   ) {
-    this.chatUrl = environment.chatUrl;
-    this.hubUrl = environment.signalRhubUrl;
-    this.aggregatorUrl = environment.aggregator;
+    this.baseUrl = `${environment.WorkflowUrl}/chat`;
+
     this.confirmedInvitationsSource$ = new BehaviorSubject<IFriendInvitation[]>(
       [],
     );
@@ -62,27 +59,38 @@ export class MessagesService {
     this.friendsWithActivityStatus$ = this.getFriendsWithActivityStatus(user);
   }
   findUsersByEmailAndCheckState(email: string) {
-    return this.http.get<ISearchedUser[]>(
-      `${this.aggregatorUrl}/Identity/search/${email}`,
+    return this.http.get<ISearchedUser[]>(`${environment.WorkflowUrl}/aggregator/api/Identity/search/${email}`,
     );
   }
   sendInvitation(user: IUser) {
     return this.http.post<IFriendInvitation>(
-      `${this.chatUrl}/FriendRequests`,
+      `${this.baseUrl}/api/FriendRequests`,
       user,
     );
   }
   GetReceivedFriendRequests() {
-    return this.http
-      .get<IFriendInvitation[]>(
-        `${this.chatUrl}/FriendRequests/GetReceivedFriendRequests`,
-      )
-      .pipe(
-        take(1),
-        tap((invitations) =>
-          this.receivedFriendRequestsSource$.next(invitations),
-        ),
-      );
+
+    return this.receivedFriendRequests$.pipe(
+      take(1),
+      mergeMap((currentReceivedFriendRequests) => {
+        let params = new HttpParams();
+
+        params = params.append('Skip',currentReceivedFriendRequests.length.toString(),);
+        params = params.append('Take', "20");
+        params = params.append('Search', "");
+
+        return this.http
+        .get<IFriendInvitation[]>(
+          `${this.baseUrl}/api/FriendRequests/GetReceivedFriendRequests`,{params:params}
+        )
+        .pipe(
+          take(1),
+          tap((invitations) =>
+            this.receivedFriendRequestsSource$.next(invitations),
+          ),
+        );
+      }),
+    );
   }
 
   private getFriendsWithActivityStatus(user: IUser) {
@@ -123,7 +131,7 @@ export class MessagesService {
     invitedUserId: string;
   }) {
     return this.http
-      .put(`${this.chatUrl}/FriendRequests/${invitationId.inviterUserId}`, {})
+      .put(`${this.baseUrl}/api/FriendRequests/${invitationId.inviterUserId}`, {})
       .pipe(
         mergeMap(() => {
           return this.receivedFriendRequests$.pipe(
@@ -156,7 +164,7 @@ export class MessagesService {
     invitedUserId: string;
   }) {
     return this.http
-      .delete(`${this.chatUrl}/FriendRequests/${invitationId.inviterUserId}`)
+      .delete(`${this.baseUrl}/api/FriendRequests/${invitationId.inviterUserId}`)
       .pipe(
         mergeMap(() => {
           return this.receivedFriendRequests$.pipe(
@@ -180,7 +188,7 @@ export class MessagesService {
       );
   }
   declineAcceptedFriendInvitation(friend: IUser, currentUserId: string) {
-    return this.http.delete(`${this.chatUrl}/FriendRequests/${friend.id}`).pipe(
+    return this.http.delete(`${this.baseUrl}/api/FriendRequests/${friend.id}`).pipe(
       take(1),
       concatMap(() =>
         combineLatest([
@@ -208,7 +216,8 @@ export class MessagesService {
   }
   GetConfirmedFriendRequests(
     searchTerm = '',
-    takeAmount = 15,
+    takeAmount = 20,
+    skipAmount = 0,
     isScroll = false,
   ) {
     return this.confirmedInvitations$.pipe(
@@ -216,18 +225,13 @@ export class MessagesService {
       mergeMap((currentConfirmedInvitations) => {
         let params = new HttpParams();
 
-        if (isScroll)
-          params = params.append(
-            'skip',
-            currentConfirmedInvitations.length.toString(),
-          );
-
-        params = params.append('take', takeAmount.toString());
-        params = params.append('search', searchTerm);
+        params = params.append('Skip',currentConfirmedInvitations.length.toString(),);
+        params = params.append('Take', takeAmount.toString());
+        params = params.append('Search', searchTerm);
 
         return this.http
           .get<IFriendInvitation[]>(
-            `${this.chatUrl}/FriendRequests/GetConfirmedFriendRequests`,
+            `${this.baseUrl}/api/FriendRequests/GetConfirmedFriendRequests`,
             { params: params },
           )
           .pipe(
@@ -239,7 +243,7 @@ export class MessagesService {
   }
   createHubConnection(userAccessToken: string): Promise<void> {
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl(this.hubUrl + 'Messages', {
+      .withUrl(`${environment.WorkflowUrl}/hub/Messages`, {
         accessTokenFactory: () => userAccessToken,
         transport: HttpTransportType.WebSockets,
       })

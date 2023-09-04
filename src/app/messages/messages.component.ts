@@ -23,6 +23,9 @@ export class MessagesComponent implements OnInit, OnDestroy {
   private searchNewUsersSource$: BehaviorSubject<ISearchedUser[]>;
   friendsWithActivityStatus$?: Observable<IUser[]>;
   private ngUnsubscribeSource$: Subject<void>;
+
+  isCollapsedAccordionMyChats=false;
+
   constructor(
     public messagesService: MessagesService,
     private readonly oAuthService: OAuthService,

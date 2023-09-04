@@ -37,7 +37,7 @@ export class AccordionFindPeopleComponent implements OnInit, OnDestroy {
   ) {
     this.searchNewUsersSource$ = new BehaviorSubject([] as ISearchedUser[]);
     this.searchNewUsers$ = this.searchNewUsersSource$.asObservable();
-    this.isCollapsedAccordionFindPeople = false;
+    this.isCollapsedAccordionFindPeople = true;
     this.searchNewUsers = new FormControl('', { nonNullable: true });
     this.UserFriendStatusTypes = UserFriendStatusType;
     this.ngUnsubscribeSource$ = new Subject<void>();

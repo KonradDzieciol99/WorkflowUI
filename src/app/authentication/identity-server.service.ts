@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AuthConfig, OAuthService, UserInfo } from 'angular-oauth2-oidc';
 import { BehaviorSubject, Subject, filter } from 'rxjs';
-
 export const authConfig: AuthConfig = {
   issuer: 'https://localhost:5001',
   redirectUri: 'https://localhost:4200/home',
@@ -22,7 +21,6 @@ export const authConfig: AuthConfig = {
 export class IdentityServerService {
   private isDoneLoadingSubjectSource$ = new BehaviorSubject(false);
   public isDoneLoading$ = this.isDoneLoadingSubjectSource$.asObservable();
-  private userProfileSubjectSource$ = new Subject<UserInfo>();
   constructor(private readonly oAuthService: OAuthService) {
     this.load();
   }

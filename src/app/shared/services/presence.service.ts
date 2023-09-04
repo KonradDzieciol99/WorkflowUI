@@ -22,8 +22,8 @@ import { INotification, NotificationType } from '../models/INotification';
   providedIn: 'root',
 })
 export class PresenceService {
-  hubUrl = environment.signalRhubUrl;
-  notificationUrl = environment.notificationUrl;
+  //hubUrl = environment.signalRhubUrl;
+  //notificationUrl = environment.notificationUrl;
   private hubConnection?: HubConnection;
   private onlineUsersSource$: BehaviorSubject<string[]>;
   onlineUsers$: Observable<string[]>;
@@ -33,12 +33,13 @@ export class PresenceService {
   unreadNotificationsIds$: Observable<string[]>;
   private allNotificationsCountSource$: BehaviorSubject<number>;
   allNotificationsCount$: Observable<number>;
-
+  baseUrl: string;
   constructor(
     private toastr: ToastrService,
     private router: Router,
     private http: HttpClient,
   ) {
+    this.baseUrl = environment.WorkflowUrl;
     this.onlineUsersSource$ = new BehaviorSubject<string[]>([]);
     this.onlineUsers$ = this.onlineUsersSource$.asObservable();
     this.notificationsSource$ = new BehaviorSubject<INotification[]>([]);
@@ -52,7 +53,7 @@ export class PresenceService {
   }
   getAllNotifications() {
     return this.http
-      .get<INotification[]>(`${this.notificationUrl}/AppNotification`)
+      .get<INotification[]>(`${this.baseUrl}/notification/api/AppNotification`)
       .pipe(
         take(1),
         tap((notifications) => this.notificationsSource$.next(notifications)),
@@ -63,7 +64,7 @@ export class PresenceService {
   }
   markNotificationAsRead(id: string) {
     return this.http
-      .put<void>(`${this.notificationUrl}/AppNotification/${id}`, {})
+      .put<void>(`${this.baseUrl}/notification/api/AppNotification/${id}`, {})
       .pipe(
         take(1),
         concatMap(() =>
@@ -93,7 +94,7 @@ export class PresenceService {
   deleteNotification(notificationToDelete: INotification) {
     return this.http
       .delete<void>(
-        `${this.notificationUrl}/AppNotification/${notificationToDelete.id}`,
+        `${this.baseUrl}/notification/api/AppNotification/${notificationToDelete.id}`,
       )
       .pipe(
         take(1),
@@ -165,9 +166,12 @@ export class PresenceService {
       }),
     );
   }
+  //environment
+  //`${this.baseUrl}/hub/Presence`
+  //`${environment.signalRhubUrlhttp}Presence`
   createHubConnection(userAccessToken: string) {
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl(this.hubUrl + 'Presence', {
+      .withUrl(`${this.baseUrl}/hub/Presence`, {
         accessTokenFactory: () => userAccessToken,
         transport: HttpTransportType.WebSockets,
       })

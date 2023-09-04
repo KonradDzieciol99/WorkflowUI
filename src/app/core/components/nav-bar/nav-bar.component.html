@@ -1,13 +1,10 @@
 <nav class="navbar navbar-expand-md border-bottom fw-semibold">
   <div class="container-fluid">
     <div class="d-md-none" style="width: 2.6rem"></div>
-    <a class="navbar-brand text-white" href="#">
-      <i
-        class="fa-sharp fa-solid fa-gear fa-spin fa-xl"
-        style="--fa-animation-duration: 13s"
-      ></i>
-      <span class="d-md-none ms-2 fw-normal" style="font-family: Fantasy"
-        >Workflow</span
+    <a class="navbar-brand text-white d-flex me-2" href="#">
+        <i class="bi bi-gear-wide-connected spin spin-slow" style="font-size: 1.8rem;"></i>
+      
+      <span class="d-md-none ms-2 my-auto">Workflow</span
       >
     </a>
     <button
@@ -17,7 +14,6 @@
     >
       <span class="navbar-toggler-icon"></span>
     </button>
-    <!-- [collapse]="isCollapsed" [isAnimated]="true"-->
     <div [ngbCollapse]="isCollapsed" class="collapse navbar-collapse">
       <hr class="d-block d-md-none text-white-50 w-100" />
       <ul class="navbar-nav me-auto mb-lg-0 flex-row flex-wrap">
@@ -27,7 +23,7 @@
             routerLink="./projects"
             routerLinkActive="active"
           >
-            <i class="fa-solid fa-folder-tree"></i>
+            <i class="bi bi-folder-fill"></i>
             <span class="ms-1">Projects</span>
           </a>
         </li>
@@ -54,7 +50,6 @@
         </li>
       </ul>
     </div>
-    <!-- [collapse]="isCollapsed" [isAnimated]="true" -->
     <div [ngbCollapse]="isCollapsed" class="collapse navbar-collapse">
       <ul
         class="navbar-nav ms-auto flex-wrap column-gap-md-2 flex-row flex-md-row row-gap-1 row-gap-md-0"

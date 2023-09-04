@@ -19,17 +19,16 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class ProjectService {
-  aggregatorUrl: string;
-  projectsUrl: string;
   private projectSource$: BehaviorSubject<IProject | undefined>;
   project$: Observable<IProject | undefined>;
+  baseUrl: string;
 
   constructor(
     private http: HttpClient,
     private router: Router,
   ) {
-    this.projectsUrl = environment.projectsUrl;
-    this.aggregatorUrl = environment.aggregator;
+    this.baseUrl = `${environment.WorkflowUrl}/projects`;
+
     this.projectSource$ = new BehaviorSubject(
       undefined as IProject | undefined,
     );
@@ -37,7 +36,7 @@ export class ProjectService {
   }
   get(projectId: string) {
     return this.http
-      .get<IProject>(`${this.projectsUrl}/projects/${projectId}`)
+      .get<IProject>(`${this.baseUrl}/api/projects/${projectId}`)
       .pipe(tap((project) => this.projectSource$.next(project)));
   }
   update(updateProject: {
@@ -47,7 +46,7 @@ export class ProjectService {
     projectId: string;
   }) {
     return this.http.put(
-      `${this.projectsUrl}/projects/${updateProject.projectId}`,
+      `${this.baseUrl}/api/projects/${updateProject.projectId}`,
       updateProject,
     );
   }
@@ -58,7 +57,7 @@ export class ProjectService {
         const params = new HttpParams().set('projectId', project.id);
 
         return this.http.get<ISearchedMember[]>(
-          `${this.aggregatorUrl}/Identity/searchMember/${email}`,
+          `${environment.WorkflowUrl}/aggregator/api/Identity/searchMember/${email}`,
           { params: params },
         );
       }),
@@ -71,7 +70,7 @@ export class ProjectService {
       switchMap((project) => {
         return this.http
           .post<IProjectMember>(
-            `${this.aggregatorUrl}/Projects/${project.id}/projectMembers/${email}`,
+            `${environment.WorkflowUrl}/aggregator/api/Projects/${project.id}/projectMembers/${email}`,
             {},
           )
           .pipe(
@@ -97,7 +96,7 @@ export class ProjectService {
       switchMap((project) => {
         return this.http
           .delete<void>(
-            `${this.projectsUrl}/Projects/${project.id}/projectMembers/${id}`,
+            `${this.baseUrl}/api/Projects/${project.id}/projectMembers/${id}`,
           )
           .pipe(
             take(1),

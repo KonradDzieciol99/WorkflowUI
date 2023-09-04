@@ -12,7 +12,7 @@ import { ProjectService } from './project.service';
   providedIn: 'root',
 })
 export class ProjectMembersService {
-  private baseUrl: string;
+  //private baseUrl: string;
   private projectMemberSource$: BehaviorSubject<
     ISyncfusionFormat<IProjectMember>
   >;
@@ -21,7 +21,7 @@ export class ProjectMembersService {
     private http: HttpClient,
     private projectService: ProjectService,
   ) {
-    this.baseUrl = environment.tasksUrl;
+    //this.baseUrl = `${environment.WorkflowUrl}/`;
     this.projectMemberSource$ = new BehaviorSubject({
       result: [],
       count: 0,

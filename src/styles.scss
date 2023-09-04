@@ -6,8 +6,11 @@
 @import "../node_modules/bootstrap/scss/functions";
 @import "../node_modules/bootstrap/scss/variables";
 @import "../node_modules/bootstrap/scss/mixins";
-@import "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
 @import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
+@import './assets/fonts/poppins';
+:root{
+  --bs-body-font-family: 'Poppins',sans-serif;
+}
 
 html,
 body {

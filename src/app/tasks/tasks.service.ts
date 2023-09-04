@@ -37,7 +37,7 @@ export class TasksService {
     private toastrService: ToastrService,
     private projectService: ProjectService,
   ) {
-    this.baseUrl = environment.tasksUrl;
+    this.baseUrl = `${environment.WorkflowUrl}/tasks`;
     this.tasksSource$ = new BehaviorSubject<ISyncfusionFormat<IAppTask>>({
       result: [],
       count: 0,
@@ -66,7 +66,7 @@ export class TasksService {
 
         return this.http
           .get<ISyncfusionFormat<IAppTask>>(
-            `${this.baseUrl}/projects/${project.id}/task`,
+            `${this.baseUrl}/api/projects/${project.id}/task`,
             { params: params },
           )
           .pipe(
@@ -87,7 +87,7 @@ export class TasksService {
       filter((project): project is IProject => project !== undefined),
       mergeMap((project) => {
         return this.http
-          .post<IAppTask>(`${this.baseUrl}/projects/${project.id}/task`, task)
+          .post<IAppTask>(`${this.baseUrl}/api/projects/${project.id}/task`, task)
           .pipe(
             take(1),
             concatMap((task) =>
@@ -121,7 +121,7 @@ export class TasksService {
       filter((project): project is IProject => project !== undefined),
       mergeMap((project) => {
         return this.http.delete<void>(
-          `${this.baseUrl}/projects/${project.id}/task/${id}`,
+          `${this.baseUrl}/api/projects/${project.id}/task/${id}`,
         );
       }),
     );
@@ -132,7 +132,7 @@ export class TasksService {
       mergeMap((project) => {
         return this.http
           .put<void>(
-            `${this.baseUrl}/projects/${project.id}/task/${task.id}`,
+            `${this.baseUrl}/api/projects/${project.id}/task/${task.id}`,
             task,
           )
           .pipe(

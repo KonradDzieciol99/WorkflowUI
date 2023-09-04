@@ -9,8 +9,8 @@
     <div class="col-12 col-sm-5 col-md-4 col-lg-3 col-xl-2">
       <div class="input-group input-group-sm mb-2">
         <span class="input-group-text"
-          ><i class="fa-solid fa-magnifying-glass fa-sm"></i
-        ></span>
+          ><i class="bi bi-search"></i>
+        </span>
         <input
           type="text"
           [formControl]="searchTasks"
@@ -18,11 +18,11 @@
           placeholder="Search..."
         />
         <button
-          class="btn btn-outline-secondary btn-sm"
+          class="btn btn-outline-secondary"
           type="button"
           (click)="searchTasks.reset()"
         >
-          <i class="fa-solid fa-x fa-sm"></i>
+        <i class="bi bi-x-lg"></i>
         </button>
       </div>
     </div>
@@ -51,8 +51,24 @@
     >
       <e-columns>
         <e-column field="name" headerText="Title"> </e-column>
-        <e-column field="priority" headerText="Priority"> </e-column>
-        <e-column field="state" headerText="State"> </e-column>
+        <e-column field="priority" headerText="Priority">
+          <ng-template #template let-data>
+            <div [ngSwitch]="data.priority">
+              <div *ngSwitchCase="0"><i class="bi bi-thermometer text-info" tooltip="Low"container="body"></i></div>
+              <div *ngSwitchCase="1"><i class="bi bi-thermometer-half text-warning" tooltip="Medium"container="body"></i></div>
+              <div *ngSwitchCase="2"><i class="bi bi-thermometer-high text-danger" tooltip="High"container="body"></i></div>
+            </div>
+          </ng-template>   
+        </e-column>
+        <e-column field="state" headerText="State">
+          <ng-template #template let-data>
+            <div [ngSwitch]="data.state">
+              <div *ngSwitchCase="0">To Do</div>
+              <div *ngSwitchCase="1">In Progress</div>
+              <div *ngSwitchCase="2">Done <i class="bi bi-check-square text-success me-1" tooltip="Done"container="body"></i></div>
+            </div>
+          </ng-template>    
+        </e-column>
         <e-column field="startDate" headerText="Start Date"> </e-column>
         <e-column field="dueDate" headerText="Due Date"> </e-column>
         <e-column field="taskAssignee" headerText="Assignee" width="200px">

@@ -25,8 +25,6 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class ChatService {
-  private chatUrl: string;
-  private hubUrl: string;
   private hubConnection?: HubConnection;
   private messageThreadSource$: BehaviorSubject<Message[] | undefined>;
   messageThread$: Observable<Message[] | undefined>;
@@ -36,9 +34,9 @@ export class ChatService {
   private recipientIsTypingSource$: BehaviorSubject<boolean>;
   recipientIsTyping$: Observable<boolean>;
   chatRecipient$: Observable<IUser | undefined>;
+  baseUrl: string;
   constructor(private http: HttpClient) {
-    this.chatUrl = environment.chatUrl;
-    this.hubUrl = environment.signalRhubUrl;
+    this.baseUrl = `${environment.WorkflowUrl}/chat`;
     this.messageThreadSource$ = new BehaviorSubject(
       undefined as Message[] | undefined,
     );
@@ -58,7 +56,7 @@ export class ChatService {
     userAccessToken: string,
   ): Promise<void> {
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl(this.hubUrl + 'Chat?RecipientEmail=' + recipientEmail, {
+      .withUrl(`${environment.WorkflowUrl}/hub/Chat?RecipientEmail=${recipientEmail}`, {
         accessTokenFactory: () => userAccessToken,
         transport: HttpTransportType.WebSockets,
       })
@@ -128,7 +126,7 @@ export class ChatService {
     return of();
   }
   sendMessage(recipient: IUser, content: string) {
-    return this.http.post(`${this.chatUrl}/Messages`, {
+    return this.http.post(`${this.baseUrl}/api/Messages`, {
       recipientUserId: recipient.id,
       recipientEmail: recipient.email,
       content: content,
@@ -145,7 +143,7 @@ export class ChatService {
         params = params.append('Take', take.toString());
 
         return this.http
-          .get<Message[]>(`${this.chatUrl}/Messages`, { params: params })
+          .get<Message[]>(`${this.baseUrl}/api/Messages`, { params: params })
           .pipe(
             tap((oldestMessages) => {
               this.messageThreadSource$.next([
