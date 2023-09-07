@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, map, take } from 'rxjs';
 import { INotification } from 'src/app/shared/models/INotification';
 import { PresenceService } from 'src/app/shared/services/presence.service';
 
@@ -41,5 +41,23 @@ export class NotificationPanelComponent {
 
   onOpenChange(isOpen: boolean): void {
     this.isNotificationPanelExpanded = isOpen;
+  }
+
+  loadMoreNotifications() {
+    this.presenceService.getAllNotifications()
+    .pipe(
+      take(1)
+    )
+    .subscribe()
+
+  //   this.isloadingOlderMessages = true;
+  //   this.chatService
+  //     .getMessages(this.chatRecipient, 15)
+  //     .pipe(take(1), takeUntil(this.ngUnsubscribeSource$))
+  //     .subscribe((messages) => {
+  //       if (messages.length < 15) this.hasMoreData = false;
+
+  //       this.isloadingOlderMessages = false;
+  //     });
   }
 }

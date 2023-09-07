@@ -19,6 +19,7 @@ import { UserMenuComponent } from './components/user-menu/user-menu.component';
 import { ErrorHandlingInterceptor } from './interceptors/error-handling.interceptor';
 import { JwtInterceptorInterceptor } from './interceptors/jwt-interceptor.interceptor';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { LoadingInterceptor } from './interceptors/loading.interceptor';
     BsDropdownModule.forRoot(),
     BreadcrumbModule,
     NgbCollapseModule,
+    InfiniteScrollModule
   ],
   exports: [HeaderComponent],
   providers: [

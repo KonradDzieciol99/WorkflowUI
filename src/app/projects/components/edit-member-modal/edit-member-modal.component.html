@@ -1,0 +1,61 @@
+<div class="modal-header">
+    <h5 class="modal-title">Update Member</h5>
+    <button type="button" class="btn-close" (click)="activeModal.close()"></button>
+</div>
+<div class="modal-body">
+    <form *ngIf="projectMemberForm" [formGroup]="projectMemberForm">
+        <div
+        dropdown
+        btnRadioGroup
+        formControlName="type"
+        class="d-inline-block dropdown"
+        (isOpenChange)="onOpenChange($event)"
+      >
+        <!--  btn-group  -->
+        <button
+          dropdownToggle
+          type="button"
+          class="btn btn-secondary dropdown-toggle"
+          tooltip="Swith theme"
+          container="body"
+          #pop="bs-tooltip"
+          [class.active]="dropDownPanelOpen"
+        >
+          <small class="">{{currentType}}</small>
+        </button>
+        <ul *dropdownMenu class="dropdown-menu dropdown-menu-end" role="menu">
+          <li role="menuitem">
+            <button
+              [btnRadio]="projectMemberTypes.Member"
+              class="dropdown-item d-flex justify-content-center gap-1"
+            >
+              <span> Member</span>
+            </button>
+          </li>
+          <li role="menuitem">
+            <button
+              [btnRadio]="projectMemberTypes.Admin"
+              class="dropdown-item d-flex justify-content-center gap-1"
+              type="button"
+            >
+            <span>Admin</span>
+            </button>
+          </li>
+          <li role="menuitem">
+            <button
+            [btnRadio]="projectMemberTypes.Leader"
+              class="dropdown-item d-flex justify-content-center gap-1"
+              type="button"
+            >
+            <span>Leader</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="update()">
+        Update
+    </button>
+</div>

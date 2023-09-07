@@ -1,5 +1,5 @@
-<div
-  class="d-flex position-relative border bg-secondary bg-opacity-25 mb-1 rounded-circle"
+<!-- <button
+  class="btn d-flex position-relative border bg-body-tertiary mb-1 rounded-circle"
   style="height: 30px; width: 30px"
   tooltip="Add member"
   [adaptivePosition]="true"
@@ -9,8 +9,23 @@
 >
   <i
     class="bi bi-person-plus-fill position-absolute"
-    style="left: 27%; bottom: 12%"
+    style="left: 24%; bottom: 6%"
   ></i>
-</div>
-
+</button> -->
+<!-- <i
+class="bi bi-person-plus-fill position-absolute"
+style="left: 24%; bottom: 6%"
+></i> -->
 <!-- mb-sm-0 ms-sm-auto me-sm-1 mx-auto mx-sm-0  col-auto  -->
+<button class="btn btn-outline-secondary btn-sm rounded-circle"
+tooltip="Add member"
+[adaptivePosition]="true"
+placement="left"
+container="body"
+(click)="open()"
+>
+  <i
+    class="bi bi-person-plus-fill"
+    style="left: 24%; bottom: 6%"
+  ></i>
+</button>

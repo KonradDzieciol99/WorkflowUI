@@ -1,5 +1,8 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { IAppTask, Priority, State } from '../models/IAppTask';
+import { IProjectMember } from '../models/IProjectMember';
+import { isEqual } from 'lodash';
 
 export class CustomValidators {
   static minimumDateNgb(minDate: NgbDateStruct): ValidatorFn {
@@ -75,5 +78,61 @@ export class CustomValidators {
 
       return result;
     };
+  }
+  static requiredUpdate(initialAppTask:IAppTask): ValidatorFn {
+    return (
+      control: AbstractControl<{
+        id: string
+        name: string
+        description: string
+        projectId: string
+        state: State
+        priority: Priority
+        dueDate: NgbDateStruct
+        startDate: NgbDateStruct
+        assignee: IProjectMember | undefined
+        leader: IProjectMember | undefined
+      }>,
+    ): ValidationErrors | null => {
+
+      initialAppTask.taskAssignee = initialAppTask.taskAssignee ?? undefined;
+      initialAppTask.taskAssigneeMemberId = initialAppTask.taskAssigneeMemberId ?? undefined;
+
+      let IAppTask:IAppTask = {
+        id: control.value.id,
+        name: control.value.name,
+        description: control.value.description,
+        projectId: control.value.projectId,
+        priority: control.value.priority,
+        state:control.value.state,
+        dueDate:  this.mapNgbDateStructToDate(control.value.dueDate),
+        startDate: this.mapNgbDateStructToDate(control.value.startDate),
+        taskLeaderId:control.value.leader?.id,
+        taskLeader: control.value.leader,
+        taskAssigneeMemberId: control.value.assignee?.id  ?? undefined ,
+        taskAssignee:control.value.assignee ?? undefined ,
+      }
+
+
+      const result = isEqual(initialAppTask, IAppTask)  ? { requiredUpdate: "no changes have been made" } : null;
+      
+      return result
+    };
+  }
+  private static mapNgbDateStructToDate(date: NgbDateStruct): Date {
+    
+    const mapedDate = new Date(
+      date.year,
+      date.month,
+      date.day,
+      0,0,0,0
+    );
+    // const mapedDate = new Date(
+    //   date.year,
+    //   date.month - 1,
+    //   date.day
+    // );
+
+    return mapedDate;
   }
 }

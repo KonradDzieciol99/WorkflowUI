@@ -1,11 +1,22 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import {
+  ActionEventArgs,
+  AddEventArgs,
+  BeginEditArgs,
   DataSourceChangedEventArgs,
   DataStateChangeEventArgs,
+  DeleteEventArgs,
+  EditEventArgs,
   EditSettingsModel,
+  FilterEventArgs,
   GridComponent,
+  GroupEventArgs,
+  PageEventArgs,
   PageSettingsModel,
+  SaveEventArgs,
+  SearchEventArgs,
+  SortEventArgs,
   ToolbarItems,
 } from '@syncfusion/ej2-angular-grids';
 import { ClickEventArgs } from '@syncfusion/ej2-navigations';
@@ -23,6 +34,8 @@ import {
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window/confirm-window.component';
 import { TasksService } from '../../tasks.service';
 import { CreateTaskModalComponent } from '../modals/create-task-modal/create-task-modal.component';
+import { CreateProjectModalComponent } from 'src/app/projects/components/modals/create-project-modal/create-project-modal.component';
+import { IAppTask } from 'src/app/shared/models/IAppTask';
 
 @Component({
   selector: 'app-list',
@@ -58,9 +71,20 @@ export class ListComponent implements OnInit, OnDestroy {
 
   createTask() {
     //let bsModalRef =
-    this.modalService.show(CreateTaskModalComponent, {
+
+    const initialState: ModalOptions<CreateTaskModalComponent> = {
+      initialState: {
+        title: 'Create Task',
+      },
       class: 'modal-lg modal-dialog-centered',
-    });
+    };
+
+    this.modalService.show(CreateTaskModalComponent, initialState);
+
+
+    // this.modalService.show(CreateTaskModalComponent, {
+    //   class: 'modal-lg modal-dialog-centered',
+    // });
   }
   public dataStateChange(state: DataStateChangeEventArgs): void {
     this.tasksService
@@ -80,7 +104,7 @@ export class ListComponent implements OnInit, OnDestroy {
           concatMap((value) => {
             if (!value) return of();
 
-            return this.tasksService.delete(state);
+            return this.tasksService.delete(state).pipe(take(1));
           }),
           takeUntil(this.ngUnsubscribeSource$),
         )
@@ -120,27 +144,56 @@ export class ListComponent implements OnInit, OnDestroy {
         },
       });
   }
-  toolbarClick(args: ClickEventArgs): void {
-    if (args.item.id?.endsWith('edit')) {
-      const selectedRecord = this.grid?.getSelectedRecords()[0];
-      //this.myDialog.open(selectedRecord);
-      args.cancel = true; // Prevent the grid's default dialog from opening
-      if (!selectedRecord) return;
+  // toolbarClick(args: ClickEventArgs): void {
+  //   if (args.item.id?.endsWith('edit')) {
+  //     const selectedRecord = this.grid?.getSelectedRecords()[0];
+  //     //this.myDialog.open(selectedRecord);
+  //     args.cancel = true; // Prevent the grid's default dialog from opening
+  //     if (!selectedRecord) return;
 
-      const selectedRecordCopy = JSON.parse(JSON.stringify(selectedRecord));
+  //     const selectedRecordCopy = JSON.parse(JSON.stringify(selectedRecord));
 
-      const initialState: ModalOptions = {
+  //     const initialState: ModalOptions = {
+  //       initialState: {
+  //         updatedTask: selectedRecordCopy,
+  //         title: 'Modal with component',
+  //       },
+  //       class: 'modal-lg modal-dialog-centered',
+  //     };
+
+  //     //let bsModalRef =
+  //     this.modalService.show(CreateTaskModalComponent, initialState);
+  //   }
+  // }
+  actionBegin (args:PageEventArgs|GroupEventArgs|FilterEventArgs|SearchEventArgs|SortEventArgs|AddEventArgs|SaveEventArgs|EditEventArgs|DeleteEventArgs|ActionEventArgs){
+    if (args.requestType === 'beginEdit') {
+      let editArgs = args as EditEventArgs;
+
+      editArgs.cancel = true;
+      
+      const initialState: ModalOptions<CreateTaskModalComponent> = {
         initialState: {
-          updatedTask: selectedRecordCopy,
-          title: 'Modal with component',
+          updatedTask: editArgs.rowData as IAppTask,
+          title: 'Update Task',
         },
         class: 'modal-lg modal-dialog-centered',
       };
 
-      //let bsModalRef =
       this.modalService.show(CreateTaskModalComponent, initialState);
     }
   }
+  actionComplete(args:PageEventArgs|GroupEventArgs|FilterEventArgs|SearchEventArgs|SortEventArgs|AddEventArgs|SaveEventArgs|EditEventArgs|DeleteEventArgs|ActionEventArgs) {
+    //console.log(args.);
+    // if (args.requestType === 'beginEdit' || args.requestType === 'add') {
+    //     const dialog = (args as any).dialog;
+    //     dialog.showCloseIcon = false;
+    //     dialog.height = 300;
+    //     dialog.width=300;
+    //     // change the header of the dialog
+    //     dialog.header = (args as any).requestType === 'beginEdit' ? 'Edit Record of ' + (args as any).rowData['CustomerID'] : 'New Customer';
+    // }
+}
+
   ngOnDestroy(): void {
     this.ngUnsubscribeSource$.next();
   }

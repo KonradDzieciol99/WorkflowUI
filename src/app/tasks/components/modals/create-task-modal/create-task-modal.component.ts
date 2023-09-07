@@ -12,6 +12,7 @@ import { IAppTask, Priority, State } from 'src/app/shared/models/IAppTask';
 import { ICreateAppTask } from 'src/app/shared/models/ICreateAppTask';
 import { IProjectMember } from 'src/app/shared/models/IProjectMember';
 import { ITextIconPair } from 'src/app/shared/models/ITextIconPair';
+import { ProblemDetails, isProblemDetails } from 'src/app/shared/models/ProblemDetails';
 import { TasksService } from 'src/app/tasks/tasks.service';
 
 @Component({
@@ -20,6 +21,7 @@ import { TasksService } from 'src/app/tasks/tasks.service';
   styleUrls: ['./create-task-modal.component.scss'],
 })
 export class CreateTaskModalComponent implements OnInit, OnDestroy {
+  title?: string;
   stateMap: Map<State, ITextIconPair>;
   priorityMap: Map<Priority, ITextIconPair>;
   minNgbDateStruct?: NgbDateStruct;
@@ -45,7 +47,7 @@ export class CreateTaskModalComponent implements OnInit, OnDestroy {
     private tasksService: TasksService,
     private toastrService: ToastrService,
     private projectService: ProjectService,
-    private oAuthService: OAuthService,
+    private oAuthService: OAuthService
   ) {
     this.statuses = [State.ToDo, State.InProgress, State.Done];
     this.priorites = [Priority.Low, Priority.Medium, Priority.High];
@@ -88,24 +90,24 @@ export class CreateTaskModalComponent implements OnInit, OnDestroy {
 
         const userClaims = this.oAuthService.getIdentityClaims();
         const leader = x.projectMembers.find(
-          (x) => x.userId === userClaims['sub'],
+          (x) => x.userId === userClaims['sub']
         );
 
         this.taskForm = new FormGroup(
           {
-            id: new FormControl<string>('', {
+            id: new FormControl('', {
               nonNullable: true,
               validators: [],
             }),
-            name: new FormControl<string>('', {
+            name: new FormControl('', {
               nonNullable: true,
               validators: [Validators.required],
             }),
-            description: new FormControl<string>('', {
+            description: new FormControl('', {
               nonNullable: true,
               validators: [],
             }),
-            projectId: new FormControl<string>(x.id, {
+            projectId: new FormControl(x.id, {
               nonNullable: true,
               validators: [],
             }),
@@ -117,11 +119,11 @@ export class CreateTaskModalComponent implements OnInit, OnDestroy {
               nonNullable: true,
               validators: [Validators.required],
             }),
-            dueDate: new FormControl<NgbDateStruct>(dueDate, {
+            dueDate: new FormControl(dueDate, {
               nonNullable: true,
               validators: [Validators.required],
             }),
-            startDate: new FormControl<NgbDateStruct>(this.minNgbDateStruct, {
+            startDate: new FormControl(this.minNgbDateStruct, {
               nonNullable: true,
               validators: [Validators.required],
             }),
@@ -134,10 +136,15 @@ export class CreateTaskModalComponent implements OnInit, OnDestroy {
               validators: [Validators.required],
             }),
           },
-          { validators: CustomValidators.checkDateOrder() },
+          { validators: CustomValidators.checkDateOrder()}
         );
 
         if (this.updatedTask) {
+          this.minNgbDateStruct=undefined;
+          this.updatedTask.dueDate.setMonth(this.updatedTask.dueDate.getMonth() + 1);
+          this.updatedTask.startDate.setMonth(this.updatedTask.startDate.getMonth() + 1);
+
+          console.debug(this.updatedTask)
           this.taskForm.get('name')?.setValue(this.updatedTask.name);
           this.taskForm
             .get('description')
@@ -148,12 +155,12 @@ export class CreateTaskModalComponent implements OnInit, OnDestroy {
           this.taskForm
             .get('dueDate')
             ?.setValue(
-              this.mapDateToNgbDateStruct(new Date(this.updatedTask.dueDate)),
+              this.mapDateToNgbDateStruct(new Date(this.updatedTask.dueDate))
             );
           this.taskForm
             .get('startDate')
             ?.setValue(
-              this.mapDateToNgbDateStruct(new Date(this.updatedTask.startDate)),
+              this.mapDateToNgbDateStruct(new Date(this.updatedTask.startDate))
             );
           this.taskForm
             .get('assignee')
@@ -161,17 +168,19 @@ export class CreateTaskModalComponent implements OnInit, OnDestroy {
           this.taskForm.get('leader')?.setValue(this.updatedTask.taskLeader);
           this.taskForm.get('id')?.setValue(this.updatedTask.id);
 
-          this.taskForm.get('id')?.setValidators(Validators.required);
+          this.taskForm.get('id')?.addValidators(Validators.required);
+          this.taskForm.addValidators(CustomValidators.requiredUpdate(this.updatedTask));
+          this.taskForm.setErrors(null);
         } else {
           this.taskForm
             .get('dueDate')
             ?.setValidators(
-              CustomValidators.minimumDateNgb(this.minNgbDateStruct),
+              CustomValidators.minimumDateNgb(this.minNgbDateStruct)
             );
           this.taskForm
             .get('startDate')
             ?.setValidators(
-              CustomValidators.minimumDateNgb(this.minNgbDateStruct),
+              CustomValidators.minimumDateNgb(this.minNgbDateStruct)
             );
         }
       });
@@ -182,7 +191,7 @@ export class CreateTaskModalComponent implements OnInit, OnDestroy {
         const members = x?.projectMembers ?? [];
         return [undefined, ...members];
       }),
-      takeUntil(this.ngUnsubscribeSource$),
+      takeUntil(this.ngUnsubscribeSource$)
     );
   }
   create() {
@@ -200,11 +209,13 @@ export class CreateTaskModalComponent implements OnInit, OnDestroy {
       dueDateNgbDateStruct.year,
       dueDateNgbDateStruct.month - 1,
       dueDateNgbDateStruct.day,
+      0,0,0,0
     );
     const startDateDateDate = new Date(
       startDateNgbDateStruct.year,
       startDateNgbDateStruct.month - 1,
       startDateNgbDateStruct.day,
+      0,0,0,0
     );
 
     const createAppTask: ICreateAppTask = {
@@ -229,11 +240,10 @@ export class CreateTaskModalComponent implements OnInit, OnDestroy {
           this.toastrService.success(`Task has been created`);
           this.selfBsModalRef.hide();
         },
-        error: (error: unknown) => {
-          if (error instanceof HttpErrorResponse)
-            this.taskForm?.setErrors({ serverError: error.error });
-          else console.error('Nieznany błąd:', error);
-        },
+        error: (error) => {
+          if (isProblemDetails(error))
+            this.taskForm?.setErrors({ serverError: error.detail });
+        }
       });
   }
   update() {
@@ -253,12 +263,12 @@ export class CreateTaskModalComponent implements OnInit, OnDestroy {
     const dueDateDate = new Date(
       dueDateNgbDateStruct.year,
       dueDateNgbDateStruct.month - 1,
-      dueDateNgbDateStruct.day,
+      dueDateNgbDateStruct.day
     );
     const startDateDateDate = new Date(
       startDateNgbDateStruct.year,
       startDateNgbDateStruct.month - 1,
-      startDateNgbDateStruct.day,
+      startDateNgbDateStruct.day
     );
 
     const updatedTask: IAppTask = {
@@ -284,11 +294,10 @@ export class CreateTaskModalComponent implements OnInit, OnDestroy {
           this.toastrService.success(`Task has been updated`);
           this.selfBsModalRef.hide();
         },
-        error: (error: unknown) => {
-          if (error instanceof HttpErrorResponse)
-            this.taskForm?.setErrors({ serverError: error.error });
-          else console.error('Nieznany błąd:', error);
-        },
+        error: (error) => {
+          if (isProblemDetails(error))
+            this.taskForm?.setErrors({ serverError: error.detail });
+        }
       });
   }
   mapDateToNgbDateStruct(date: Date): NgbDateStruct {

@@ -64,8 +64,7 @@ export class MessagesService {
   }
   sendInvitation(user: IUser) {
     return this.http.post<IFriendInvitation>(
-      `${this.baseUrl}/api/FriendRequests`,
-      user,
+      `${this.baseUrl}/api/FriendRequests`,{targetUserId:user.id,targetUserEmail:user.email,targetUserPhotoUrl:user.photoUrl},
     );
   }
   GetReceivedFriendRequests() {
@@ -219,13 +218,15 @@ export class MessagesService {
     takeAmount = 20,
     skipAmount = 0,
     isScroll = false,
-  ) {
+    ) {
     return this.confirmedInvitations$.pipe(
       take(1),
       mergeMap((currentConfirmedInvitations) => {
         let params = new HttpParams();
 
-        params = params.append('Skip',currentConfirmedInvitations.length.toString(),);
+        if (isScroll)
+          params = params.append('Skip',currentConfirmedInvitations.length.toString(),);
+        
         params = params.append('Take', takeAmount.toString());
         params = params.append('Search', searchTerm);
 
@@ -236,7 +237,12 @@ export class MessagesService {
           )
           .pipe(
             take(1),
-            tap((friends) => this.confirmedInvitationsSource$.next(friends)),
+            tap((friends) => {
+              if (isScroll)
+                this.confirmedInvitationsSource$.next([...friends,...currentConfirmedInvitations]);
+              else
+                this.confirmedInvitationsSource$.next(friends);
+            }),
           );
       }),
     );
