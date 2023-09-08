@@ -2,4 +2,14 @@
     background-color: var(--bs-primary-bg-subtle);
     transition: background-color 0.3s ease;
 }
-  
+
+// :host:has(.accordion-collapse.show) {
+//     height: 100%;
+//     // transition: height 5s ease !important;
+//   }
+:host:has(.accordion-button:not(.collapsed)) {
+   // height: 100%;
+   //flex-basis: 100%;
+    //@include transition($transition-collapse);
+   //  transition: height 5s ease !important;
+ }

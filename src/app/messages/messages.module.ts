@@ -15,6 +15,7 @@ import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { AccordionFindPeopleComponent } from './components/accordion-find-people/accordion-find-people.component';
 import { AccordionMyChatsComponent } from './components/accordion-my-chats/accordion-my-chats.component';
 import { AccordionInvitationsComponent } from './components/accordion-invitations/accordion-invitations.component';
+import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { AccordionInvitationsComponent } from './components/accordion-invitation
     ReactiveFormsModule,
     FormsModule,
     CollapseModule.forRoot(),
+    NgbCollapseModule,
   ],
 })
 export class MessagesModule {}

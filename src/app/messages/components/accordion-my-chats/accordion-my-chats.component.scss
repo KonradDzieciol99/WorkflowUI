@@ -1,4 +1,34 @@
+
+@import "/node_modules/bootstrap/scss/functions";
+@import "/node_modules/bootstrap/scss/variables";
+@import "/node_modules/bootstrap/scss/mixins";
 .friend-card:hover {
   background-color: var(--bs-primary-bg-subtle);
   transition: background-color 0.3s ease;
+}
+// :host:has(.accordion-header .accordion-button){
+// background-color: aquamarine !important;
+// }
+// :host:has(.accordion-button:not(.collapsed)) {
+//   //  height: 100%;
+// //  //@include transition($transition-collapse);
+// //   transition: height 5s ease !important;
+// }
+.accordion-collapse.collapsing{
+  height: 100%;
+  // transition: height 5s ease !important;
+}
+
+// a:has(> img) { ... }
+:host:has(.accordion-button:not(.collapsed)) {
+  //flex-basis: 100%;
+  height: 100%;
+  //@include transition($transition-collapse);
+  
+}
+:host{
+  transition: height 0.1s ease;
+  //@include transition($transition-collapse);
+  //flex-basis: 50px;
+  height: 55px;
 }

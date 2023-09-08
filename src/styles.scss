@@ -8,6 +8,8 @@
 @import "../node_modules/bootstrap/scss/mixins";
 @import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
 @import './assets/fonts/poppins';
+
+
 :root{
   --bs-body-font-family: 'Poppins',sans-serif;
 }
@@ -15,6 +17,8 @@
 html,
 body {
   height: 100%;
+  //@include transition($transition-collapse);
+
 }
 
 .navbar {

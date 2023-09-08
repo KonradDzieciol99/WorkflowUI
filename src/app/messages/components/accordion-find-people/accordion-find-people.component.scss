@@ -3,3 +3,25 @@
     transition: background-color 0.3s ease;
   }
   
+  // :host(.accordion-button.collapsed) {
+  //   /* style dla hosta, gdy wewnątrz przycisk ma klasę 'collapsed' */
+  //   height: 200%;
+  // }
+
+  // :host:has(.accordion-collapse.show) {
+  //   //flex-grow: 1;
+  //   height: 100%;
+  //   // transition: height 5s ease !important;
+  //   transition: flex-grow 1s ease-in-out;
+  // }
+  // :host{
+  //   //flex-basis: 50px;
+  //   // transition: height 5s ease !important;
+  //   transition: flex-grow 1s ease-in-out;
+
+  // }
+//   :host:has(.accordion-button:not(.collapsed)) {
+//     height: 100%;
+//     //@include transition($transition-collapse);
+//    //  transition: height 5s ease !important;
+//  }

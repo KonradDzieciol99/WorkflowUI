@@ -1,12 +1,9 @@
 <div class="row g-0 messages-container">
   <div class="col-12 col-sm-4 border-bottom h-100">
-    <div
-      class="accordion accordion-flush h-100 d-flex flex-column"
-      id="accordionExample"
-    >
-      <app-accordion-find-people></app-accordion-find-people>
-      <app-accordion-my-chats></app-accordion-my-chats>
-      <app-accordion-invitations></app-accordion-invitations>
+    <div class="accordion accordion-flush h-100 flex-column d-flex">
+      <app-accordion-find-people class="accordion-item d-flex flex-column overflow-auto" style="min-height:55px;"></app-accordion-find-people>
+      <app-accordion-my-chats class="accordion-item d-flex flex-column overflow-auto" style="min-height:55px;"></app-accordion-my-chats>
+      <app-accordion-invitations class="accordion-item d-flex flex-column overflow-auto" style="min-height:55px;"></app-accordion-invitations>
     </div>
   </div>
   <div
