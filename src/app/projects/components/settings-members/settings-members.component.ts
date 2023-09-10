@@ -1,14 +1,24 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import {
+  ActionEventArgs,
+  AddEventArgs,
   DataSourceChangedEventArgs,
   DataStateChangeEventArgs,
+  DeleteEventArgs,
+  EditEventArgs,
   EditSettingsModel,
+  FilterEventArgs,
   GridComponent,
+  GroupEventArgs,
+  PageEventArgs,
   PageSettingsModel,
+  SaveEventArgs,
+  SearchEventArgs,
+  SortEventArgs,
   ToolbarItems,
 } from '@syncfusion/ej2-angular-grids';
-import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ToastrService } from 'ngx-toastr';
 import {
   Subject,
@@ -21,12 +31,17 @@ import {
 } from 'rxjs';
 import { ConfirmWindowComponent } from 'src/app/shared/components/confirm-window/confirm-window.component';
 import {
+  IProjectMember,
   InvitationStatus,
   ProjectMemberType,
   isIProjectMember,
 } from 'src/app/shared/models/IProjectMember';
 import { ProjectMembersService } from '../../services/project-members.service';
 import { ProjectService } from '../../services/project.service';
+import { IAppTask } from 'src/app/shared/models/IAppTask';
+import { CreateTaskModalComponent } from 'src/app/tasks/components/modals/create-task-modal/create-task-modal.component';
+import { EditMemberModalComponent } from '../edit-member-modal/edit-member-modal.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-settings-members',
@@ -43,19 +58,21 @@ export class SettingsMembersComponent implements OnInit, OnDestroy {
   searchMembers: FormControl<string>;
   private ngUnsubscribeSource$: Subject<void>;
   constructor(
+    private modalServiceNGB: NgbModal,
     public projectMembersService: ProjectMembersService,
     private projectService: ProjectService,
     private modalService: BsModalService,
     private toastrService: ToastrService,
   ) {
     this.pageSettings = { pageSize: 10 /*, pageCount: 8*/ };
-    this.toolbar = ['Delete'];
+    this.toolbar = ['Delete', 'Edit','Cancel'];
     this.editSettings = {
-      allowEditing: false,
+      allowEditing: true,
       allowAdding: true,
       allowDeleting: true,
-      mode: 'Dialog',
+      
     };
+    // mode: 'Dialog',
     this.searchMembers = new FormControl('', {
       nonNullable: true,
       validators: [Validators.required],
@@ -121,4 +138,21 @@ export class SettingsMembersComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.ngUnsubscribeSource$.next();
   }
+
+  actionBegin (args:PageEventArgs|GroupEventArgs|FilterEventArgs|SearchEventArgs|SortEventArgs|AddEventArgs|SaveEventArgs|EditEventArgs|DeleteEventArgs|ActionEventArgs){
+    if (args.requestType === 'beginEdit') {
+      let editArgs = args as EditEventArgs;
+      editArgs.cancel = true; 
+      // const initialState: ModalOptions<EditMemberModalComponent> = {
+      //   initialState: {
+      //     projectMember: editArgs.rowData as IProjectMember,
+      //   },
+      //   class: 'modal-lg modal-dialog-centered',
+      // };
+
+      const modalRef = this.modalServiceNGB.open(EditMemberModalComponent);
+      modalRef.componentInstance.projectMember = editArgs.rowData as IProjectMember;
+    }
+  }
+
 }

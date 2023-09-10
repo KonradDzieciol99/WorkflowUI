@@ -3,14 +3,20 @@
 <!-- [ngClass]="notification.displayed ? 'border-start border-3 border-info' : 'border border-1 border-primary'" -->
 <!-- [ngClass]="{'border border-primary border-1': notification.displayed === false}"
 [ngClass]="{'border-start border-3 border-info': notification.notificationType === notificationsTypes.FriendRequestSent}" -->
+
+<!-- [ngClass]="{
+  'border border-primary border-1': notification.displayed === false,
+  'border-start border-3 border-info':
+    notification.notificationType === notificationsTypes.FriendRequestSent &&
+    notification.displayed
+}" -->
+
 <div
   *ngIf="notification"
-  class="dropdown-item w-100 h-100 d-flex flex-wrap text-break position-relative"
+  class="dropdown-item w-100 h-100 d-flex flex-wrap text-break position-relative "
   [ngClass]="{
-    'border border-primary border-1': notification.displayed === false,
-    'border-start border-3 border-info':
-      notification.notificationType === notificationsTypes.FriendRequestSent &&
-      notification.displayed
+    'bg-primary  bg-opacity-10': notification.displayed === false,
+    'border-start border-3 border-info': notification.displayed
   }"
   type="button"
   style="white-space: normal"

@@ -72,7 +72,7 @@ export class TasksService {
           .pipe(
             map((response) => {
               response.result = response.result.map((task) => {
-                task.dueDate = new Date(task.dueDate);
+                task.dueDate = new Date(task.dueDate );
                 task.startDate = new Date(task.startDate);
                 return task;
               });

@@ -6,12 +6,13 @@ import {
   Observable,
   filter,
   map,
+  mergeMap,
   switchMap,
   take,
   tap,
 } from 'rxjs';
 import { IProject } from 'src/app/shared/models/IProject';
-import { IProjectMember } from 'src/app/shared/models/IProjectMember';
+import { IProjectMember, ProjectMemberType } from 'src/app/shared/models/IProjectMember';
 import { ISearchedMember } from 'src/app/shared/models/ISearchedMember';
 import { environment } from 'src/environments/environment';
 
@@ -116,4 +117,8 @@ export class ProjectService {
       }),
     );
   }
+  public setProjectSource(project:IProject){
+    this.projectSource$.next(project);
+  }
+
 }

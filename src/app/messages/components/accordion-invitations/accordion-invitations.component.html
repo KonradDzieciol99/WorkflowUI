@@ -1,45 +1,47 @@
-<div class="accordion-item  border-top d-flex overflow-hidden flex-column flex-grow-1" style="" *ngIf="
-    messagesService.receivedFriendRequests$ | async as receivedFriendRequests
-  ">
-  <h2 class="accordion-header">
-    <button class="accordion-button" type="button" [class.collapsed]="isCollapsedAccordionInvitations" (click)="
-        isCollapsedAccordionInvitations = !isCollapsedAccordionInvitations
-      ">
-      <h6 class="p-0 m-0">Invitations</h6>
-      <i class="bi bi-bell-fill ms-1" style="font-size: 1.1rem"
-        [class.green]="receivedFriendRequests.length !== 0">
-      </i>
-
-    </button>
-  </h2>
-  <div id="collapseThree" class="accordion-collapse flex-grow-1 overflow-auto"
-    [collapse]="isCollapsedAccordionInvitations" [isAnimated]="false">
-    <div class="accordion-body p-0">
-      <div *ngFor="let invitation of receivedFriendRequests" class="border border-1">
-        <div class="d-flex flex-row justify-content-start">
-          <div class="me-2">
-            <div class="p-1" style="width: 40px; height: 40px">
-              <img [src]="
-                  invitation?.inviterPhotoUrl ??
-                  'assets/images/Sample_User_Icon.png'
-                " class="img-fluid rounded-circle border border-1" alt="..." />
+<ng-container *ngIf="messagesService.receivedFriendRequests$ | async as receivedFriendRequests">
+    <h2 class="accordion-header">
+      <button class="accordion-button " type="button" [class.collapsed]="isCollapsedAccordionInvitations" (click)="isCollapsedAccordionInvitations = !isCollapsedAccordionInvitations">
+        <h6 class="p-0 m-0">Invitations</h6>
+        <i class="bi bi-bell-fill ms-1" style="font-size: 1.1rem"
+          [class.text-success]="receivedFriendRequests.length">
+        </i>
+      </button>
+    </h2>
+    <div class="accordion-collapse overflow-auto" [ngbCollapse]="isCollapsedAccordionInvitations"
+    [infiniteScrollDistance]="2"
+    [infiniteScrollThrottle]="500"
+    (scrolled)="loadMore()"
+    infiniteScroll
+    [scrollWindow]="false"
+    class="accordion-collapse overflow-auto round rounded-0"
+    
+    >
+      <div class="accordion-body p-0">
+        <div *ngFor="let invitation of receivedFriendRequests" class="border border-1 inviter-card">
+          <div class="d-flex flex-row justify-content-start">
+            <div class="me-2">
+              <div class="p-1" style="width: 40px; height: 40px">
+                <img [src]="
+                    invitation?.inviterPhotoUrl ??
+                    'assets/images/Sample_User_Icon.png'
+                  " class="img-fluid rounded-circle border border-1" alt="..." />
+              </div>
             </div>
-          </div>
-          <div class="flex-grow-1 d-flex align-items-center overflow-hidden">
-            <div class="text-truncate">{{ invitation.inviterUserEmail }}</div>
-          </div>
-          <div class="d-flex align-items-center me-2">
-            <button (click)="acceptFriendInvitation(invitation)" type="button" class="btn btn-outline-success btn-sm"
-              style="width: 35px" container="body" tooltip="Accept friend invitation.">
-              <i class="fa-solid fa-check"></i>
-            </button>
-            <button (click)="declineFriendInvitation(invitation)" type="button" class="btn btn-outline-danger"
-              style="width: 35px" container="body" tooltip="Cancel friend invitation.">
-              <i class="bi bi-x-lg"></i>
-            </button>
+            <div class="flex-grow-1 d-flex align-items-center overflow-hidden">
+              <div class="text-truncate">{{ invitation.inviterUserEmail }}</div>
+            </div>
+            <div class="d-flex align-items-center me-2">
+              <button (click)="acceptFriendInvitation(invitation)" type="button" class="btn btn-outline-success btn-sm"
+               container="body" tooltip="Accept friend invitation.">
+               <i class="bi bi-check-lg"></i>
+              </button>
+              <button (click)="declineFriendInvitation(invitation)" type="button" class="btn btn-outline-danger btn-sm"
+              container="body" tooltip="Cancel friend invitation.">
+                <i class="bi bi-x-lg"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
+</ng-container>

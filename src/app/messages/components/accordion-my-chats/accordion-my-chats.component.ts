@@ -17,6 +17,7 @@ import {
 import { IUser } from 'src/app/shared/models/IUser';
 import { MessagesService } from '../../messages.service';
 import { ChatService } from '../../services/chat.service';
+import { PresenceService } from 'src/app/shared/services/presence.service';
 
 @Component({
   selector: 'app-accordion-my-chats',
@@ -30,20 +31,22 @@ export class AccordionMyChatsComponent implements OnInit, OnDestroy {
   userClaims: Record<string, any>;
   searchUsersFormControl: FormControl<string>;
   private ngUnsubscribeSource$: Subject<void>;
+  onlineUsers$: Observable<string[]>;
   constructor(
     public chatService: ChatService,
     private readonly oAuthService: OAuthService,
     private messagesService: MessagesService,
     private toastrService: ToastrService,
+    private presenceService:PresenceService
   ) {
-    this.friendsWithActivityStatus$ =
-      this.messagesService.friendsWithActivityStatus$;
+    this.friendsWithActivityStatus$ = this.messagesService.friendsWithActivityStatus$;
     this.isCollapsedAccordionMyChats = false;
     this.userClaims = this.oAuthService.getIdentityClaims();
     this.searchUsersFormControl = new FormControl<string>('', {
       nonNullable: true,
     });
     this.ngUnsubscribeSource$ = new Subject<void>();
+    this.onlineUsers$=presenceService.onlineUsers$;
   }
 
   ngOnInit(): void {
@@ -52,7 +55,7 @@ export class AccordionMyChatsComponent implements OnInit, OnDestroy {
         debounceTime(600),
         distinctUntilChanged(),
         switchMap((term) =>
-          this.messagesService.GetConfirmedFriendRequests(term).pipe(take(1)),
+          this.messagesService.GetConfirmedFriendRequests(false,term).pipe(take(1)),
         ),
         takeUntil(this.ngUnsubscribeSource$),
       )
@@ -87,5 +90,15 @@ export class AccordionMyChatsComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     this.ngUnsubscribeSource$.next();
+  }
+  loadMore(){
+    const term = this.searchUsersFormControl.value;
+
+    this.messagesService.GetConfirmedFriendRequests(true,term)
+      .pipe(take(1))
+      .subscribe()
+  }
+  stopPropagation($event: MouseEvent) {
+    $event.stopPropagation();
   }
 }

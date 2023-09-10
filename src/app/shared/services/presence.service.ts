@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import {
@@ -12,6 +12,8 @@ import {
   Observable,
   combineLatest,
   concatMap,
+  mergeMap,
+  of,
   take,
   tap,
 } from 'rxjs';
@@ -51,13 +53,20 @@ export class PresenceService {
     this.allNotificationsCount$ =
       this.allNotificationsCountSource$.asObservable();
   }
-  getAllNotifications() {
-    return this.http
-      .get<INotification[]>(`${this.baseUrl}/notification/api/AppNotification`)
-      .pipe(
-        take(1),
-        tap((notifications) => this.notificationsSource$.next(notifications)),
-      );
+  getAllNotifications(takeAmount:number=5) {
+    return this.notifications$.pipe(
+      mergeMap(currentNotifications=>{
+        let params = new HttpParams();
+        params = params.append('Skip', currentNotifications.length.toString());
+        params = params.append('Take', takeAmount.toString());
+        return this.http
+        .get<INotification[]>(`${this.baseUrl}/notification/api/AppNotification`,{params:params})
+        .pipe(
+          take(1),
+          tap((notifications) => this.notificationsSource$.next([...currentNotifications,...notifications])),
+        );
+      })
+    )
   }
   onlineUsersNext(next: string[]) {
     this.onlineUsersSource$.next(next);

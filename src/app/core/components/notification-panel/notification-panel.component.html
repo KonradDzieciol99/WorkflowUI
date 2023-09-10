@@ -1,57 +1,32 @@
-<div
-  class="dropdown d-inline-block h-100"
-  dropdown
-  (isOpenChange)="onOpenChange($event)"
-  [autoClose]="false"
->
-  <button
-    type="button"
-    class="btn btn-link rounded-circle nav-link dropdown-toggle d-flex align-items-center"
-    dropdownToggle
-    tooltip="Notifications"
-    container="body"
-    #pop="bs-tooltip"
-    [class.active]="isNotificationPanelExpanded"
-  >
+<div class="dropdown d-inline-block h-100" dropdown (isOpenChange)="onOpenChange($event)" [autoClose]="false">
+  <button type="button" class="btn btn-link rounded-circle nav-link dropdown-toggle d-flex align-items-center"
+    dropdownToggle tooltip="Notifications" container="body" #pop="bs-tooltip"
+    [class.active]="isNotificationPanelExpanded">
     <span class="position-relative">
       <i class="bi bi-bell-fill"></i>
-      <ng-container
-        *ngIf="unreadNotificationsLength$ | async as unreadNotificationsLength"
-      >
-        <span
-          *ngIf="unreadNotificationsLength !== 0"
+      <ng-container *ngIf="unreadNotificationsLength$ | async as unreadNotificationsLength">
+        <span *ngIf="unreadNotificationsLength !== 0"
           class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger"
-          tooltip="Unread notifications"
-          container="body"
-          (mouseenter)="pop.hide()"
-        >
+          tooltip="Unread notifications" container="body" (mouseenter)="pop.hide()">
           {{ unreadNotificationsLength }}
         </span>
       </ng-container>
     </span>
     <small class="d-md-none ms-2">Notifications</small>
   </button>
-  <ul
-    *dropdownMenu
-    class="dropdown-menu dropdown-menu-end mt-1 overflow-auto"
-    role="menu"
-    style="width: 300px; max-height: 400px"
-  >
-    <p class="text-muted p-1 text-center m-0 small">
-      <small
-        >Notifications Menu {{ curentNotificationsCount$ | async }} /
-        {{ allNotificationsCount$ | async }}</small
-      >
+  <ul *dropdownMenu class="dropdown-menu dropdown-menu-end mt-1 overflow-auto pb-0" role="menu"
+    [infiniteScrollDistance]="1"
+    [infiniteScrollThrottle]="50"
+    (scrolled)="loadMoreNotifications()"
+    infiniteScroll
+    [scrollWindow]="false"
+    style="width: 300px; max-height: 400px">
+    <p class="text-muted p-1 text-center m-0 small position-sticky">
+      <small>Notifications Menu {{ curentNotificationsCount$ | async }} /
+        {{ allNotificationsCount$ | async }}</small>
     </p>
-    <li
-      *ngFor="let notification of notifications$ | async"
-      role="menuitem"
-      class="w-100"
-    >
-      <app-notification-card
-        [notification]="notification"
-        class="w-100"
-      ></app-notification-card>
+    <li *ngFor="let notification of notifications$ | async" role="menuitem" class="w-100">
+      <app-notification-card [notification]="notification" class="w-100"></app-notification-card>
     </li>
     <ng-template #noNotifications>
       <p class="text-muted p-1 text-center m-0 small">

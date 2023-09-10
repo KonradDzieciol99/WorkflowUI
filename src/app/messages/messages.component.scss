@@ -34,13 +34,23 @@
 //     overflow: auto;
 // }
 
-.accordion {
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100% !important; /* Zakładając, że chcesz, aby kontener miał pełną wysokość */
-}
+// .accordion {
+//     display: flex !important;
+//     flex-direction: column !important;
+//     height: 100% !important; /* Zakładając, że chcesz, aby kontener miał pełną wysokość */
+// }
 
-.accordion > .accordion-item {
-    flex: 1 !important; /* Każdy div zajmuje równe miejsce w kontenerze */
-    // overflow: auto !important;
-}
+// .accordion > .accordion-item {
+//     flex: 1 !important; /* Każdy div zajmuje równe miejsce w kontenerze */
+//     // overflow: auto !important;
+// }
+
+// .accordion{
+//     transition : flex-grow 2s ease;
+// }
+// .accordion{
+//     transition: all 4s ease; 
+// }
+// .accordion-item{
+//     transition: all 4s ease; 
+// }

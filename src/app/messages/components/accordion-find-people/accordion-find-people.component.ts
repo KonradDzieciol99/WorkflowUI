@@ -26,8 +26,6 @@ import { FormControl } from '@angular/forms';
 })
 export class AccordionFindPeopleComponent implements OnInit, OnDestroy {
   UserFriendStatusTypes: typeof UserFriendStatusType;
-  private searchNewUsersSource$: BehaviorSubject<ISearchedUser[]>;
-  searchNewUsers$: Observable<ISearchedUser[]>;
   isCollapsedAccordionFindPeople: boolean;
   searchNewUsers: FormControl<string>;
   private ngUnsubscribeSource$: Subject<void>;
@@ -35,8 +33,6 @@ export class AccordionFindPeopleComponent implements OnInit, OnDestroy {
     public messagesService: MessagesService,
     private toastrService: ToastrService,
   ) {
-    this.searchNewUsersSource$ = new BehaviorSubject([] as ISearchedUser[]);
-    this.searchNewUsers$ = this.searchNewUsersSource$.asObservable();
     this.isCollapsedAccordionFindPeople = true;
     this.searchNewUsers = new FormControl('', { nonNullable: true });
     this.UserFriendStatusTypes = UserFriendStatusType;
@@ -51,16 +47,14 @@ export class AccordionFindPeopleComponent implements OnInit, OnDestroy {
         switchMap((term: string) => {
           if (term) {
             return this.messagesService
-              .findUsersByEmailAndCheckState(term)
+              .findUsersByEmailAndCheckState(term,false)
               .pipe(take(1));
           }
           return of([]);
         }),
         takeUntil(this.ngUnsubscribeSource$),
       )
-      .subscribe((searchNewUsers) => {
-        this.searchNewUsersSource$.next(searchNewUsers);
-      });
+      .subscribe();
   }
 
   sendInvitation(searchUser: ISearchedUser) {
@@ -74,20 +68,23 @@ export class AccordionFindPeopleComponent implements OnInit, OnDestroy {
       .sendInvitation(searchedUser)
       .pipe(
         take(1),
-        switchMap(() => this.searchNewUsers$.pipe(take(1))),
         takeUntil(this.ngUnsubscribeSource$),
       )
-      .subscribe((users: ISearchedUser[]) => {
+      .subscribe(() => {
         this.toastrService.success('The invitation has been sent.');
-        const searchNewUsers = users.map((user) =>
-          user.id === searchUser.id
-            ? { ...user, status: UserFriendStatusType.InvitedByYou }
-            : user,
-        );
-        this.searchNewUsersSource$.next(searchNewUsers);
       });
   }
   ngOnDestroy(): void {
     this.ngUnsubscribeSource$.next();
+  }
+  loadMore(){
+
+    const term = this.searchNewUsers.value;
+
+    if (!term) return;
+      
+    return this.messagesService.findUsersByEmailAndCheckState(term,true)
+      .pipe(take(1))
+      .subscribe();
   }
 }

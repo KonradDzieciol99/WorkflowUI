@@ -38,7 +38,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   async ngOnInit() {
     forkJoin({
       sourceOne$: this.messagesService
-        .GetConfirmedFriendRequests()
+        .GetConfirmedFriendRequests(false)
         .pipe(take(1)),
       sourceTwo$: this.messagesService
         .GetReceivedFriendRequests()

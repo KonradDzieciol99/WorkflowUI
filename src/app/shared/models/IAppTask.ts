@@ -5,9 +5,6 @@ export interface IAppTask {
   name: string;
   description?: string;
   projectId: string;
-  // taskAssigneeMemberId?:string
-  // taskAssigneeMemberEmail?:string
-  // taskAssigneeMemberPhotoUrl?:string
   priority: Priority;
   state: State;
   dueDate: Date;

@@ -8,6 +8,8 @@ import {
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, catchError, throwError } from 'rxjs';
+import { ProblemDetails, isProblemDetails } from 'src/app/shared/models/ProblemDetails';
+import { ValidationProblemDetails } from 'src/app/shared/models/ValidationProblemDetails ';
 
 @Injectable()
 export class ErrorHandlingInterceptor implements HttpInterceptor {
@@ -20,18 +22,13 @@ export class ErrorHandlingInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError((httpErrorResponse: unknown) => {
         if (httpErrorResponse instanceof HttpErrorResponse) {
-          if (httpErrorResponse.status === 400) {
-            this.toastrService.error(httpErrorResponse.error);
+
+          if (isProblemDetails(httpErrorResponse.error)){
+            this.toastrService.error(httpErrorResponse.error.detail,httpErrorResponse.error.title, { disableTimeOut: true,});
+            return throwError(() => httpErrorResponse.error);
           }
-          if (httpErrorResponse.status === 401) {
-            this.toastrService.error(httpErrorResponse.error);
-          }
-          if (httpErrorResponse.status === 404) {
-            this.toastrService.error(httpErrorResponse.error);
-          }
-          if (httpErrorResponse.status === 500) {
-            this.toastrService.error(httpErrorResponse.error);
-          }
+
+          this.toastrService.error("Unknown error occurred, please try again later.",undefined, { disableTimeOut: true,});   
           return throwError(() => httpErrorResponse);
         }
         throw httpErrorResponse;

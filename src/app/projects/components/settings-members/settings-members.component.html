@@ -38,9 +38,10 @@
     (dataSourceChanged)="dataSourceChanged($event)"
     (dataStateChange)="dataStateChange($event)"
     [toolbar]="toolbar"
+    (actionBegin)="actionBegin($event)"
   >
     <e-columns>
-      <e-column field="id" headerText="Member">
+      <e-column field="id" headerText="Member" [allowEditing]="false">
         <ng-template #template let-data>
           <div class="d-flex">
             <img
@@ -56,7 +57,7 @@
           </div>
         </ng-template>
       </e-column>
-      <e-column field="invitationStatus" headerText="Invitation Status">
+      <e-column field="invitationStatus" headerText="Invitation Status" [allowEditing]="false">
         <ng-template #template let-data>
           <ng-container [ngSwitch]="data?.invitationStatus">
             <ng-container *ngSwitchCase="invitationStatus.Invited">
@@ -101,4 +102,7 @@
       >>
     </e-columns>
   </ejs-grid>
+
+  <!-- {{projectMembersService.projectMember$ | async |json}} -->
 </div>
+

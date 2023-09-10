@@ -22,6 +22,10 @@ import { SettingsComponent } from './components/settings/settings.component';
 import { FindLeaderPipe } from './pipes/find-leader.pipe';
 import { ProjectsRoutingModule } from './projects-routing.module';
 import { ProjectsComponent } from './projects.component';
+import { EditMemberModalComponent } from './components/edit-member-modal/edit-member-modal.component';
+import { ButtonsModule } from 'ngx-bootstrap/buttons';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
 @NgModule({
   declarations: [
@@ -33,6 +37,7 @@ import { ProjectsComponent } from './projects.component';
     SettingsComponent,
     SettingsDetailsComponent,
     SettingsMembersComponent,
+    EditMemberModalComponent,
   ],
   imports: [
     CommonModule,
@@ -41,6 +46,9 @@ import { ProjectsComponent } from './projects.component';
     SharedModule,
     NgbCollapseModule,
     BreadcrumbModule,
+    ButtonsModule.forRoot(),
+    TooltipModule.forRoot(),
+    BsDropdownModule.forRoot(),
   ],
   providers: [
     PageService,
