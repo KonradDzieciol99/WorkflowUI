@@ -1,13 +1,13 @@
 <div class="container-lg py-3">
-  <div class="d-flex justify-content-between flex-wrap">
+  <div class="d-flex justify-content-between flex-wrap mb-2 mb-sm-0">
     <div class="d-flex">
       <h5>Summary</h5>
     </div>
     <xng-breadcrumb></xng-breadcrumb>
   </div>
-  <div class="row g-0">
+  <div class="row g-0 mb-2">
     <div class="col-12 col-sm-5 col-md-4 col-lg-3 col-xl-2">
-      <div class="input-group input-group-sm mb-2">
+      <div class="input-group input-group-sm mb-2 mb-sm-0">
         <span class="input-group-text"
           ><i class="bi bi-search"></i>
         </span>
@@ -51,8 +51,6 @@
       (actionComplete)="actionComplete($event)"
       (actionBegin)="actionBegin($event)"
     >
-    <!-- (toolbarClick)="toolbarClick($event)" -->
-
       <e-columns>
         <e-column field="name" headerText="Title"> </e-column>
         <e-column field="priority" headerText="Priority">

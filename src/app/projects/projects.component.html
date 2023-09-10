@@ -1,32 +1,33 @@
 <div class="container-fluid pt-5 pe-5 ps-5 overflow-auto">
-  <div class="container-fluid mb-1" style="min-width: 300px">
-    <div class="d-block d-sm-flex justify-content-between">
+  <div class="container-fluid mb-1">
+    <div class="d-flex justify-content-between flex-wrap">
       <h1 class="flex-grow-1">Projects</h1>
-      <div class="m-auto">
-        <button type="button" class="btn btn-primary" (click)="createProject()">
-          <i class="bi bi-plus-lg"></i> Create project
-        </button>
-      </div>
-    </div>
-
-    <div class="input-group input-group-sm w-25 mb-2 mt-4">
-      <span class="input-group-text"
-        ><i class="bi bi-search"></i></span>
-      <input
-        type="text"
-        [formControl]="searchProjects"
-        class="form-control"
-        placeholder="Search..."
-      />
-      <button
-        class="btn btn-outline-secondary "
-        type="button"
-        (click)="searchProjects.reset()"
-      >
-      <i class="bi bi-x-lg"></i>
+      <button type="button" class="btn btn-primary m-auto flex-grow-1 flex-sm-grow-0" (click)="createProject()">
+        <i class="bi bi-plus-lg"></i> Create project
       </button>
     </div>
-
+    <div class="row g-0 mb-2">
+      <div class="col-12 col-sm-5 col-md-4 col-lg-3 col-xl-2">
+        <div class="input-group input-group-sm mb-2 mt-2 mt-sm-3">
+          <span class="input-group-text">
+            <i class="bi bi-search"></i>
+          </span>
+          <input
+            type="text"
+            [formControl]="searchProjects"
+            class="form-control"
+            placeholder="Search..."
+          />
+          <button
+            class="btn btn-outline-secondary "
+            type="button"
+            (click)="searchProjects.reset()"
+          >
+          <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      </div>
+    </div>
     <ejs-grid
       #grid
       [dataSource]="service.projects$ | async"

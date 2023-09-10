@@ -38,7 +38,11 @@ export class AccordionInvitationsComponent implements OnDestroy {
         this.toastrService.success('Invitation canceled.');
       });
   }
+  loadMore(){
+    
+  }
   ngOnDestroy(): void {
     this.ngUnsubscribeSource$.next();
   }
+
 }

@@ -15,6 +15,7 @@ import { MapGetValuePipe } from './pipes/map-get-value.pipe';
 import { AddMemberIconComponent } from './components/add-member-icon/add-member-icon.component';
 import { AddProjectMemberModalComponent } from './components/modals/add-project-member-modal/add-project-member-modal.component';
 import { TabsModule } from 'ngx-bootstrap/tabs';
+import { ImgErrorDirective } from './directives/img-error.directive';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
     MapGetValuePipe,
     AddMemberIconComponent,
     AddProjectMemberModalComponent,
+    ImgErrorDirective,
   ],
   imports: [
     CommonModule,
@@ -48,6 +50,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
     AddMemberIconComponent,
     TabsModule,
     TooltipModule,
+    ImgErrorDirective
   ],
 })
 export class SharedModule {}

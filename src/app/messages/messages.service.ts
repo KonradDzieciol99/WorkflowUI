@@ -18,7 +18,7 @@ import {
 } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { IFriendInvitation } from '../shared/models/IFriendInvitation';
-import { ISearchedUser } from '../shared/models/ISearchedUser';
+import { ISearchedUser, UserFriendStatusType } from '../shared/models/ISearchedUser';
 import { IUser } from '../shared/models/IUser';
 import { PresenceService } from '../shared/services/presence.service';
 
@@ -33,6 +33,8 @@ export class MessagesService {
   friendsWithActivityStatus$: Observable<IUser[]>;
   private hubConnection?: HubConnection;
   baseUrl: string;
+  searchNewUsersSource$: BehaviorSubject<ISearchedUser[]>;
+  searchNewUsers$: Observable<ISearchedUser[]>;
   constructor(
     private http: HttpClient,
     private readonly presenceService: PresenceService,
@@ -40,6 +42,9 @@ export class MessagesService {
   ) {
     this.baseUrl = `${environment.WorkflowUrl}/chat`;
 
+    this.searchNewUsersSource$ = new BehaviorSubject([] as ISearchedUser[]);
+    this.searchNewUsers$ = this.searchNewUsersSource$.asObservable();
+    
     this.confirmedInvitationsSource$ = new BehaviorSubject<IFriendInvitation[]>(
       [],
     );
@@ -58,13 +63,47 @@ export class MessagesService {
     };
     this.friendsWithActivityStatus$ = this.getFriendsWithActivityStatus(user);
   }
-  findUsersByEmailAndCheckState(email: string) {
-    return this.http.get<ISearchedUser[]>(`${environment.WorkflowUrl}/aggregator/api/Identity/search/${email}`,
-    );
+  findUsersByEmailAndCheckState(
+    searchTerm : string,
+    isScroll : boolean,
+    takeAmount = 10,
+    ) {
+    return this.searchNewUsers$.pipe(
+      mergeMap(currentSearchNewUsers=>{
+        let params = new HttpParams();
+
+        if (isScroll)
+          params = params.append('Skip',currentSearchNewUsers.length.toString());
+        
+        params = params.append('Take', takeAmount.toString());
+        params = params.append('Search', searchTerm);
+
+
+        return this.http.get<ISearchedUser[]>(`${environment.WorkflowUrl}/aggregator/api/Identity/search/${searchTerm}`,{params:params}).pipe(
+          tap((searchNewUsers)=>{
+            if (isScroll)
+              this.searchNewUsersSource$.next([...currentSearchNewUsers,...searchNewUsers]);
+            else
+              this.searchNewUsersSource$.next(searchNewUsers);
+          })
+        );
+
+      })
+    )
   }
-  sendInvitation(user: IUser) {
+  sendInvitation(searchUser: IUser) {
     return this.http.post<IFriendInvitation>(
-      `${this.baseUrl}/api/FriendRequests`,{targetUserId:user.id,targetUserEmail:user.email,targetUserPhotoUrl:user.photoUrl},
+      `${this.baseUrl}/api/FriendRequests`,{targetUserId:searchUser.id,targetUserEmail:searchUser.email,targetUserPhotoUrl:searchUser.photoUrl},
+    ).pipe(
+      mergeMap(() => this.searchNewUsers$.pipe(take(1))),
+      tap((users)=>{
+        const searchNewUsers = users.map((user) =>
+          user.id === searchUser.id
+            ? { ...user, status: UserFriendStatusType.InvitedByYou }
+            : user,
+        );
+        this.searchNewUsersSource$.next(searchNewUsers);
+      })
     );
   }
   GetReceivedFriendRequests() {
@@ -214,10 +253,9 @@ export class MessagesService {
     );
   }
   GetConfirmedFriendRequests(
+    isScroll:boolean,
     searchTerm = '',
-    takeAmount = 20,
-    skipAmount = 0,
-    isScroll = false,
+    takeAmount = 10,
     ) {
     return this.confirmedInvitations$.pipe(
       take(1),
@@ -239,7 +277,7 @@ export class MessagesService {
             take(1),
             tap((friends) => {
               if (isScroll)
-                this.confirmedInvitationsSource$.next([...friends,...currentConfirmedInvitations]);
+                this.confirmedInvitationsSource$.next([...currentConfirmedInvitations,...friends]);
               else
                 this.confirmedInvitationsSource$.next(friends);
             }),

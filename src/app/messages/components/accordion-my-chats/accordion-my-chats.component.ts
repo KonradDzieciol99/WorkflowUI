@@ -55,7 +55,7 @@ export class AccordionMyChatsComponent implements OnInit, OnDestroy {
         debounceTime(600),
         distinctUntilChanged(),
         switchMap((term) =>
-          this.messagesService.GetConfirmedFriendRequests(term).pipe(take(1)),
+          this.messagesService.GetConfirmedFriendRequests(false,term).pipe(take(1)),
         ),
         takeUntil(this.ngUnsubscribeSource$),
       )
@@ -90,6 +90,13 @@ export class AccordionMyChatsComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     this.ngUnsubscribeSource$.next();
+  }
+  loadMore(){
+    const term = this.searchUsersFormControl.value;
+
+    this.messagesService.GetConfirmedFriendRequests(true,term)
+      .pipe(take(1))
+      .subscribe()
   }
   stopPropagation($event: MouseEvent) {
     $event.stopPropagation();
