@@ -31,16 +31,8 @@ import { TasksComponent } from './tasks.component';
     UserDropdownComponent,
   ],
   imports: [
-    CommonModule,
     TasksRoutingModule,
-    NgbCollapseModule,
-    GridModule,
     SharedModule,
-    NgbCollapseModule,
-    BsDropdownModule.forRoot(),
-    ButtonsModule.forRoot(),
-    BreadcrumbModule,
-    TooltipModule.forRoot(),
   ],
   providers: [
     PageService,

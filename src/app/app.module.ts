@@ -6,12 +6,9 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CoreModule } from './core/core.module';
 import { HttpClientModule } from '@angular/common/http';
-import { ToastrModule } from 'ngx-toastr';
-import { NgxSpinnerModule } from 'ngx-spinner';
-import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { OAuthModule } from 'angular-oauth2-oidc';
 import { authAppInitializerFactory } from './core/initializers/auth-app-initializer.factory';
-import { IdentityServerService } from './authentication/identity-server.service';
+import { IdentityServerService } from './core/authentication/identity-server.service';
 
 @NgModule({
   declarations: [AppComponent],
@@ -21,12 +18,6 @@ import { IdentityServerService } from './authentication/identity-server.service'
     BrowserAnimationsModule,
     HttpClientModule,
     CoreModule,
-    ToastrModule.forRoot({
-      positionClass: 'toast-bottom-right',
-      progressBar: true,
-    }),
-    NgxSpinnerModule.forRoot({ type: 'ball-clip-rotate-multiple' }),
-    ButtonsModule.forRoot(),
     OAuthModule.forRoot(),
   ],
 
