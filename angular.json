@@ -51,7 +51,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumError": "3mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -78,7 +78,7 @@
             "browserTarget": "client:build",
             "sslKey": "ssl/localhost.key",
             "sslCert": "ssl/localhost.crt",
-            "ssl": true
+            "ssl": false
           },
           "configurations": {
             "production": {

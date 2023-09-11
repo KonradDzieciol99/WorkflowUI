@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AuthConfig, OAuthService, UserInfo } from 'angular-oauth2-oidc';
 import { BehaviorSubject, Subject, filter } from 'rxjs';
+import { environment } from 'src/environments/environment';
 export const authConfig: AuthConfig = {
-  issuer: 'https://localhost:5001',
-  redirectUri: 'https://localhost:4200/home',
+  issuer: environment.identityServerUrlConf,
+  redirectUri: `${environment.clientUrl}/home`,
   clientId: 'interactive',
   responseType: 'code',
   strictDiscoveryDocumentValidation: false,
@@ -12,7 +13,8 @@ export const authConfig: AuthConfig = {
   showDebugInformation: false,
   sessionChecksEnabled: true,
   clearHashAfterLogin: false,
-  postLogoutRedirectUri: 'https://localhost:4200',
+  postLogoutRedirectUri: environment.clientUrl,
+  requireHttps:false
 };
 
 @Injectable({

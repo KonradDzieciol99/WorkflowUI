@@ -11,7 +11,7 @@ import {
 } from '@angular/router';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { Observable, map } from 'rxjs';
-import { IdentityServerService } from 'src/app/authentication/identity-server.service';
+import { IdentityServerService } from 'src/app/core/authentication/identity-server.service';
 
 @Injectable({
   providedIn: 'root',

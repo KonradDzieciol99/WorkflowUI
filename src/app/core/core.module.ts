@@ -1,15 +1,6 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
-import { ButtonsModule } from 'ngx-bootstrap/buttons';
-import { CollapseModule } from 'ngx-bootstrap/collapse';
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { ModalModule } from 'ngx-bootstrap/modal';
-import { TooltipModule } from 'ngx-bootstrap/tooltip';
-import { BreadcrumbModule } from 'xng-breadcrumb';
 import { HeaderComponent } from './components/header/header.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { NotificationCardComponent } from './components/notification-card/notification-card.component';
@@ -19,7 +10,9 @@ import { UserMenuComponent } from './components/user-menu/user-menu.component';
 import { ErrorHandlingInterceptor } from './interceptors/error-handling.interceptor';
 import { JwtInterceptorInterceptor } from './interceptors/jwt-interceptor.interceptor';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
-import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { SharedModule } from '../shared/shared.module';
+import { ToastrModule } from 'ngx-toastr';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 @NgModule({
   declarations: [
@@ -31,19 +24,19 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll';
     NotificationPanelComponent,
   ],
   imports: [
-    ModalModule.forRoot(),
-    CommonModule,
     RouterModule,
-    CollapseModule.forRoot(),
-    ReactiveFormsModule,
-    ButtonsModule.forRoot(),
-    TooltipModule.forRoot(),
-    BsDropdownModule.forRoot(),
-    BreadcrumbModule,
-    NgbCollapseModule,
-    InfiniteScrollModule
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-right',
+      progressBar: true,
+    }),
+    SharedModule,
+    NgxSpinnerModule.forRoot({ type: 'ball-clip-rotate-multiple' }),
   ],
-  exports: [HeaderComponent],
+  exports: [
+    HeaderComponent,
+    ToastrModule,
+    NgxSpinnerModule
+  ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
     {

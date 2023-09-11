@@ -1,17 +1,13 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 import {
   EditService,
   ExcelExportService,
   FilterService,
-  GridModule,
   GroupService,
   PageService,
   SortService,
   ToolbarService,
 } from '@syncfusion/ej2-angular-grids';
-import { BreadcrumbModule } from 'xng-breadcrumb';
 import { SharedModule } from '../shared/shared.module';
 import { IconPickerComponent } from './components/icon-picker/icon-picker.component';
 import { CreateProjectModalComponent } from './components/modals/create-project-modal/create-project-modal.component';
@@ -23,9 +19,6 @@ import { FindLeaderPipe } from './pipes/find-leader.pipe';
 import { ProjectsRoutingModule } from './projects-routing.module';
 import { ProjectsComponent } from './projects.component';
 import { EditMemberModalComponent } from './components/edit-member-modal/edit-member-modal.component';
-import { ButtonsModule } from 'ngx-bootstrap/buttons';
-import { TooltipModule } from 'ngx-bootstrap/tooltip';
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
 @NgModule({
   declarations: [
@@ -40,15 +33,8 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
     EditMemberModalComponent,
   ],
   imports: [
-    CommonModule,
-    GridModule,
     ProjectsRoutingModule,
     SharedModule,
-    NgbCollapseModule,
-    BreadcrumbModule,
-    ButtonsModule.forRoot(),
-    TooltipModule.forRoot(),
-    BsDropdownModule.forRoot(),
   ],
   providers: [
     PageService,
