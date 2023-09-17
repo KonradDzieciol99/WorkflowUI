@@ -1,0 +1,11 @@
+version: '3.4'
+
+services:
+  angular:
+    image: workflow-ui-image:latest
+    build:
+      context: C:\Users\konra\source\repos\WorkflowUI
+      dockerfile: dockerfile
+    ports:
+    - "1000:80"
+    - "443:433"
