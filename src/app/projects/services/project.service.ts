@@ -53,7 +53,7 @@ export class ProjectService {
   }
   findMemberByEmailAndCheckState(email: string,
                                 isScroll:boolean,
-                                takeAmount = 10,) {
+                                takeAmount = 20,) {
     return this.project$.pipe(
       filter((project): project is IProject => project !== undefined),
       switchMap((project) => {

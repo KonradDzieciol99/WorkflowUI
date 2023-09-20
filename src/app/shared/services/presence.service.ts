@@ -55,7 +55,7 @@ export class PresenceService {
     this.allNotificationsCount$ =
       this.allNotificationsCountSource$.asObservable();
   }
-  getAllNotifications(takeAmount:number=5) {
+  getAllNotifications(takeAmount:number=20) {
     return this.notifications$.pipe(
       mergeMap(currentNotifications=>{
         let params = new HttpParams();
