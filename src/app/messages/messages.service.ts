@@ -66,7 +66,7 @@ export class MessagesService {
   findUsersByEmailAndCheckState(
     searchTerm : string,
     isScroll : boolean,
-    takeAmount = 10,
+    takeAmount = 20,
     ) {
     return this.searchNewUsers$.pipe(
       mergeMap(currentSearchNewUsers=>{
@@ -252,7 +252,7 @@ export class MessagesService {
   GetConfirmedFriendRequests(
     isScroll:boolean,
     searchTerm = '',
-    takeAmount = 10,
+    takeAmount = 20,
     ) {
     return this.confirmedInvitations$.pipe(
       take(1),
