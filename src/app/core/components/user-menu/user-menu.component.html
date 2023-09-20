@@ -3,27 +3,21 @@
   dropdown
   (isOpenChange)="onOpenChange($event)"
 >
-  <!-- btn-group btn-group d-block d-sm-inline-block -->
   <button
     type="button"
-    class="btn btn-link p-0 rounded-circle nav-link dropdown-toggle d-flex align-items-center"
+    class="btn btn-link rounded-circle nav-link dropdown-toggle d-flex align-items-center"
     dropdownToggle
     container="body"
     tooltip="User Menu"
     container="body"
     [class.active]="isNotificationPanelOpen"
   >
-    <ng-container *ngIf="profilePictureUrl; else noProfilePhoto">
       <img
         alt="UserPhoto"
         [src]="profilePictureUrl"
         class="rounded-circle"
-        style="height: 37px; width: 37px"
+        style="height: 35px; width: 35px"
       />
-    </ng-container>
-    <ng-template #noProfilePhoto>
-      <i class="bi bi-person-fill" style="font-size: 22px"></i>
-    </ng-template>
     <small class="d-md-none ms-2">User Menu</small>
   </button>
 

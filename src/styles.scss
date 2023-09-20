@@ -323,3 +323,32 @@ body {
     color: var(--bs-primary-text-emphasis) !important;
   }
 }
+
+
+img:not(.loaded):not(.loaded-error) {
+  animation: loading-img-animation 0.6s infinite linear;
+  background: #555555;
+  background-image: -webkit-linear-gradient(
+    to right,
+    #555555 0%,       
+    #444444 20%,      
+    #555555 40%,      
+    #555555 100%      
+  );
+  background-image: linear-gradient(
+    to right,
+    #555555 0%,       
+    #444444 20%,      
+    #555555 40%,      
+    #555555 100%      
+  );
+  background-repeat: no-repeat;
+}
+@keyframes loading-img-animation {
+  0% {
+    background-position: -100px;
+  }
+  100% {
+    background-position: 200px;
+  }
+}

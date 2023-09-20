@@ -144,6 +144,8 @@ export class NotificationCardComponent implements OnChanges, OnDestroy {
     bsModalRef.content?.result$
       .pipe(
         take(1),
+        takeUntil(this.modalService.onHide),
+        takeUntil(this.modalService.onHidden),
         mergeMap((x) => {
           if (x) {
             return this.presenceService.deleteNotification(notification).pipe(
@@ -155,8 +157,6 @@ export class NotificationCardComponent implements OnChanges, OnDestroy {
           }
           return of();
         }),
-        takeUntil(this.modalService.onHide),
-        takeUntil(this.modalService.onHidden),
         takeUntil(this.ngUnsubscribeSource$),
       )
       .subscribe();

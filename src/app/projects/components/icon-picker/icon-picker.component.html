@@ -7,14 +7,12 @@
     <ng-container *ngFor="let icon of icons$ | async">
       <button
         class="image-container btn-bare rounded overflow-hidden"
-        style="height: 84px; width: 84px"
         (click)="selectedIcon = icon"
       >
         <img
           [src]="icon.url"
-          (load)="onImageLoad($event)"
-          [alt]="icon.name"
-          class="img-fluid"
+          height = "84px"
+          width =" 84px"
         />
       </button>
     </ng-container>

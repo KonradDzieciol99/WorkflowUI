@@ -126,12 +126,13 @@ export class SettingsMembersComponent implements OnInit, OnDestroy {
           takeUntil(this.ngUnsubscribeSource$),
         )
         .subscribe({
-          next: () => {
-            this.toastrService.success(`Task has been deleted`);
-          },
           complete: () => {
+            this.toastrService.success(`Member has been deleted`);
             if (state.endEdit) state.endEdit();
           },
+          error:()=>{
+            if (state.endEdit) state.endEdit();
+          }
         });
     }
   }

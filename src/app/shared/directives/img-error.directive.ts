@@ -1,16 +1,16 @@
-import { Directive, ElementRef, HostListener } from '@angular/core';
+import { Directive, ElementRef, HostListener, Renderer2 } from '@angular/core';
 
 @Directive({
   selector: 'img'
 })
 export class ImgErrorDirective {
 
-  constructor(private el: ElementRef) {}
+  constructor(private el: ElementRef, private renderer: Renderer2) {}
   
   @HostListener("error")
   private onError() {
-    (this.el.nativeElement as HTMLImageElement).src="assets/images/user.png"
-    
-    //.style.display = "none";
+    const imgElement = this.el.nativeElement as HTMLImageElement;
+    imgElement.src="assets/images/user.png"
+    this.renderer.addClass(imgElement, 'loaded-error');
   }
 }

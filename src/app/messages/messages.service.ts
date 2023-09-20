@@ -72,14 +72,11 @@ export class MessagesService {
       mergeMap(currentSearchNewUsers=>{
         let params = new HttpParams();
 
-        if (isScroll)
-          params = params.append('Skip',currentSearchNewUsers.length.toString());
-        
+        params = params.append('Skip',isScroll ? currentSearchNewUsers.length.toString() : "0");
         params = params.append('Take', takeAmount.toString());
         params = params.append('Search', searchTerm);
 
-
-        return this.http.get<ISearchedUser[]>(`${environment.WorkflowUrl}/aggregator/api/Identity/search/${searchTerm}`,{params:params}).pipe(
+        return this.http.get<ISearchedUser[]>(`${environment.WorkflowUrl}/aggregator/api/FriendRequests/search/${searchTerm}`,{params:params}).pipe(
           tap((searchNewUsers)=>{
             if (isScroll)
               this.searchNewUsersSource$.next([...currentSearchNewUsers,...searchNewUsers]);
@@ -261,10 +258,8 @@ export class MessagesService {
       take(1),
       mergeMap((currentConfirmedInvitations) => {
         let params = new HttpParams();
-
-        if (isScroll)
-          params = params.append('Skip',currentConfirmedInvitations.length.toString(),);
         
+        params = params.append('Skip',isScroll ? currentConfirmedInvitations.length.toString() : "0");
         params = params.append('Take', takeAmount.toString());
         params = params.append('Search', searchTerm);
 

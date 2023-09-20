@@ -44,7 +44,6 @@
       <e-columns>
         <e-column headerText="Name" width="150">
           <ng-template #template let-data>
-            <!-- <a [routerLink]="data.name"> -->
             <a [routerLink]="data.id" type="button" class="d-flex flex-row">
               <div class="image me-2">
                 <img
@@ -59,7 +58,6 @@
                 {{ data.name }}
               </div>
             </a>
-            <!-- </a> -->
           </ng-template>
         </e-column>
         <e-column headerText="Lead" width="150">
@@ -69,9 +67,7 @@
                 <div class="image me-2">
                   <img
                     class="rounded-circle border border-2"
-                    [src]="
-                      leader?.photoUrl ?? 'assets/images/Sample_User_Icon.png'
-                    "
+                    [src]="leader?.photoUrl"
                     width="30px"
                     height="30px"
                     alt="Leader photo"

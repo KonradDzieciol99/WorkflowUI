@@ -1,10 +1,10 @@
 <ng-container *ngIf="themeForm">
-  <form [formGroup]="themeForm" class="d-flex ms-auto">
+  <form [formGroup]="themeForm" class="d-flex h-100">
     <div
       dropdown
       btnRadioGroup
       formControlName="theme"
-      class="d-inline-block dropdown"
+      class="d-inline-block dropdown my-auto" 
       (isOpenChange)="onOpenChange($event)"
     >
       <!--  btn-group  -->

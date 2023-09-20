@@ -34,7 +34,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('formInput') formInput?: ElementRef;
   private ngUnsubscribeSource$: Subject<void>;
   constructor(public chatService: ChatService) {
-    this.messageContent = new FormControl('Hello', {
+    this.messageContent = new FormControl('', {
       nonNullable: true,
       validators: [Validators.required],
     });

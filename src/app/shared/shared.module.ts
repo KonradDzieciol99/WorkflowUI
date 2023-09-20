@@ -21,6 +21,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { GridModule } from '@syncfusion/ej2-angular-grids';
+import { ImgLoaderDirective } from './directives/img-loader.directive';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { GridModule } from '@syncfusion/ej2-angular-grids';
     AddMemberIconComponent,
     AddProjectMemberModalComponent,
     ImgErrorDirective,
+    ImgLoaderDirective
   ],
   imports: [
     CommonModule,
@@ -63,6 +65,7 @@ import { GridModule } from '@syncfusion/ej2-angular-grids';
     TabsModule,
     TooltipModule,
     ImgErrorDirective,
+    ImgLoaderDirective,
     BreadcrumbModule,
     ButtonsModule,
     InfiniteScrollModule,

@@ -27,7 +27,7 @@
         <div *ngFor="let friend of friendsWithActivityStatus; let i = index" (click)="onFriendSelected(friend)"type="button" class="border border-1 friend-card">
           <div class="d-flex flex-row justify-content-start">
             <div class="me-2 p-1">
-                <img [src]="friend.photoUrl" class="img-fluid rounded-circle border border-1" width="40" height="40" *ngIf="friend.photoUrl !== undefined; else noProfilePhoto" />
+                <img [src]="friend.photoUrl" class="img-fluid rounded-circle border border-1" width="40" height="40" style="min-width: 40px;" *ngIf="friend.photoUrl !== undefined; else noProfilePhoto" />
                 <ng-template #noProfilePhoto>
                   <i class="bi bi-person-bounding-box"></i>
                 </ng-template>
