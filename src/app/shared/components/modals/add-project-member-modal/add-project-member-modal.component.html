@@ -24,23 +24,20 @@
       <div
         role="button"
         *ngFor="let searchUser of searchedMember"
-        class="user-card"
+        class="user-card d-flex flex-row justify-content-between"
       >
-        <div class="d-flex flex-row justify-content-start">
-          <div class="p-1 me-2" style="width: 40px; height: 40px">
-            <img
-              [src]="
-                searchUser?.photoUrl ?? 'assets/images/Sample_User_Icon.png'
-              "
-              class="img-fluid rounded-circle border border-1"
-              alt="..."
-            />
+          <div class="p-1 me-1">
+              <img
+                [src]="searchUser?.photoUrl"
+                width="40px" 
+                height="40px"
+                class="img-fluid rounded-circle border border-1"
+                style="min-width: 40px;"
+                alt="..."
+              />
           </div>
-          <div class="flex-grow-1 d-flex align-items-center overflow-hidden">
-            <div class="text-truncate">{{ searchUser.email }}</div>
-          </div>
-
-          <div class="d-flex me-2 align-items-center">
+          <div class="text-truncate my-auto ">{{ searchUser.email }}</div>
+          <div class="d-flex my-auto" style="min-width: 40px;">
             <ng-container [ngSwitch]="searchUser.status">
               <ng-container *ngSwitchCase="memberStatusTypes.Uninvited">
                 <ng-container *ngTemplateOutlet="uninvited"></ng-container>
@@ -58,7 +55,7 @@
             <button
               (click)="sendInvitation(searchUser)"
               type="button"
-              class="btn btn-outline-success btn-sm"
+              class="btn btn-outline-success btn-sm m-auto"
               container="body"
               tooltip="Add member"
             >
@@ -67,7 +64,7 @@
           </ng-template>
           <ng-template #invited>
             <div
-              class="spinner-border spinner-border-sm"
+              class="spinner-border spinner-border-sm m-auto"
               role="status"
               container="body"
               tooltip="Waiting for confirmation."
@@ -76,11 +73,8 @@
             </div>
           </ng-template>
           <ng-template #member>
-            <!-- <button type="text" class="btn btn-outline-success btn-sm" container="body" tooltip="Member" > -->
-              <i class="bi bi-person-fill-check"></i>
-            <!-- </button> -->
+              <i class="bi bi-person-fill-check m-auto"></i>
           </ng-template>
-        </div>
       </div>
     </div>
   </ng-container>

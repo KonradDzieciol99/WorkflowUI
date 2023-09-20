@@ -11,35 +11,3 @@ button.btn-bare {
     transform: scale(1.4, 1.4);
   }
 }
-
-.image-container:not(img) {
-  animation: loading 0.8s infinite linear;
-  background: #dedfe1;
-  background-image: -webkit-linear-gradient(
-    to right,
-    #dedfe1 0%,
-    #f2f3f5 20%,
-    #dedfe1 40%,
-    #dedfe1 100%
-  );
-  background-image: linear-gradient(
-    to right,
-    #dedfe1 0%,
-    #f2f3f5 20%,
-    #dedfe1 40%,
-    #dedfe1 100%
-  );
-  background-repeat: no-repeat;
-}
-@keyframes loading {
-  0% {
-    background-position: -100px;
-  }
-  100% {
-    background-position: 200px;
-  }
-}
-
-img:not(.loaded) {
-  display: none;
-}

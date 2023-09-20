@@ -19,6 +19,7 @@ import {
   ProjectMemberType,
 } from 'src/app/shared/models/IProjectMember';
 import { IProject } from 'src/app/shared/models/IProject';
+import { Toast, ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-settings-details',
@@ -34,12 +35,13 @@ export class SettingsDetailsComponent implements OnInit, OnDestroy {
     id: FormControl<string>;
     name: FormControl<string>;
     iconUrl: FormControl<string>;
-    leader: FormControl<IProjectMember | undefined>;
+    leader: FormControl<IProjectMember>;
   }>;
   constructor(
     private modalService: BsModalService,
     private photosService: PhotosService,
     private projectService: ProjectService,
+    private toastrService:ToastrService
   ) {
     this.formHasChanged = false;
     this.projectMembers$ = this.projectService.project$.pipe(
@@ -71,7 +73,7 @@ export class SettingsDetailsComponent implements OnInit, OnDestroy {
               nonNullable: true,
               validators: [Validators.required],
             }),
-            leader: new FormControl<IProjectMember | undefined>(leader, {
+            leader: new FormControl<IProjectMember>(leader!, {
               nonNullable: true,
               validators: [Validators.required],
             }),
@@ -115,6 +117,7 @@ export class SettingsDetailsComponent implements OnInit, OnDestroy {
 
     bsModalRef.content?.result$
       .pipe(
+        take(1),
         takeUntil(this.modalService.onHide),
         takeUntil(this.modalService.onHidden),
         takeUntil(this.ngUnsubscribeSource$),
@@ -129,7 +132,16 @@ export class SettingsDetailsComponent implements OnInit, OnDestroy {
       });
   }
   save() {
-    this.settingsForm?.get('iconUrl')?.value;
+    if (!this.settingsForm || this.settingsForm.invalid) 
+      return;
+
+    var values = this.settingsForm.getRawValue()
+    this.projectService.update({name:values.name,iconUrl:values.iconUrl,newLeaderId: values.leader.id,projectId:values.leader?.projectId})
+                       .pipe(
+                        take(1),
+                        takeUntil(this.ngUnsubscribeSource$)
+                        )
+                       .subscribe(()=>this.toastrService.success("Project has been updated"))
   }
   ngOnDestroy() {
     this.ngUnsubscribeSource$.next();

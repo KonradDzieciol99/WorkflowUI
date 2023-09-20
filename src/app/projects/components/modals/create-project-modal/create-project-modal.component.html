@@ -1,53 +1,54 @@
-<div class="modal-header">
-  <h5 class="modal-title">Create project</h5>
-  <button type="button" class="btn-close" (click)="bsModalRef.hide()"></button>
-</div>
-<div class="modal-body">
-  <div class="mb-2">
-    <div class="d-flex flex-row">
-      <div
-        class="image-container rounded overflow-hidden"
-        style="height: 90px; width: 90px"
-        #placeholder
-      >
-        <img
-          class="me-2 w-100 h-100"
-          (load)="onImageLoad($event)"
-          [src]="projektForm.get('icon')?.value?.url"
-        />
-      </div>
-      <div class="mt-auto ms-auto">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm"
-          (click)="openIconPicker()"
+<ng-container *ngIf="projektForm">
+  <div class="modal-header">
+    <h5 class="modal-title">Create project</h5>
+    <button type="button" class="btn-close" (click)="bsModalRef.hide()"></button>
+  </div>
+  <div class="modal-body">
+    <div class="mb-2">
+      <div class="d-flex flex-row">
+        <div
+          class="image-container rounded overflow-hidden"
+          style="height: 90px; width: 90px"
+          #placeholder
         >
-          Change icon
-        </button>
+          <img
+            class="me-2 w-100 h-100"
+            [src]="projektForm.get('icon')?.value?.url"
+          />
+        </div>
+        <div class="mt-auto ms-auto">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            (click)="openIconPicker()"
+          >
+            Change icon
+          </button>
+        </div>
       </div>
     </div>
+    <form [formGroup]="projektForm">
+      <app-reactive-input
+        class="form"
+        [formGroup]="projektForm"
+        formControlName="name"
+        [validatorsKeyValue]="[
+          { key: 'required', value: 'Name is required' },
+          { key: 'minlength', value: 'Minimum project name length is 6' }
+        ]"
+        [readonly]="false"
+        [label]="'Name:'"
+        [type]="'text'"
+      >
+      </app-reactive-input>
+    </form>
   </div>
-  <form [formGroup]="projektForm">
-    <app-reactive-input
-      class="form"
-      [formGroup]="projektForm"
-      formControlName="name"
-      [validatorsKeyValue]="[
-        { key: 'required', value: 'Name is required' },
-        { key: 'minlength', value: 'Minimum project name length is 6' }
-      ]"
-      [readonly]="false"
-      [label]="'Name:'"
-      [type]="'text'"
-    >
-    </app-reactive-input>
-  </form>
-</div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-secondary" (click)="bsModalRef.hide()">
-    Cancel
-  </button>
-  <button type="button" class="btn btn-primary" (click)="createProject()">
-    Create
-  </button>
-</div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="bsModalRef.hide()">
+      Cancel
+    </button>
+    <button type="button" class="btn btn-primary" (click)="createProject()">
+      Create
+    </button>
+  </div>
+</ng-container>

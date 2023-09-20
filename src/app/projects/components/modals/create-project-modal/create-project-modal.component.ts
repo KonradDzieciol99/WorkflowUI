@@ -16,7 +16,7 @@ import { IconPickerComponent } from '../../icon-picker/icon-picker.component';
   styleUrls: ['./create-project-modal.component.scss'],
 })
 export class CreateProjectModalComponent implements OnInit, OnDestroy {
-  public projektForm: FormGroup;
+  public projektForm?: FormGroup;
   private ngUnsubscribeSource$: Subject<void>;
   constructor(
     public bsModalRef: BsModalRef,
@@ -26,13 +26,6 @@ export class CreateProjectModalComponent implements OnInit, OnDestroy {
     private modalService: BsModalService,
     private renderer: Renderer2,
   ) {
-    this.projektForm = new FormGroup({
-      name: new FormControl<string>('', {
-        nonNullable: true,
-        validators: [Validators.required, Validators.minLength(6)],
-      }),
-      icon: new FormControl<IIcon | null>(null, [Validators.required]),
-    });
     this.ngUnsubscribeSource$ = new Subject<void>();
   }
 
@@ -43,9 +36,17 @@ export class CreateProjectModalComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (icons) => {
           const random = Math.floor(Math.random() * icons.length);
-          this.projektForm.get('icon')?.setValue(icons[random]);
+          this.projektForm = new FormGroup({
+            name: new FormControl<string>('', {
+              nonNullable: true,
+              validators: [Validators.required, Validators.minLength(6)],
+            }),
+            icon: new FormControl<IIcon>(icons[random],{nonNullable: true ,validators:[Validators.required]}),
+          });
         },
       });
+
+
   }
   openIconPicker() {
     const bsModalRef = this.modalService.show(IconPickerComponent, {
@@ -64,7 +65,7 @@ export class CreateProjectModalComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (IIcon) => {
-          this.projektForm.get('icon')?.setValue(IIcon);
+          this.projektForm?.get('icon')?.setValue(IIcon);
         },
         complete: () => {
           /*sub.unsubscribe();*/
@@ -72,7 +73,10 @@ export class CreateProjectModalComponent implements OnInit, OnDestroy {
       });
   }
   createProject() {
-    if (this.projektForm.invalid) {
+    if (!this.projektForm ) 
+      return;
+  
+    if (this.projektForm?.invalid) {
       this.projektForm.markAllAsTouched();
       return;
     }
@@ -89,13 +93,10 @@ export class CreateProjectModalComponent implements OnInit, OnDestroy {
         },
         error: (error: unknown) => {
           if (error instanceof HttpErrorResponse)
-            this.projektForm.setErrors({ serverError: error.error });
+            this.projektForm?.setErrors({ serverError: error.error });
           else console.error('Nieznany błąd:', error);
         },
       });
-  }
-  onImageLoad(event: Event) {
-    this.renderer.addClass(event.target as HTMLImageElement, 'loaded');
   }
   ngOnDestroy(): void {
     this.ngUnsubscribeSource$.next();

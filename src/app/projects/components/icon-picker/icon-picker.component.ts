@@ -26,7 +26,4 @@ export class IconPickerComponent {
     this.resultSource$.next(this.selectedIcon);
     this.bsModalRef.hide();
   }
-  onImageLoad(event: Event) {
-    this.renderer.addClass(event.target as HTMLImageElement, 'loaded');
-  }
 }

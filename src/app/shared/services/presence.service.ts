@@ -12,6 +12,8 @@ import {
   Observable,
   combineLatest,
   concatMap,
+  forkJoin,
+  map,
   mergeMap,
   of,
   take,
@@ -103,40 +105,58 @@ export class PresenceService {
   deleteNotification(notificationToDelete: INotification) {
     return this.http
       .delete<void>(
-        `${this.baseUrl}/notification/api/AppNotification/${notificationToDelete.id}`,
+        `${this.baseUrl}/notification/api/AppNotification/${notificationToDelete.id}`
       )
       .pipe(
         take(1),
-        tap(() => {
+        mergeMap(() => {
+          const updates:(Observable<string[]> | Observable<INotification[]>|Observable<number>)[] = [];
+          
           if (!notificationToDelete.displayed) {
-            this.unreadNotificationsIds$
-              .pipe(take(1))
-              .subscribe((unreadNotificationsIds) => {
-                const nextUnreadNotificationsIds =
+            const updateUnreadNotifications$ = this.unreadNotificationsIds$
+              .pipe(
+                take(1),
+                map(unreadNotificationsIds => 
                   unreadNotificationsIds.filter(
-                    (unreadNotification) =>
-                      unreadNotification !== notificationToDelete.id,
-                  );
-                this.unreadNotificationsIdsSource$.next(
-                  nextUnreadNotificationsIds,
-                );
-              });
+                    unreadNotification => unreadNotification !== notificationToDelete.id
+                  )
+                ),
+                tap(nextUnreadNotificationsIds => {
+                  this.unreadNotificationsIdsSource$.next(nextUnreadNotificationsIds);
+                })
+              );
+
+            updates.push(updateUnreadNotifications$);
           }
-          this.notifications$.pipe(take(1)).subscribe((notifications) => {
-            const nextNotifications = notifications.filter(
-              (n) => n.id !== notificationToDelete.id,
+
+          const updateNotifications$ = this.notifications$
+            .pipe(
+              take(1),
+              map(notifications => 
+                notifications.filter(n => n.id !== notificationToDelete.id)
+              ),
+              tap(nextNotifications => {
+                this.notificationsSource$.next(nextNotifications);
+              })
             );
-            this.notificationsSource$.next(nextNotifications);
-          });
-          this.allNotificationsCount$
-            .pipe(take(1))
-            .subscribe((allNotificationsCount) => {
-              const nextAllNotificationsCount = allNotificationsCount - 1;
-              this.allNotificationsCountSource$.next(nextAllNotificationsCount);
-            });
-        }),
+
+          updates.push(updateNotifications$);
+
+          const updateAllNotificationsCount$ = this.allNotificationsCount$
+            .pipe(
+              take(1),
+              map(allNotificationsCount => allNotificationsCount - 1),
+              tap(nextAllNotificationsCount => {
+                this.allNotificationsCountSource$.next(nextAllNotificationsCount);
+              })
+            );
+
+          updates.push(updateAllNotificationsCount$);
+
+          return forkJoin(updates);
+        })
       );
-  }
+}
   setADifferentTypeOfNotification(
     id: string,
     notificationType: NotificationType,

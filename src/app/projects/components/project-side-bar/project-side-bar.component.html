@@ -15,25 +15,27 @@
 <ng-template #sideBar>
   <div class="col-auto sidebar-width border-end h-100" [ngbCollapse]="(sidenavState$ | async) === false"
     [horizontal]="true">
-    <div class="d-flex flex-column flex-shrink-0 p-3 h-100 overflow-auto">
-      <div class="d-flex flex-row">
-        <img class="me-2 rounded" [src]="(project$ | async)?.iconUrl" [alt]="(project$ | async)?.name" width="30"
-          height="30" />
-        <div class="my-auto">
-          <h6 class="mt-1 user-select-none text-body-emphasis">
-            {{ (project$ | async)?.name }}
-          </h6>
+    <!-- <div style="width:200px"> -->
+      <div class="d-flex flex-column flex-shrink-0 p-3 h-100 overflow-auto sidebar-width ">
+        <div class="d-flex flex-row">
+          <img class="me-2 rounded" [src]="(project$ | async)?.iconUrl" [alt]="(project$ | async)?.name" width="30"
+            height="30" />
+          <div class="my-auto">
+            <h6 class="mt-1 user-select-none text-body-emphasis">
+              {{ (project$ | async)?.name }}
+            </h6>
+          </div>
         </div>
-      </div>
-      <hr />
-      <nav class="nav nav-pills d-flex flex-column">
-        <a class="nav-link link-body-emphasis text-truncate" routerLinkActive="active" [routerLink]="['tasks/list']">
-          <i class="bi bi-list-check"></i> List
-        </a>
-        <a class="nav-link link-body-emphasis text-truncate" routerLinkActive="active" [routerLink]="['settings']">
-          <i class="bi bi-gear"></i> Settings
-        </a>
-      </nav>
-    </div>
+        <hr />
+        <nav class="nav nav-pills d-flex flex-column">
+          <a class="nav-link link-body-emphasis text-truncate" routerLinkActive="active" [routerLink]="['tasks/list']">
+            <i class="bi bi-list-check"></i> List
+          </a>
+          <a class="nav-link link-body-emphasis text-truncate" routerLinkActive="active" [routerLink]="['settings']">
+            <i class="bi bi-gear"></i> Settings
+          </a>
+        </nav>
+      <!-- </div> -->
+  </div>
   </div>
 </ng-template>

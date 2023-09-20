@@ -46,6 +46,7 @@ export class AddProjectMemberModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // TODO: Przenieść do serwisu
     this.searchMember.valueChanges
       .pipe(
         debounceTime(600),
@@ -53,7 +54,7 @@ export class AddProjectMemberModalComponent implements OnInit, OnDestroy {
         switchMap((term) => {
           if (term) {
             return this.projectService
-              .findMemberByEmailAndCheckState(term)
+              .findMemberByEmailAndCheckState(term,true)
               .pipe(take(1), takeUntil(this.ngUnsubscribeSource$));
           }
           return of([]);
@@ -64,19 +65,19 @@ export class AddProjectMemberModalComponent implements OnInit, OnDestroy {
         this.searchedMemberSource$.next([...searchNewUsers]);
       });
   }
-  sendInvitation(user: ISearchedMember): void {
+  sendInvitation(potentialMmember: ISearchedMember): void {
     this.projectService
-      .addMember(user.email)
+      .addMember(potentialMmember.email)
       .pipe(
         take(1),
         switchMap(() => this.searchedMember$.pipe(take(1))),
         takeUntil(this.ngUnsubscribeSource$),
       )
-      .subscribe((searchedMembers) => {
-        const searchNewUsers = searchedMembers.map((user) =>
-          user.id === user.id
-            ? { ...user, status: MemberStatusType.Invited }
-            : user,
+      .subscribe((currentSearchedMembers) => {
+        const searchNewUsers = currentSearchedMembers.map((currentSearchedMember) =>
+        currentSearchedMember.id === potentialMmember.id
+            ? { ...currentSearchedMember, status: MemberStatusType.Invited }
+            : currentSearchedMember,
         );
         this.searchedMemberSource$.next(searchNewUsers);
 
