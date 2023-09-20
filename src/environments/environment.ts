@@ -4,8 +4,8 @@
 
 export const environment = {
   WorkflowUrl:'http://localhost:5100',
-  identityServerUrl: 'https://localhost:5001/api',
-  identityServerUrlConf: 'https://localhost:5001',
+  identityServerUrl: 'http://localhost:5000/api',
+  identityServerUrlConf: 'http://localhost:5000',
   clientUrl: 'http://localhost:4200',
   COOKIE_REFRESH_TOKEN_NAME: 'Workflow-Refresh-Token',
   AUTO_LOGOUT_TIME_IN_MINUTES: 10,
