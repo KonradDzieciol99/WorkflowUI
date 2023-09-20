@@ -2,48 +2,34 @@
   <div class="container-fluid">
     <div class="d-md-none" style="width: 2.6rem"></div>
     <a class="navbar-brand text-white d-flex me-2" href="#">
-        <i class="bi bi-gear-wide-connected spin spin-slow" style="font-size: 1.8rem;"></i>
-      
-      <span class="d-md-none ms-2 my-auto">Workflow</span
-      >
+      <i class="bi bi-gear-wide-connected spin spin-slow" style="font-size: 1.8rem;"></i>
+
+      <span class="d-md-none ms-2 my-auto">Workflow</span>
     </a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      (click)="isCollapsed = !isCollapsed"
-    >
+    <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div [ngbCollapse]="isCollapsed" class="collapse navbar-collapse">
       <hr class="d-block d-md-none text-white-50 w-100" />
       <ul class="navbar-nav me-auto mb-lg-0 flex-row flex-wrap">
         <li class="nav-item col-6 col-md-auto">
-          <a
-            class="nav-link underline position-relative"
-            routerLink="./projects"
-            routerLinkActive="active"
-          >
+          <a class="nav-link underline position-relative" routerLink="./projects" routerLinkActive="active">
             <i class="bi bi-folder-fill"></i>
             <span class="ms-1">Projects</span>
           </a>
         </li>
         <li class="nav-item col-6 col-md-auto">
-          <a
-            class="position-relative nav-link underline"
-            routerLink="./messages"
-            routerLinkActive="active"
-            [tooltip]="isNumberOfOnlineUsersTooltipVisible ? '' : 'Messages'"
-          >
-            <i class="bi bi-messenger"></i>
-            <span
-              *ngIf="(numberOfOnlineUsers$ | async) !== 0"
-              class="position-absolute top-100 start-0 translate-middle badge rounded-pill bg-success"
-              tooltip="Online users"
-              (mouseenter)="isNumberOfOnlineUsersTooltipVisible = true"
-              (mouseleave)="isNumberOfOnlineUsersTooltipVisible = false"
-            >
-              {{ numberOfOnlineUsers$ | async }}
-              <span class="visually-hidden">online users</span>
+          <a class="position-relative nav-link underline" routerLink="./messages" routerLinkActive="active"
+            [tooltip]="isNumberOfOnlineUsersTooltipVisible ? '' : 'Messages'">
+            <span class="position-relative ">
+              <i class="bi bi-messenger"></i>
+              <span *ngIf="(numberOfOnlineUsers$ | async) !== 0"
+                class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-success"
+                tooltip="Online users" (mouseenter)="isNumberOfOnlineUsersTooltipVisible = true"
+                (mouseleave)="isNumberOfOnlineUsersTooltipVisible = false">
+                {{ numberOfOnlineUsers$ | async }}
+                <span class="visually-hidden">online users</span>
+              </span>
             </span>
             <span class="ms-1">Messages</span>
           </a>
@@ -51,31 +37,29 @@
       </ul>
     </div>
     <div [ngbCollapse]="isCollapsed" class="collapse navbar-collapse">
-      <ul
-        class="navbar-nav ms-auto flex-wrap column-gap-md-2 flex-row flex-md-row row-gap-1 row-gap-md-0"
-      >
-        <li class="nav-item col-12 col-md-none order-8 order-1 order-md-0">
+      <ul class="navbar-nav ms-auto flex-wrap column-gap-md-2 flex-row flex-md-row row-gap-1 row-gap-md-0">
+        <li class="nav-item col-12 col-md-none order-1 order-md-0">
           <hr class="d-block d-md-none text-white-50 w-100" />
         </li>
-        <li class="nav-item mb-2 mb-md-0 col-6 col-md-auto order-3 order-md-0">
+        <li class="nav-item col-12 col-md-none order-3 order-md-0">
+          <hr class="d-block d-md-none text-white-50 w-100" />
+        </li>
+        <li class="nav-item col-12 col-md-none order-5 order-md-0">
+          <hr class="d-block d-md-none text-white-50 w-100" />
+        </li>
+        <li class="nav-item mb-2 mb-md-0 col-12 col-md-auto order-4 order-md-0">
           <app-notification-panel></app-notification-panel>
         </li>
         <li class="nav-item col-md-auto">
-          <div
-            class="vr h-100 mb-2 mb-md-0 text-white-50 d-none d-md-block"
-          ></div>
+          <div class="vr h-100 mb-2 mb-md-0 text-white-50 d-none d-md-block"></div>
         </li>
-        <li class="nav-item dropdown col-6 col-md-auto order-4 order-md-0">
+        <li class="nav-item col-12 col-md-auto order-6 order-md-0" style="order: 6;">
           <app-theme-switch-button></app-theme-switch-button>
         </li>
         <li class="nav-item col-md-auto">
-          <div
-            class="vr h-100 mb-2 mb-md-0 text-white-50 d-none d-md-block"
-          ></div>
+          <div class="vr h-100 mb-2 mb-md-0 text-white-50 d-none d-md-block"></div>
         </li>
-        <li
-          class="nav-item mb-2 mb-md-0 col-6 col-md-auto ms-md-1 order-2 order-md-0"
-        >
+        <li class="nav-item mb-2 mb-md-0 col-12 col-md-auto ms-md-1 order-2 order-md-0">
           <app-user-menu></app-user-menu>
         </li>
       </ul>

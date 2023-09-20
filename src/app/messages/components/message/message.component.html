@@ -10,7 +10,7 @@
       width="30"
       height="30"
       class="border border-1 rounded-circle me-2 main-photo"
-      [src]="currentRecipient.photoUrl ?? './assets/user.png'"
+      [src]="currentRecipient.photoUrl"
       [tooltip]="message.senderEmail"
       placement="bottom"
     />
@@ -42,7 +42,7 @@
           width="16"
           height="16"
           class="border border-1 rounded-circle message-read-photo"
-          [src]="currentRecipient.photoUrl ?? './assets/user.png'"
+          [src]="currentRecipient.photoUrl"
           container="body"
           tooltip="Read {{ message.dateRead | date: 'd MMMM HH:mm' }}"
           placement="bottom"

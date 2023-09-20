@@ -23,9 +23,7 @@
         <div *ngFor="let searchUser of this.messagesService.searchNewUsers$ | async" class="border border-1 searched-user">
           <div class="d-flex align-items-center">
             <div class="p-1">
-              <img [src]="
-                  searchUser?.photoUrl ?? 'assets/images/Sample_User_Icon.png'
-                " width="35" height="35" class="rounded-circle border border-1" />
+              <img [src]="searchUser?.photoUrl" width="40" height="40" style="min-width: 40px;" class="rounded-circle border border-1" />
             </div>
             <div class="text-truncate">
               <span>{{ searchUser.email }}</span>
