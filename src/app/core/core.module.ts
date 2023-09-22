@@ -13,6 +13,7 @@ import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import { SharedModule } from '../shared/shared.module';
 import { ToastrModule } from 'ngx-toastr';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { RetryInterceptor } from './interceptors/http-policy.interceptor';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,15 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     NgxSpinnerModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorHandlingInterceptor,
+      multi: true,
+    },
+    { 
+      provide: HTTP_INTERCEPTORS,
+      useClass: LoadingInterceptor,
+      multi: true },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: JwtInterceptorInterceptor,
@@ -46,7 +55,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     },
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: ErrorHandlingInterceptor,
+      useClass: RetryInterceptor,
       multi: true,
     },
   ],
