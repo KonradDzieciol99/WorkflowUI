@@ -127,5 +127,6 @@ export class ThemeSwitchButtonComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.ngUnsubscribeSource$.next();
+    this.ngUnsubscribeSource$.complete();
   }
 }

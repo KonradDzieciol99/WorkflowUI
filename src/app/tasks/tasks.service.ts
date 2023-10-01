@@ -28,7 +28,6 @@ import { IProject } from '../shared/models/IProject';
   providedIn: 'root',
 })
 export class TasksService {
-  // private projectId?: string;
   private baseUrl;
   private tasksSource$: BehaviorSubject<ISyncfusionFormat<IAppTask>>;
   public tasks$: Observable<ISyncfusionFormat<IAppTask>>;
@@ -43,10 +42,6 @@ export class TasksService {
       count: 0,
     });
     this.tasks$ = this.tasksSource$.asObservable();
-    // projectService.project$.subscribe(project => {
-    //   if (project)
-    //     this.projectId = project.id;
-    // });
   }
   public execute(state: DataStateChangeEventArgs) {
     return this.getData(state).pipe(tap((x) => this.tasksSource$.next(x)));
