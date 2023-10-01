@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import {
   HttpTransportType,
   HubConnection,
@@ -8,6 +8,7 @@ import {
 import {
   BehaviorSubject,
   Observable,
+  Subject,
   concatMap,
   debounceTime,
   filter,
@@ -24,7 +25,7 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class ChatService {
+export class ChatService implements OnDestroy {
   private hubConnection?: HubConnection;
   private messageThreadSource$: BehaviorSubject<Message[] | undefined>;
   messageThread$: Observable<Message[] | undefined>;
@@ -35,11 +36,13 @@ export class ChatService {
   recipientIsTyping$: Observable<boolean>;
   chatRecipient$: Observable<IUser | undefined>;
   baseUrl: string;
+  private ngUnsubscribeSource$: Subject<void>;
   constructor(private http: HttpClient) {
     this.baseUrl = `${environment.WorkflowUrl}/chat`;
     this.messageThreadSource$ = new BehaviorSubject(
       undefined as Message[] | undefined,
     );
+    this.ngUnsubscribeSource$ = new Subject<void>();
     this.messageThread$ = this.messageThreadSource$.asObservable();
     this.recipientIsWatchingSource$ = new BehaviorSubject(false);
     this.recipientIsWatching$ = this.recipientIsWatchingSource$.asObservable();
@@ -49,6 +52,16 @@ export class ChatService {
       undefined as IUser | undefined,
     );
     this.chatRecipient$ = this.chatRecipientSource$.asObservable();
+
+    this.recipientIsTyping$
+      .pipe(
+        debounceTime(1500),
+        filter((bool)=> bool !== false),
+        takeUntil(this.ngUnsubscribeSource$)
+      )
+      .subscribe({
+        next: () => this.recipientIsTypingSource$.next(false)
+      });
   }
 
   createHubConnection(
@@ -68,16 +81,9 @@ export class ChatService {
     });
 
     this.hubConnection.on('UserIsTyping', (userEmail: string) => {
-      if (userEmail === recipientEmail) {
+      if (userEmail === recipientEmail) 
         this.recipientIsTypingSource$.next(true);
-
-        this.recipientIsTyping$
-          .pipe(take(1), debounceTime(1500), takeUntil(this.messageThread$))
-          .subscribe({
-            next: () => this.recipientIsTypingSource$.next(false),
-            complete: () => this.recipientIsTypingSource$.next(false),
-          });
-      }
+      
     });
 
     this.hubConnection.on('UpdatedGroup', (group: string[]) => {
@@ -163,4 +169,9 @@ export class ChatService {
     this.chatRecipientSource$.next(undefined);
     await this.hubConnection?.stop();
   }
+  ngOnDestroy(): void {
+    this.ngUnsubscribeSource$.next();
+    this.ngUnsubscribeSource$.complete();
+  }
+
 }
